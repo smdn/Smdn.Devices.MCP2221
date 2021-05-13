@@ -18,6 +18,9 @@ services.AddLogging(
     .AddFilter(static level => LogLevel.Trace <= level)
 );
 
+// This works only if you use LibUsbDotNet
+Smdn.Devices.UsbHid.Log.NativeLibraryLogLevel = LogLevel.Trace;
+
 await using var device = await MCP2221.OpenAsync(services.BuildServiceProvider());
 
 await device.I2C.ScanBusAsync();

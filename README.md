@@ -1,3 +1,7 @@
+[![GitHub license](https://img.shields.io/github/license/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/blob/main/LICENSE.txt)
+[![GitHub issues](https://img.shields.io/github/issues/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/issues)
+[![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/)
+[![NuGet Smdn.Devices.MCP2221.GpioAdapter](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.GpioAdapter.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221.GpioAdapter/)
 
 # Smdn.Devices.MCP2221
 [Smdn.Devices.MCP2221](src/Smdn.Devices.MCP2221/) is a .NET library for controlling [MCP2221](https://www.microchip.com/wwwproducts/en/MCP2221)/[MCP2221A USB2.0 to I<sup>2</sup>C/UART Protocol Converter with GPIO](https://www.microchip.com/wwwproducts/en/MCP2221A). This library enables you to control MCP2221/MCP2221A's GPIO, I<sup>2</sup>C interface, and other functionalities via USB-HID interface.

@@ -36,7 +36,7 @@ displays[1].Flush();
 
 // write string and display it
 const int numOfDigits = FourDigitFourteenSegmentDisplay.NumberOfDigits;
-var str = $"    Hello, MCP2221/MCP2221. {device.GetType().Assembly.GetName().Name} {device.GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}    ";
+var str = $"    Hello, MCP2221/MCP2221A. {device.GetType().Assembly.GetName().Name} {device.GetType().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}    ";
 
 Console.WriteLine(str);
 

@@ -1,0 +1,11 @@
+#
+# udev rules for LibUsbDotNet (libusb)
+# copy this file to `/etc/udev/rules.d/` and run `sudo udevadm control --reload-rules && sudo udevadm trigger`
+#
+
+# [required] prevent usbhid from claiming MCP2221/MCP2221A's HID interface
+ACTION=="add", SUBSYSTEM=="usb", DRIVER=="usbhid", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/usbhid/unbind'"
+
+# [optional] grant non-root user access to MCP2221/MCP2221A
+SUBSYSTEM=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", GROUP="plugdev", TAG+="uaccess"
+#SUBSYSTEM=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", MODE="0666"

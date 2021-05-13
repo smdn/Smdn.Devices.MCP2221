@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <VersionPrefix>0.9</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup Label="metadata">
+    <Description>
+      Smdn.Devices.MCP2221.GpioAdapter provides the MCP2221/MCP2221A adapter for System.Device.Gpio.
+      This library enables you to use the many device bindings provided by Iot.Device.Bindings.
+    </Description>
+    <PackageTags>MCP2221,MCP2221A,I2C,System.Device.Gpio,Iot.Device.Bindings</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Smdn.Devices.MCP2221\Smdn.Devices.MCP2221.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Device.Gpio" Version="1.4.0" />
+  </ItemGroup>
+</Project>

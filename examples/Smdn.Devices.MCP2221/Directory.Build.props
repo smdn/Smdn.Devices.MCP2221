@@ -1,0 +1,12 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(LibrarySourceDirectory)\Smdn.Devices.MCP2221\Smdn.Devices.MCP2221.csproj" />
+  </ItemGroup>
+</Project>

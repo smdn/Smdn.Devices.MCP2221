@@ -1,0 +1,5 @@
+bin/
+obj/
+*.userprefs
+.vs/
+TestResult.xml

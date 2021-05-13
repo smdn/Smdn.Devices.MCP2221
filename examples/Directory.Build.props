@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <LibrarySourceDirectory>$(MSBuildThisFileDirectory)\..\src\</LibrarySourceDirectory>
+  </PropertyGroup>
+</Project>

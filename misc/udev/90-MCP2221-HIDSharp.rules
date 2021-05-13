@@ -1,0 +1,8 @@
+#
+# udev rules for HIDSharp (hidraw)
+# copy this file to `/etc/udev/rules.d/` and run `sudo udevadm control --reload-rules && sudo udevadm trigger`
+#
+
+# [optional] grant non-root user access to MCP2221/MCP2221A
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", GROUP="plugdev", TAG+="uaccess"
+#KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", MODE="0666"

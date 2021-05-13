@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Smdn.Devices.MCP2221 uses HIDSharp as the USB-HID driver by default.
+    Smdn.Devices.MCP2221 also supports LibUsbDotNet as an alternative driver.
+    You can change the driver by changing `UsbHidDriver` property value below,
+    or by building with command `dotnet build /p:UsbHidDriver=[HIDSharp|LibUsbDotNet]`.
+  -->
+  <PropertyGroup>
+    <UsbHidDriver>HIDSharp</UsbHidDriver>
+    <!-- <UsbHidDriver>LibUsbDotNet</UsbHidDriver> -->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <VersionPrefix>0.9</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <DefineConstants>$(DefineConstants);USBHIDDRIVER_$(UsbHidDriver.ToUpper())</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Label="metadata">
+    <Description>
+      Smdn.Devices.MCP2221 is a .NET library for controlling MCP2221/MCP2221A USB2.0 to I2C/UART Protocol Converter with GPIO.
+      This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and other functionalities via USB-HID interface.
+    </Description>
+    <PackageTags>USB-HID,MCP2221,MCP2221A,I2C,GPIO</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+  </ItemGroup>
+
+  <!-- choose USB-HID backed -->
+  <Choose>
+    <When Condition=" '$(UsbHidDriver)' == 'HIDSharp' ">
+      <ItemGroup>
+        <PackageReference Include="HidSharp" Version="2.1.0" />
+      </ItemGroup>
+      <PropertyGroup>
+        <UsbHidDriverMessage>USB-HID driver: HidSharp (Apache License 2.0)</UsbHidDriverMessage>
+      </PropertyGroup>
+    </When>
+    <When Condition=" '$(UsbHidDriver)' == 'LibUsbDotNet' ">
+      <ItemGroup>
+        <PackageReference Include="LibUsbDotNet" Version="3.0.87-alpha" />
+      </ItemGroup>
+      <PropertyGroup>
+        <UsbHidDriverMessage>USB-HID driver: LibUsbDotNet (LGPL-3.0)</UsbHidDriverMessage>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <UsbHidDriverMessage />
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Target Name="DisplayUsbHidDriverWarning" AfterTargets="AfterBuild" Condition=" '$(UsbHidDriverMessage)' != '' ">
+    <Warning Text="$(UsbHidDriverMessage)"/>
+  </Target>
+  <Target Name="DisplayUsbHidDriverError" BeforeTargets="BeforeBuild" Condition=" '$(UsbHidDriverMessage)' == '' ">
+    <Error Text="USB-HID driver not specified or undefined: '$(UsbHidDriver)'" />
+  </Target>
+</Project>

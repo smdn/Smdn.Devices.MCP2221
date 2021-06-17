@@ -7,10 +7,11 @@
 
   <PropertyGroup Label="metadata">
     <Description>
-      Smdn.Devices.MCP2221.GpioAdapter provides the MCP2221/MCP2221A adapter for System.Device.Gpio.
-      This library enables you to use the many device bindings provided by Iot.Device.Bindings.
+<![CDATA[Smdn.Devices.MCP2221.GpioAdapter provides the MCP2221/MCP2221A adapter for System.Device.Gpio.
+This library enables you to use the many device bindings provided by Iot.Device.Bindings.
+]]>
     </Description>
-    <PackageTags>MCP2221,MCP2221A,I2C,System.Device.Gpio,Iot.Device.Bindings</PackageTags>
+    <PackageTags>MCP2221,MCP2221A,USB,I2C,System.Device.Gpio,Iot.Device.Bindings</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

@@ -19,10 +19,11 @@
 
   <PropertyGroup Label="metadata">
     <Description>
-      Smdn.Devices.MCP2221 is a .NET library for controlling MCP2221/MCP2221A USB2.0 to I2C/UART Protocol Converter with GPIO.
-      This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and other functionalities via USB-HID interface.
+<![CDATA[Smdn.Devices.MCP2221 is a .NET library for controlling MCP2221/MCP2221A USB2.0 to I2C/UART Protocol Converter with GPIO.
+This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and other functionalities via USB-HID interface.
+]]>
     </Description>
-    <PackageTags>USB-HID,MCP2221,MCP2221A,I2C,GPIO</PackageTags>
+    <PackageTags>USB,USB-HID,MCP2221,MCP2221A,I2C,GPIO</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

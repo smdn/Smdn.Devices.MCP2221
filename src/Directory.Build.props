@@ -15,11 +15,16 @@
   </ItemGroup>
   -->
 
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)package-icon.png" Pack="true" Visible="false" PackagePath="\$(MSBuildProjectName).png"/>
+  </ItemGroup>
+
   <PropertyGroup Label="metadata">
     <Authors>smdn</Authors>
     <CopyrightYear>2021</CopyrightYear>
 
     <!-- NuGet -->
+    <PackageIcon>$(MSBuildProjectName).png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/smdn/Smdn.Devices.MCP2221</PackageProjectUrl>
     <RepositoryUrl>https://github.com/smdn/Smdn.Devices.MCP2221</RepositoryUrl>

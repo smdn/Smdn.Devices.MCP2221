@@ -2,7 +2,6 @@
   <PropertyGroup Label="metadata">
     <!-- NuGet -->
     <PackageProjectUrl Condition=" '$(PackageProjectUrl)' == '' ">https://smdn.jp/</PackageProjectUrl>
-    <PackageIconUrl Condition=" '$(PackageIconUrl)' == '' ">https://smdn.jp/works/libs/Smdn.dll/Smdn-3.0_64x64.png</PackageIconUrl>
     <PackageTags Condition="!$(PackageTags.Contains('smdn.jp'))">smdn.jp;$(PackageTags)</PackageTags>
 
     <!-- AssemblyInfo -->

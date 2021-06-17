@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
 <Project Sdk="Microsoft.NET.Sdk">
   <!--
     Smdn.Devices.MCP2221 uses HIDSharp as the USB-HID driver by default.

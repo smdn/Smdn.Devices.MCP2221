@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+# SPDX-License-Identifier: MIT
 #
 # udev rules for HIDSharp (hidraw)
 # copy this file to `/etc/udev/rules.d/` and run `sudo udevadm control --reload-rules && sudo udevadm trigger`

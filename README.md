@@ -72,7 +72,43 @@ Haven't tested with the actual MCP2221, but it is expected that works as same as
   - Provides an adapter for [System.Device.Gpio](https://www.nuget.org/packages/System.Device.Gpio/)
   - Can handle I2C devices using with [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/) ([examples](examples/Smdn.Devices.MCP2221.GpioAdapter/))
 
-# Examples
+# Getting started and examples
+Firstly, add package [Smdn.Devices.MCP2221](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) to your project.
+
+```
+dotnet add package Smdn.Devices.MCP2221
+```
+
+Nextly, write your codes. The simplest code, blinking the LEDs connected to the GP pins is like below.
+
+```cs
+using System;
+using System.Threading;
+using Smdn.Devices.MCP2221;
+
+using var device = MCP2221.Open();
+
+// configure GP0-GP3 as GPIO output
+device.GP0.ConfigureAsGPIO(GPIODirection.Output);
+device.GP1.ConfigureAsGPIO(GPIODirection.Output);
+device.GP2.ConfigureAsGPIO(GPIODirection.Output);
+device.GP3.ConfigureAsGPIO(GPIODirection.Output);
+
+// blink GP0-GP3
+foreach (var gp in device.GPs) {
+  Console.WriteLine($"blink {gp.PinDesignation}");
+
+  for (var n = 0; n < 10; n++) {
+    gp.SetValue(false); Thread.Sleep(100);
+    gp.SetValue(true); Thread.Sleep(100);
+  }
+}
+```
+
+For detailed instructions, including wiring of the devices and parts, see [blink example](examples/Smdn.Devices.MCP2221/blink-csharp) page.
+
+More examples can be found in following examples directory.
+
 - [Smdn.Devices.MCP2221 examples](examples/Smdn.Devices.MCP2221/): Small examples using MCP2221/MCP2221A functionalities.
 - [Smdn.Devices.MCP2221.GpioAdapter examples](examples/Smdn.Devices.MCP2221.GpioAdapter/): Small examples using [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/).
 

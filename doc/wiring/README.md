@@ -6,9 +6,9 @@ Required devices and parts are as follows:
 
 - USB breakout board or breakout cable
 - MCP2221/MCP2221A and
-  - 0.22μF capaciter × 1
-  - 0.1μF capaciter × 1
-  - 10kΩ register × 1
+  - 0.22μF capacitor × 1
+  - 0.1μF capacitor × 1
+  - 10kΩ resistor × 1
 - 3.3V voltage regulator (Optional. If you need 3.3V operation.) and
   - external capacitors which required by the regulator
 - Push button (Optional. If you want to reset MCP2221/MCP2221A by hand.)

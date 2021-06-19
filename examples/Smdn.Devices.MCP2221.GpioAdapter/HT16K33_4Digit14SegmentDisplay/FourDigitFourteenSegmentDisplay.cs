@@ -1,6 +1,7 @@
 
 using System;
 using System.Device.I2c;
+using System.Text;
 using System.Runtime.InteropServices;
 
 public class FourDigitFourteenSegmentDisplay : Iot.Device.Display.Ht16k33 {
@@ -28,9 +29,14 @@ public class FourDigitFourteenSegmentDisplay : Iot.Device.Display.Ht16k33 {
 
   public void Write(ReadOnlySpan<char> charSequence)
   {
-    for (var index = 0; index < Math.Min(charSequence.Length, NumberOfDigits); index++) {
-      if (displayableCharacterRange.min <= charSequence[index] && charSequence[index] <= displayableCharacterRange.max)
-        buffer[index] = characters[(int)(charSequence[index] - displayableCharacterRange.min)];
+    var length = Math.Min(Encoding.ASCII.GetByteCount(charSequence), NumberOfDigits);
+    Span<byte> byteSequence = stackalloc byte[length];
+
+    Encoding.ASCII.GetBytes(charSequence.Slice(0, length), byteSequence);
+
+    for (var index = 0; index < length; index++) {
+      if (displayableCharacterRange.min <= byteSequence[index] && byteSequence[index] <= displayableCharacterRange.max)
+        buffer[index] = characters[(int)(byteSequence[index] - displayableCharacterRange.min)];
       else
         throw new ArgumentException("contains undisplayable character", nameof(charSequence));
     }

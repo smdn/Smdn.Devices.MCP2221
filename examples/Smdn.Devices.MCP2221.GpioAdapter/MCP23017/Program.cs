@@ -35,12 +35,12 @@ mcp23017.WriteUInt16(Register.GPINTEN, 0b_0000_0000_0000_0000);
 mcp23017.WriteUInt16(Register.IODIR, 0b_0000_0000_0000_0000);
 
 // set GPA<0~7> = 0b_1111_1111(all HIGH), set GPB<0~7> = 0b_0000_0000(all LOW)
-mcp23017.WriteUInt16(Register.GPIO, 0b_1111_1111_0000_0000);
+mcp23017.WriteUInt16(Register.GPIO, 0b_0000_0000_1111_1111);
 
 await Task.Delay(1000);
 
 // set GPA<0~7> = 0b_0000_0000(all LOW), set GPB<0~7> = 0b_1111_1111(all HIGH)
-mcp23017.WriteUInt16(Register.GPIO, 0b_0000_0000_1111_1111);
+mcp23017.WriteUInt16(Register.GPIO, 0b_1111_1111_0000_0000);
 
 await Task.Delay(1000);
 

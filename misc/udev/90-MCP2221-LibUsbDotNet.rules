@@ -1,13 +1,21 @@
 # SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 # SPDX-License-Identifier: MIT
 #
-# udev rules for LibUsbDotNet (libusb)
-# copy this file to `/etc/udev/rules.d/` and run `sudo udevadm control --reload-rules && sudo udevadm trigger`
+#      udev rules for MCP2221/MCP2221A + LibUsbDotNet (libusb)
+#
+# copy this file to `/etc/udev/rules.d/` and run `sudo udevadm control --reload-rules && sudo udevadm trigger -s usb`
+# tested on Ubuntu 20.04.2 LTS
 #
 
-# [required] prevent usbhid from claiming MCP2221/MCP2221A's HID interface
-ACTION=="add", SUBSYSTEM=="usb", DRIVER=="usbhid", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/usbhid/unbind'"
+SUBSYSTEM=="usb", DRIVER=="usb|usbhid", \
+# [mandatory] matching keys for MCP2221/MCP2221A
+  ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", \
+# [optional] matching keys for the device bus number and device path of MCP2221/MCP2221A
+#  ATTRS{busnum}=="x", ATTRS{devpath}!="y", \
+# [mandatory] unbind kernel driver from MCP2221/MCP2221A's HID interface
+  RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/usbhid/unbind'", \
+# [optional] grant non-root user access to MCP2221/MCP2221A by specifying group for the device
+  GROUP="plugdev", TAG+="uaccess", \
+# [optional] grant non-root user access to MCP2221/MCP2221A by specifying permission for the device
+#  MODE="0666", \
 
-# [optional] grant non-root user access to MCP2221/MCP2221A
-SUBSYSTEM=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", GROUP="plugdev", TAG+="uaccess"
-#SUBSYSTEM=="usb", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", MODE="0666"

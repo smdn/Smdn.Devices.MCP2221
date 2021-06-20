@@ -6,12 +6,20 @@ SPDX-License-Identifier: MIT
   <!--
     Smdn.Devices.MCP2221 uses HIDSharp as the USB-HID driver by default.
     Smdn.Devices.MCP2221 also supports LibUsbDotNet as an alternative driver.
-    You can change the driver by changing `UsbHidDriver` property value below,
-    or by building with command `dotnet build /p:UsbHidDriver=[HIDSharp|LibUsbDotNet]`.
+
+    The driver can be specified with `UsbHidDriver` project property.
+    You can set this property by one of the following instruction:
+      1. Set an environment variable `SMDN_DEVICES_MCP2221_USBHIDDRIVER=<DRIVER>`.
+      2. Build with command `dotnet build /p:UsbHidDriver=<DRIVER>`.
+      3. Modify project property directly.
   -->
   <PropertyGroup>
-    <UsbHidDriver>HIDSharp</UsbHidDriver>
-    <!-- <UsbHidDriver>LibUsbDotNet</UsbHidDriver> -->
+
+    <UsbHidDriver Condition=" '$(SMDN_DEVICES_MCP2221_USBHIDDRIVER)' != '' ">$(SMDN_DEVICES_MCP2221_USBHIDDRIVER)</UsbHidDriver>
+    <UsbHidDriver Condition=" '$(UsbHidDriver)' == '' ">HIDSharp</UsbHidDriver> <!-- as default -->
+    <!--
+    <UsbHidDriver Condition=" '$(UsbHidDriver)' == '' ">LibUsbDotNet</UsbHidDriver>
+    -->
   </PropertyGroup>
 
   <PropertyGroup>

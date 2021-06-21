@@ -118,8 +118,10 @@ namespace Smdn.Devices.MCP2221 {
       MCP2221 device = null;
 
       try {
+        IUsbHidDevice baseDevice = null;
+
         try {
-          var baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
+          baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
 
           device = new MCP2221(
             baseDevice,
@@ -128,7 +130,7 @@ namespace Smdn.Devices.MCP2221 {
           );
         }
         catch (Exception ex) when (ex is not DeviceNotFoundException) {
-          throw new DeviceUnavailableException(ex);
+          throw new DeviceUnavailableException(ex, baseDevice);
         }
 
         await device.RetrieveChipInformationAsync(
@@ -154,8 +156,10 @@ namespace Smdn.Devices.MCP2221 {
       MCP2221 device = null;
 
       try {
+        IUsbHidDevice baseDevice = null;
+
         try {
-          var baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
+          baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
 
           device = new MCP2221(
             baseDevice,
@@ -164,7 +168,7 @@ namespace Smdn.Devices.MCP2221 {
           );
         }
         catch (Exception ex) when (ex is not DeviceNotFoundException) {
-          throw new DeviceUnavailableException(ex);
+          throw new DeviceUnavailableException(ex, baseDevice);
         }
 
         device.RetrieveChipInformation(

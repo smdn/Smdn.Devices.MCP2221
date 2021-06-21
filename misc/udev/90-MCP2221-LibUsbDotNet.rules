@@ -6,6 +6,10 @@
 # copy this file to `/etc/udev/rules.d/` and run `sudo udevadm control --reload-rules && sudo udevadm trigger -s usb`
 # tested on Ubuntu 20.04.2 LTS
 #
+# reference:
+#   http://reactivated.net/writing_udev_rules.html
+#   https://wiki.archlinux.jp/index.php/Udev
+#
 
 SUBSYSTEM=="usb", DRIVER=="usb|usbhid", \
 # [mandatory] matching keys for MCP2221/MCP2221A

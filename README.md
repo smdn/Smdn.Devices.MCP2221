@@ -89,10 +89,10 @@ using Smdn.Devices.MCP2221;
 using var device = MCP2221.Open();
 
 // configure GP0-GP3 as GPIO output
-device.GP0.ConfigureAsGPIO(GPIODirection.Output);
-device.GP1.ConfigureAsGPIO(GPIODirection.Output);
-device.GP2.ConfigureAsGPIO(GPIODirection.Output);
-device.GP3.ConfigureAsGPIO(GPIODirection.Output);
+device.GP0.ConfigureAsGPIO(PinMode.Output);
+device.GP1.ConfigureAsGPIO(PinMode.Output);
+device.GP2.ConfigureAsGPIO(PinMode.Output);
+device.GP3.ConfigureAsGPIO(PinMode.Output);
 
 // blink GP0-GP3
 foreach (var gp in device.GPs) {

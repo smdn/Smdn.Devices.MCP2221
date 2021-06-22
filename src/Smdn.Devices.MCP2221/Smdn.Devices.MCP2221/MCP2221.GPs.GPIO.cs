@@ -10,29 +10,29 @@ namespace Smdn.Devices.MCP2221 {
   partial class MCP2221 {
     internal interface IGPIOFunctionality {
       ValueTask ConfigureAsGPIOAsync(
-        GPIODirection initialDirection = GPIODirection.Output,
+        PinMode initialDirection = PinMode.Output,
         PinValue initialValue = default,
         CancellationToken cancellationToken = default
       );
       void ConfigureAsGPIO(
-        GPIODirection initialDirection = GPIODirection.Output,
+        PinMode initialDirection = PinMode.Output,
         PinValue initialValue = default,
         CancellationToken cancellationToken = default
       );
 
-      ValueTask<GPIODirection> GetDirectionAsync(
+      ValueTask<PinMode> GetDirectionAsync(
         CancellationToken cancellationToken = default
       );
-      GPIODirection GetDirection(
+      PinMode GetDirection(
         CancellationToken cancellationToken = default
       );
 
       ValueTask SetDirectionAsync(
-        GPIODirection newDirection,
+        PinMode newDirection,
         CancellationToken cancellationToken = default
       );
       void SetDirection(
-        GPIODirection newDirection,
+        PinMode newDirection,
         CancellationToken cancellationToken = default
       );
 
@@ -56,7 +56,7 @@ namespace Smdn.Devices.MCP2221 {
     partial class GPFunctionality : IGPIOFunctionality {
       [CLSCompliant(false)]
       public ValueTask ConfigureAsGPIOAsync(
-        GPIODirection initialDirection = GPIODirection.Output,
+        PinMode initialDirection = PinMode.Output,
         PinValue initialValue = default,
         CancellationToken cancellationToken = default
       )
@@ -70,7 +70,7 @@ namespace Smdn.Devices.MCP2221 {
 
       [CLSCompliant(false)]
       public void ConfigureAsGPIO(
-        GPIODirection initialDirection = GPIODirection.Output,
+        PinMode initialDirection = PinMode.Output,
         PinValue initialValue = default,
         CancellationToken cancellationToken = default
       )
@@ -86,11 +86,12 @@ namespace Smdn.Devices.MCP2221 {
         public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, GPFunctionality gp)
           => throw new NotImplementedException();
 
-        public static GPIODirection ParseResponse(ReadOnlySpan<byte> resp, GPFunctionality gp)
+        public static PinMode ParseResponse(ReadOnlySpan<byte> resp, GPFunctionality gp)
           => throw new NotImplementedException();
       }
 
-      public ValueTask<GPIODirection> GetDirectionAsync(
+      [CLSCompliant(false)]
+      public ValueTask<PinMode> GetDirectionAsync(
         CancellationToken cancellationToken = default
       )
         => device.CommandAsync(
@@ -101,7 +102,8 @@ namespace Smdn.Devices.MCP2221 {
           parseResponse: GetDirectionCommand.ParseResponse
         );
 
-      public GPIODirection GetDirection(
+      [CLSCompliant(false)]
+      public PinMode GetDirection(
         CancellationToken cancellationToken = default
       )
         => device.Command(
@@ -113,15 +115,16 @@ namespace Smdn.Devices.MCP2221 {
         );
 
       private static class SetDirectionCommand {
-        public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (GPFunctionality gp, GPIODirection newDirection) args)
+        public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (GPFunctionality gp, PinMode newDirection) args)
           => throw new NotImplementedException();
 
-        public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, GPIODirection newDirection) args)
+        public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, PinMode newDirection) args)
           => throw new NotImplementedException();
       }
 
+      [CLSCompliant(false)]
       public ValueTask SetDirectionAsync(
-        GPIODirection newDirection,
+        PinMode newDirection,
         CancellationToken cancellationToken = default
       )
         => device.CommandAsync(
@@ -132,8 +135,9 @@ namespace Smdn.Devices.MCP2221 {
           parseResponse: SetDirectionCommand.ParseResponse
         ).AsValueTask();
 
+      [CLSCompliant(false)]
       public void SetDirection(
-        GPIODirection newDirection,
+        PinMode newDirection,
         CancellationToken cancellationToken = default
       )
         => device.Command(

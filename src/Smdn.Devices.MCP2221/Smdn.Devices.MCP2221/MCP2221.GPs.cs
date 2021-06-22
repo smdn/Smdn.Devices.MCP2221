@@ -13,19 +13,19 @@ namespace Smdn.Devices.MCP2221 {
 #if __FUTURE_VERSION
     public interface IReadOnlyGPFunctionalityList : IReadOnlyList<GPFunctionality> {
       void SetDirection(
-        GPIODirection directionAllGPs
+        PinMode directionAllGPs
       );
       void SetDirection(
-        GPIODirection directionGP0,
-        GPIODirection directionGP1,
-        GPIODirection directionGP2,
-        GPIODirection directionGP3
+        PinMode directionGP0,
+        PinMode directionGP1,
+        PinMode directionGP2,
+        PinMode directionGP3
       );
       void GetDirection(
-        out GPIODirection directionGP0,
-        out GPIODirection directionGP1,
-        out GPIODirection directionGP2,
-        out GPIODirection directionGP3
+        out PinMode directionGP0,
+        out PinMode directionGP1,
+        out PinMode directionGP2,
+        out PinMode directionGP3
       );
       void SetValue(
         PinValue valueAllGPs
@@ -280,7 +280,7 @@ namespace Smdn.Devices.MCP2221 {
             ReadOnlyMemory<byte> gpSettings,
             int gpIndex,
             GPDesignation gpDesignation,
-            GPIODirection gpioDirection,
+            PinMode gpioDirection,
             PinValue gpioValue
           ) args
         )
@@ -314,9 +314,9 @@ namespace Smdn.Devices.MCP2221 {
             ) |
             // Bit 3: GPIO Direction
             args.gpioDirection switch {
-              GPIODirection.Input  => 0b_000_0_1_000,
-              GPIODirection.Output => 0b_000_0_0_000,
-              _ => throw new ArgumentOutOfRangeException(nameof(args.gpioDirection), args.gpioDirection, $"must be {nameof(GPIODirection.Input)} or {nameof(GPIODirection.Output)}"),
+              PinMode.Input  => 0b_000_0_1_000,
+              PinMode.Output => 0b_000_0_0_000,
+              _ => throw new ArgumentOutOfRangeException(nameof(args.gpioDirection), args.gpioDirection, $"must be {nameof(PinMode.Input)} or {nameof(PinMode.Output)}"),
             } |
             // Bit 2-0: GP<n> Designation
             ((byte)args.gpDesignation & 0b_000_0_0_111)
@@ -329,7 +329,7 @@ namespace Smdn.Devices.MCP2221 {
             ReadOnlyMemory<byte>,
             int,
             GPDesignation,
-            GPIODirection,
+            PinMode,
             PinValue
           ) _
         )
@@ -344,7 +344,7 @@ namespace Smdn.Devices.MCP2221 {
       private protected async ValueTask ConfigureGPDesignationAsync(
         string pinDesignation,
         GPDesignation gpDesignation,
-        GPIODirection gpioInitialDirection = default,
+        PinMode gpioInitialDirection = default,
         PinValue gpioInitialValue = default,
         CancellationToken cancellationToken = default
       )
@@ -380,7 +380,7 @@ namespace Smdn.Devices.MCP2221 {
       private protected void ConfigureGPDesignation(
         string pinDesignation,
         GPDesignation gpDesignation,
-        GPIODirection gpioInitialDirection = default,
+        PinMode gpioInitialDirection = default,
         PinValue gpioInitialValue = default,
         CancellationToken cancellationToken = default
       )

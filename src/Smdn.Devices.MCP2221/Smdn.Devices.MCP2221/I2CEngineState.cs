@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Smdn.Devices.MCP2221 {
   internal
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
   readonly
 #endif
   struct I2CEngineState {
@@ -20,7 +20,7 @@ namespace Smdn.Devices.MCP2221 {
 
     public TransferStatus BusStatus {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -28,7 +28,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public byte StateMachineStateValue {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -36,7 +36,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public int RequestedTransferLength {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -44,7 +44,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public int AlreadyTransferredLength {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -52,7 +52,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public int DataBufferCounter {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -60,7 +60,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public ushort Address {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -68,7 +68,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public int ReadPendingValue {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -76,7 +76,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public byte CommunicationSpeedDividerValue {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -84,7 +84,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public byte TimeoutValue {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -92,7 +92,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public GPIOValue LineValueSCL {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;
@@ -100,7 +100,7 @@ namespace Smdn.Devices.MCP2221 {
     }
     public GPIOValue LineValueSDA {
       get;
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       init;
 #else
       private set;

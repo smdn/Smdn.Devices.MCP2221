@@ -48,7 +48,7 @@ namespace Smdn.Devices.UsbHid {
       stream = new PseudoUsbHidStream(createWriteStream?.Invoke(), createReadStream?.Invoke());
 
       return
-#if NET
+#if NET5_0_OR_GREATER
       ValueTask.FromResult<IUsbHidStream>
 #else
       new ValueTask<IUsbHidStream>

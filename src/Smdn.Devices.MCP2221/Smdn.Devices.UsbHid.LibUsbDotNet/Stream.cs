@@ -54,7 +54,7 @@ namespace Smdn.Devices.UsbHid.LibUsbDotNet {
       _writer = null;
       _reader = null;
 
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       return ValueTask.CompletedTask;
 #else
       return new ValueTask(Task.CompletedTask);
@@ -97,7 +97,7 @@ namespace Smdn.Devices.UsbHid.LibUsbDotNet {
         out var transferLength
       );
 
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       return ValueTask.CompletedTask;
 #else
       return default;
@@ -135,7 +135,7 @@ namespace Smdn.Devices.UsbHid.LibUsbDotNet {
       );
 
       return
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       ValueTask.FromResult<int>
 #else
       new ValueTask<int>

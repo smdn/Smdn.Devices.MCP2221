@@ -164,7 +164,7 @@ namespace Smdn.Devices.UsbHid.LibUsbDotNet {
     public ValueTask<IUsbHidStream> OpenStreamAsync()
     {
       return
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       ValueTask.FromResult<IUsbHidStream>
 #else
       new ValueTask<IUsbHidStream>
@@ -186,7 +186,7 @@ namespace Smdn.Devices.UsbHid.LibUsbDotNet {
       _usbDevice?.Dispose();
       _usbDevice = null;
 
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       return ValueTask.CompletedTask;
 #else
       return new ValueTask(Task.CompletedTask);

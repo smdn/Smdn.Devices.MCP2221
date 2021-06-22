@@ -77,7 +77,7 @@ namespace Smdn.Devices.UsbHid.HidSharp {
         ArrayPool<byte>.Shared.Return(buf);
       }
 
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
       return ValueTask.CompletedTask;
 #else
       return default;
@@ -120,7 +120,7 @@ namespace Smdn.Devices.UsbHid.HidSharp {
 
       try {
         return
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
         ValueTask.FromResult<int>
 #else
         new ValueTask<int>

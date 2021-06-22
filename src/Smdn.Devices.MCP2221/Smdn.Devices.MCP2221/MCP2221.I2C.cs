@@ -46,7 +46,7 @@ namespace Smdn.Devices.MCP2221 {
 
           var state = I2CEngineState.Parse(resp);
           var isBusStatusDefined =
-#if NET // NET5_0 or over
+#if NET5_0_OR_GREATER
             Enum.IsDefined<I2CEngineState.TransferStatus>(state.BusStatus);
 #else
             Enum.IsDefined(typeof(I2CEngineState.TransferStatus), state.BusStatus);

@@ -22,6 +22,6 @@ This library enables you to use the many device bindings provided by Iot.Device.
     <ProjectReference Include="..\Smdn.Devices.MCP2221\Smdn.Devices.MCP2221.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Device.Gpio" Version="1.4.0" />
+    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,2.0.0)" />
   </ItemGroup>
 </Project>

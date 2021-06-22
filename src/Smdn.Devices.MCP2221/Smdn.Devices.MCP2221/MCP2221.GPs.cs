@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,19 +28,19 @@ namespace Smdn.Devices.MCP2221 {
         out GPIODirection directionGP3
       );
       void SetValue(
-        GPIOValue valueAllGPs
+        PinValue valueAllGPs
       );
       void SetValue(
-        GPIOValue valueGP0,
-        GPIOValue valueGP1,
-        GPIOValue valueGP2,
-        GPIOValue valueGP3
+        PinValue valueGP0,
+        PinValue valueGP1,
+        PinValue valueGP2,
+        PinValue valueGP3
       );
       void GetValue(
-        out GPIOValue valueGP0,
-        out GPIOValue valueGP1,
-        out GPIOValue valueGP2,
-        out GPIOValue valueGP3
+        out PinValue valueGP0,
+        out PinValue valueGP1,
+        out PinValue valueGP2,
+        out PinValue valueGP3
       );
     }
 #endif
@@ -280,7 +281,7 @@ namespace Smdn.Devices.MCP2221 {
             int gpIndex,
             GPDesignation gpDesignation,
             GPIODirection gpioDirection,
-            GPIOValue gpioValue
+            PinValue gpioValue
           ) args
         )
         {
@@ -329,7 +330,7 @@ namespace Smdn.Devices.MCP2221 {
             int,
             GPDesignation,
             GPIODirection,
-            GPIOValue
+            PinValue
           ) _
         )
         {
@@ -344,7 +345,7 @@ namespace Smdn.Devices.MCP2221 {
         string pinDesignation,
         GPDesignation gpDesignation,
         GPIODirection gpioInitialDirection = default,
-        GPIOValue gpioInitialValue = default,
+        PinValue gpioInitialValue = default,
         CancellationToken cancellationToken = default
       )
       {
@@ -380,7 +381,7 @@ namespace Smdn.Devices.MCP2221 {
         string pinDesignation,
         GPDesignation gpDesignation,
         GPIODirection gpioInitialDirection = default,
-        GPIOValue gpioInitialValue = default,
+        PinValue gpioInitialValue = default,
         CancellationToken cancellationToken = default
       )
       {

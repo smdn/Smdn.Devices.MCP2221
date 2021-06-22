@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,12 +11,12 @@ namespace Smdn.Devices.MCP2221 {
     internal interface IGPIOFunctionality {
       ValueTask ConfigureAsGPIOAsync(
         GPIODirection initialDirection = GPIODirection.Output,
-        GPIOValue initialValue = default,
+        PinValue initialValue = default,
         CancellationToken cancellationToken = default
       );
       void ConfigureAsGPIO(
         GPIODirection initialDirection = GPIODirection.Output,
-        GPIOValue initialValue = default,
+        PinValue initialValue = default,
         CancellationToken cancellationToken = default
       );
 
@@ -35,27 +36,28 @@ namespace Smdn.Devices.MCP2221 {
         CancellationToken cancellationToken = default
       );
 
-      ValueTask<GPIOValue> GetValueAsync(
+      ValueTask<PinValue> GetValueAsync(
         CancellationToken cancellationToken = default
       );
-      GPIOValue GetValue(
+      PinValue GetValue(
         CancellationToken cancellationToken = default
       );
 
       ValueTask SetValueAsync(
-        GPIOValue newValue,
+        PinValue newValue,
         CancellationToken cancellationToken = default
       );
       void SetValue(
-        GPIOValue newValue,
+        PinValue newValue,
         CancellationToken cancellationToken = default
       );
     }
 
     partial class GPFunctionality : IGPIOFunctionality {
+      [CLSCompliant(false)]
       public ValueTask ConfigureAsGPIOAsync(
         GPIODirection initialDirection = GPIODirection.Output,
-        GPIOValue initialValue = default,
+        PinValue initialValue = default,
         CancellationToken cancellationToken = default
       )
         => ConfigureGPDesignationAsync(
@@ -66,9 +68,10 @@ namespace Smdn.Devices.MCP2221 {
           cancellationToken: cancellationToken
         );
 
+      [CLSCompliant(false)]
       public void ConfigureAsGPIO(
         GPIODirection initialDirection = GPIODirection.Output,
-        GPIOValue initialValue = default,
+        PinValue initialValue = default,
         CancellationToken cancellationToken = default
       )
         => ConfigureGPDesignation(
@@ -148,7 +151,7 @@ namespace Smdn.Devices.MCP2221 {
           comm[0] = 0x51; // Get GPIO Values
         }
 
-        public static GPIOValue ParseResponse(ReadOnlySpan<byte> resp, GPFunctionality gp)
+        public static PinValue ParseResponse(ReadOnlySpan<byte> resp, GPFunctionality gp)
         {
           if (resp[1] != 0x00) // Command completed successfully
             throw new CommandException($"unexpected command response ({resp[1]:X2})");
@@ -159,11 +162,12 @@ namespace Smdn.Devices.MCP2221 {
           if (gpPinValue == 0xEF || gpDirectionValue == 0xEF)
             throw new CommandException($"{gp.PinName} is not set for GPIO operation");
 
-          return new GPIOValue(gpPinValue);
+          return (PinValue)gpPinValue;
         }
       }
 
-      public ValueTask<GPIOValue> GetValueAsync(
+      [CLSCompliant(false)]
+      public ValueTask<PinValue> GetValueAsync(
         CancellationToken cancellationToken = default
       )
         => device.CommandAsync(
@@ -174,7 +178,8 @@ namespace Smdn.Devices.MCP2221 {
           parseResponse: GetValueCommand.ParseResponse
         );
 
-      public GPIOValue GetValue(
+      [CLSCompliant(false)]
+      public PinValue GetValue(
         CancellationToken cancellationToken = default
       )
         => device.Command(
@@ -186,7 +191,7 @@ namespace Smdn.Devices.MCP2221 {
         );
 
       private static class SetValueCommand {
-        public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (GPFunctionality gp, GPIOValue newValue) args)
+        public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (GPFunctionality gp, PinValue newValue) args)
         {
           // [MCP2221A] 3.1.11 SET GPIO OUTPUT VALUES
           comm[0] = 0x50; // Set GPIO Output Values
@@ -197,7 +202,7 @@ namespace Smdn.Devices.MCP2221 {
           comm[3 + (4 * args.gp.GPIndex)] = (byte)args.newValue; // GP<n> output value
         }
 
-        public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, GPIOValue newValue) args)
+        public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, PinValue newValue) args)
         {
           if (resp[1] != 0x00) // Command completed successfully
             throw new CommandException($"unexpected command response ({resp[1]:X2})");
@@ -215,8 +220,9 @@ namespace Smdn.Devices.MCP2221 {
         }
       }
 
+      [CLSCompliant(false)]
       public ValueTask SetValueAsync(
-        GPIOValue newValue,
+        PinValue newValue,
         CancellationToken cancellationToken = default
       )
         => device.CommandAsync(
@@ -227,8 +233,9 @@ namespace Smdn.Devices.MCP2221 {
           parseResponse: SetValueCommand.ParseResponse
         ).AsValueTask();
 
+      [CLSCompliant(false)]
       public void SetValue(
-        GPIOValue newValue,
+        PinValue newValue,
         CancellationToken cancellationToken = default
       )
         => device.Command(

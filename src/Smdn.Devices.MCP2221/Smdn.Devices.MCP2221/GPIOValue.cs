@@ -4,6 +4,7 @@
 using System;
 
 namespace Smdn.Devices.MCP2221 {
+  [Obsolete("use System.Device.Gpio.PinValue")]
   public readonly struct GPIOValue /* TODO: IEquatable<GPIOValue/int/byte/bool>*/ {
     public static readonly GPIOValue Default = default;
     public static readonly GPIOValue Low = new GPIOValue(GPIOLevel.Low);

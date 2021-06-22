@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Device.Gpio;
 using System.Linq;
 
 namespace Smdn.Devices.MCP2221 {
@@ -90,7 +91,7 @@ namespace Smdn.Devices.MCP2221 {
       private set;
 #endif
     }
-    public GPIOValue LineValueSCL {
+    public PinValue LineValueSCL {
       get;
 #if NET5_0_OR_GREATER
       init;
@@ -98,7 +99,7 @@ namespace Smdn.Devices.MCP2221 {
       private set;
 #endif
     }
-    public GPIOValue LineValueSDA {
+    public PinValue LineValueSDA {
       get;
 #if NET5_0_OR_GREATER
       init;
@@ -117,8 +118,8 @@ namespace Smdn.Devices.MCP2221 {
         CommunicationSpeedDividerValue  = resp[14], // Current I2C communication speed divider value
         TimeoutValue                    = resp[15], // Current I2C time-out value
         Address                         = (ushort)(resp[16] /* | (resp[17] << 8) */), // Lower/Higher byte of the I2C address being used
-        LineValueSCL                    = (GPIOValue)resp[22], // SCL line value as read from the pin
-        LineValueSDA                    = (GPIOValue)resp[23], // SDA line value as read from the pin
+        LineValueSCL                    = (PinValue)resp[22], // SCL line value as read from the pin
+        LineValueSDA                    = (PinValue)resp[23], // SDA line value as read from the pin
         ReadPendingValue                = (int)resp[25], // I2C Read pending value
       };
 

@@ -39,6 +39,7 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Device.Gpio" Version="1.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
   </ItemGroup>

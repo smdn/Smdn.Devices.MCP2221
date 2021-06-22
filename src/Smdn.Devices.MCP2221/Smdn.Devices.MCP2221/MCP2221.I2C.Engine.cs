@@ -134,7 +134,7 @@ namespace Smdn.Devices.MCP2221 {
 
         static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2CAddress address, I2CEngineState engineState)
         {
-          if (currentState == OperationState.Initial && (engineState.LineValueSCL.IsLow || engineState.LineValueSDA.IsLow))
+          if (currentState == OperationState.Initial && (engineState.LineValueSCL.IsLow() || engineState.LineValueSDA.IsLow()))
             throw CreateI2CErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
 
           if (engineState.BusStatus == I2CEngineState.TransferStatus.MarkedForCancellation)

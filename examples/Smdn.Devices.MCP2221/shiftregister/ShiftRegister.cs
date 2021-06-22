@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Buffers.Binary;
+using System.Device.Gpio;
 using System.Numerics;
 using System.Threading.Tasks;
 
@@ -53,15 +54,15 @@ class ShiftRegister {
       for (uint bit = 0u, bitMask = firstBitMask; bit < 8u; bit++) {
         await gpioData.SetValueAsync(0L != (sequence.Span[byt] & bitMask)).ConfigureAwait(false);
 
-        await gpioClock.SetValueAsync(GPIOValue.High).ConfigureAwait(false);
-        await gpioClock.SetValueAsync(GPIOValue.Low).ConfigureAwait(false);
+        await gpioClock.SetValueAsync(PinValue.High).ConfigureAwait(false);
+        await gpioClock.SetValueAsync(PinValue.Low).ConfigureAwait(false);
 
         bitMask = BitOperations.RotateLeft(bitMask, shiftAmount);
       }
     }
 
-    await gpioLatch.SetValueAsync(GPIOValue.Low).ConfigureAwait(false);
-    await gpioLatch.SetValueAsync(GPIOValue.High).ConfigureAwait(false);
+    await gpioLatch.SetValueAsync(PinValue.Low).ConfigureAwait(false);
+    await gpioLatch.SetValueAsync(PinValue.High).ConfigureAwait(false);
   }
 
   public void Write(
@@ -79,15 +80,15 @@ class ShiftRegister {
       for (uint bit = 0u, bitMask = firstBitMask; bit < 8u; bit++) {
         gpioData.SetValue(0L != (sequence[byt] & bitMask));
 
-        gpioClock.SetValue(GPIOValue.High);
-        gpioClock.SetValue(GPIOValue.Low);
+        gpioClock.SetValue(PinValue.High);
+        gpioClock.SetValue(PinValue.Low);
 
         bitMask = BitOperations.RotateLeft(bitMask, shiftAmount);
       }
     }
 
-    gpioLatch.SetValue(GPIOValue.Low);
-    gpioLatch.SetValue(GPIOValue.High);
+    gpioLatch.SetValue(PinValue.Low);
+    gpioLatch.SetValue(PinValue.High);
   }
 
   public async ValueTask WriteAsync(

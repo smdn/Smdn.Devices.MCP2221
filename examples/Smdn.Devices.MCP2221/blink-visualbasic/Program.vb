@@ -4,6 +4,7 @@
 Option Infer On
 
 Imports System
+Imports System.Device.Gpio
 Imports System.Threading
 
 Imports Smdn.Devices.MCP2221
@@ -22,10 +23,10 @@ Class Blink
       Console.WriteLine()
 
       ' configure GP0-GP3 as GPIO output
-      device.GP0.ConfigureAsGPIO(GPIODirection.Output)
-      device.GP1.ConfigureAsGPIO(GPIODirection.Output)
-      device.GP2.ConfigureAsGPIO(GPIODirection.Output)
-      device.GP3.ConfigureAsGPIO(GPIODirection.Output, GPIOValue.Low) ' initial value also can be specified
+      device.GP0.ConfigureAsGPIO(PinMode.Output)
+      device.GP1.ConfigureAsGPIO(PinMode.Output)
+      device.GP2.ConfigureAsGPIO(PinMode.Output)
+      device.GP3.ConfigureAsGPIO(PinMode.Output, PinValue.Low) ' initial value also can be specified
 
       ' set GPIO pin values
       Console.WriteLine("set all GPs HIGH")
@@ -34,11 +35,11 @@ Class Blink
 
       device.GPs(1).SetValue(True) ' set GP1 to HIGH with boolean value
 
-      device.GP2.SetValue(GPIOLevel.High) ' set GP2 to HIGH with GPIOLevel enum value
+      device.GP2.SetValue(CByte(1)) ' set GP2 to HIGH with byte value
 
-      Dim gp3Value As GPIOValue = 1
+      Dim gp3Value As PinValue = 1
 
-      device.GP3.SetValue(gp3Value) ' set GP3 to HIGH with struct GPIOValue
+      device.GP3.SetValue(gp3Value) ' set GP3 to HIGH with struct PinValue
 
       Thread.Sleep(1000)
 
@@ -46,7 +47,7 @@ Class Blink
 
       ' GP0-GP3 also can be accessed via `GPs` read-only collection property
       For Each gp In device.GPs
-        gp.SetValue(GPIOValue.Low)
+        gp.SetValue(PinValue.Low)
       Next
 
       Thread.Sleep(1000)
@@ -56,10 +57,10 @@ Class Blink
         Console.WriteLine($"blink {gp.PinDesignation}")
 
         For n = 0 To 9
-          gp.SetValue(false)
+          gp.SetValue(False)
           Thread.Sleep(100)
 
-          gp.SetValue(true)
+          gp.SetValue(True)
           Thread.Sleep(100)
         Next
       Next

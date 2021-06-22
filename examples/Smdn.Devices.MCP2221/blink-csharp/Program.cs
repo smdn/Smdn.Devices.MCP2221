@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Device.Gpio;
 using System.Threading;
 
 using Smdn.Devices.MCP2221;
@@ -19,10 +20,10 @@ Console.WriteLine($"Firmware revision: {device.FirmwareRevision}");
 Console.WriteLine();
 
 // configure GP0-GP3 as GPIO output
-device.GP0.ConfigureAsGPIO(GPIODirection.Output);
-device.GP1.ConfigureAsGPIO(GPIODirection.Output);
-device.GP2.ConfigureAsGPIO(GPIODirection.Output);
-device.GP3.ConfigureAsGPIO(GPIODirection.Output, initialValue: GPIOValue.Low); // initial value also can be specified
+device.GP0.ConfigureAsGPIO(PinMode.Output);
+device.GP1.ConfigureAsGPIO(PinMode.Output);
+device.GP2.ConfigureAsGPIO(PinMode.Output);
+device.GP3.ConfigureAsGPIO(PinMode.Output, initialValue: PinValue.Low); // initial value also can be specified
 
 // set GPIO pin values
 Console.WriteLine("set all GPs HIGH");
@@ -31,11 +32,11 @@ device.GPs[0].SetValue(1); // set GP0 to HIGH with integer value (0 = LOW, any o
 
 device.GPs[1].SetValue(true); // set GP1 to HIGH with boolean value
 
-device.GP2.SetValue(GPIOLevel.High); // set GP2 to HIGH with GPIOLevel enum value
+device.GP2.SetValue((byte)1); // set GP2 to HIGH with byte value
 
-GPIOValue gp3Value = (GPIOValue)1;
+PinValue gp3Value = (PinValue)1;
 
-device.GP3.SetValue(gp3Value); // set GP3 to HIGH with struct GPIOValue
+device.GP3.SetValue(gp3Value); // set GP3 to HIGH with struct PinValue
 
 Thread.Sleep(1000);
 
@@ -43,7 +44,7 @@ Console.WriteLine("set all GPs LOW");
 
 // GP0-GP3 also can be accessed via `GPs` read-only collection property
 foreach (var gp in device.GPs) {
-  gp.SetValue(GPIOValue.Low);
+  gp.SetValue(PinValue.Low);
 }
 
 Thread.Sleep(1000);

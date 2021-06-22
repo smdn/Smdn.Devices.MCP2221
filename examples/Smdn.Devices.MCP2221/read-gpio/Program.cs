@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Device.Gpio;
 using System.Linq;
 using System.Threading;
 
@@ -10,10 +11,10 @@ using Smdn.Devices.MCP2221;
 using var device = MCP2221.Open();
 
 // configure GP0-GP3 as GPIO input
-device.GP0.ConfigureAsGPIO(GPIODirection.Input);
-device.GP1.ConfigureAsGPIO(GPIODirection.Input);
-device.GP2.ConfigureAsGPIO(GPIODirection.Input);
-device.GP3.ConfigureAsGPIO(GPIODirection.Input);
+device.GP0.ConfigureAsGPIO(PinMode.Input);
+device.GP1.ConfigureAsGPIO(PinMode.Input);
+device.GP2.ConfigureAsGPIO(PinMode.Input);
+device.GP3.ConfigureAsGPIO(PinMode.Input);
 
 // read GP0 value
 var gp0Val = device.GP0.GetValue();
@@ -34,7 +35,7 @@ while (true) {
   Console.SetCursorPosition(initialCursorPosition.left, initialCursorPosition.top);
 
   Console.WriteLine(string.Join("\t", device.GPs.Select(gp => gp.PinName)));
-  Console.WriteLine(string.Join("\t", device.GPs.Select(gp => gp.GetValue().IsHigh ? "H" : "L")));
+  Console.WriteLine(string.Join("\t", device.GPs.Select(gp => (bool)gp.GetValue() ? "H" : "L")));
 
   Thread.Sleep(20);
 }

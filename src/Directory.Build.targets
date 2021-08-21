@@ -20,4 +20,19 @@ SPDX-License-Identifier: MIT
     <Company>smdn.jp (https://smdn.jp)</Company>
     <Copyright Condition=" '$(Copyright)' == '' ">Copyright © $(CopyrightYear) $(Authors)</Copyright>
   </PropertyGroup>
+
+  <!-- Replaces %(ProjectReferencesWithVersions.ProjectVersion) with custom defined metadata %(ProjectReference.VersionRange) -->
+  <!-- ref: https://github.com/NuGet/Home/issues/5556 -->
+  <Target Name="UpdateProjectReferencesWithVersionRanges" AfterTargets="_GetProjectReferenceVersions">
+    <ItemGroup>
+      <ProjectReferencesWithVersionsToUpdate Include="$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\%(ProjectReference.Identity)'))" ProjectVersion="%(ProjectReference.VersionRange)" Condition=" '%(ProjectReference.VersionRange)' != '' " />
+
+      <_ProjectReferencesWithVersions Remove="%(ProjectReferencesWithVersionsToUpdate.Identity)" />
+      <_ProjectReferencesWithVersions Include="%(ProjectReferencesWithVersionsToUpdate.Identity)" ProjectVersion="%(ProjectReferencesWithVersionsToUpdate.ProjectVersion)" />
+    </ItemGroup>
+
+<!--
+    <Message Text="$([System.IO.Path]::GetFileName('%(_ProjectReferencesWithVersions.Identity)')): %(_ProjectReferencesWithVersions.ProjectVersion)" Importance="high" />
+-->
+  </Target>
 </Project>

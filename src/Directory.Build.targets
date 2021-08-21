@@ -14,7 +14,9 @@ SPDX-License-Identifier: MIT
     <AssemblyVersion Condition=" '$(AssemblyVersion)' == '' ">$(VersionPrefix)</AssemblyVersion>
     <AssemblyVersion Condition=" '$(AssemblyVersion)' == '' ">$(Version)</AssemblyVersion>
     <InformationalVersion Condition=" '$(InformationalVersion)' == '' ">$(VersionPrefix)$(VersionSuffix) ($(TargetFramework))</InformationalVersion>
-    <Product Condition=" '$(Product)' == '' ">$(AssemblyName)-$(InformationalVersion)</Product>
+    <Title Condition=" '$(Title)' == '' ">$(AssemblyName)</Title>
+    <Description Condition=" '$(Description)' == '' ">$(AssemblyName).dll</Description>
+    <Product>$(AssemblyName)-$(InformationalVersion)</Product>
     <Company>smdn.jp (https://smdn.jp)</Company>
     <Copyright Condition=" '$(Copyright)' == '' ">Copyright © $(CopyrightYear) $(Authors)</Copyright>
   </PropertyGroup>

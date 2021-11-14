@@ -24,7 +24,7 @@ SPDX-License-Identifier: MIT
 
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <VersionPrefix>0.9</VersionPrefix>
+    <VersionPrefix>0.9.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <DefineConstants>$(DefineConstants);USBHIDDRIVER_$(UsbHidDriver.ToUpper())</DefineConstants>
   </PropertyGroup>

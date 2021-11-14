@@ -194,31 +194,63 @@ namespace Smdn.Devices.MCP2221 {
       }
     }
 
-    private static class RetrieveChipFactorySerialNumberCommand {
-      public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, int _)
+    // [MCP2221A] 3.1.2 READ FLASH DATA
+    private enum ReadFlashDataSubCode : byte {
+      UsbDescriptorStringManufacturer = 0x02,
+      UsbDescriptorStringProduct      = 0x03,
+      UsbDescriptorStringSerialNumber = 0x04,
+      ChipFactorySerialNumber         = 0x05
+    }
+
+    private static class RetrieveFlashStringCommand {
+      public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, ReadFlashDataSubCode subCode)
       {
         // [MCP2221A] 3.1.2 READ FLASH DATA
         comm[0] = 0xB0; // Read Flash Data
-        comm[1] = 0x05; // Read Chip Factory Serial Number
+
+        // Read Flash Data Sub Code
+        // 0x02: Read USB Manufacturer Descriptor String
+        // 0x03: Read USB Product Descriptor String
+        // 0x04: Read USB Manufacturer Descriptor String
+        // 0x05: Read Chip Factory Serial Number
+        comm[1] = (byte)subCode;
       }
 
-      public static unsafe string ParseResponse(ReadOnlySpan<byte> resp, int _)
+      public static unsafe string ParseResponse(ReadOnlySpan<byte> resp, ReadFlashDataSubCode subCode)
       {
+        if (subCode == ReadFlashDataSubCode.ChipFactorySerialNumber) {
 #if false // XXX: string.Create does not accept ReadOnlySpan<T>, dotnet/runtime#30175
-        return string.Create((int)resp[2], resp, (str, re) => {
-          for (var i = 0; i < str.Length; i++) {
-            str[i] = (char)re[i];
+          return string.Create((int)resp[2], resp, (str, re) => {
+            for (var i = 0; i < str.Length; i++) {
+              str[i] = (char)re[i];
+            }
           }
-        }
 #endif
-        var length = (int)resp[2];
-        Span<char> serialNumberChars = stackalloc char[length];
+          var length = (int)resp[2];
+          Span<char> serialNumberChars = stackalloc char[length];
 
-        for (var i = 0; i < length; i++) {
-          serialNumberChars[i] = (char)resp[4 + i];
+          for (var i = 0; i < length; i++) {
+            serialNumberChars[i] = (char)resp[4 + i];
+          }
+
+          return new string(serialNumberChars);
         }
+        else {
+          // 0x02: The number of bytes + 2 in the provided USB Manufacturer/Product/Serial Number Descriptor String.
+          var lengthInBytes = (int)resp[2] - 2;
+          var length = lengthInBytes / 2;
 
-        return new string(serialNumberChars);
+          Span<char> descriptorStringChars = stackalloc char[length];
+
+          for (var i = 0; i < length; i++) {
+            var lower  = resp[4 + 2 * i + 0];
+            var higher = resp[4 + 2 * i + 1];
+
+            descriptorStringChars[i] = (char)(lower | (higher << 8));
+          }
+
+          return new string(descriptorStringChars);
+        }
       }
     }
 
@@ -238,12 +270,36 @@ namespace Smdn.Devices.MCP2221 {
       validateHardwareRevision?.Invoke(HardwareRevision);
       validateFirmwareRevision?.Invoke(FirmwareRevision);
 
+      ManufacturerDescriptor = await CommandAsync(
+        userData: default,
+        arg: ReadFlashDataSubCode.UsbDescriptorStringManufacturer,
+        cancellationToken: default,
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
+      ).ConfigureAwait(false);
+
+      ProductDescriptor = await CommandAsync(
+        userData: default,
+        arg: ReadFlashDataSubCode.UsbDescriptorStringProduct,
+        cancellationToken: default,
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
+      ).ConfigureAwait(false);
+
+      SerialNumberDescriptor = await CommandAsync(
+        userData: default,
+        arg: ReadFlashDataSubCode.UsbDescriptorStringSerialNumber,
+        cancellationToken: default,
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
+      ).ConfigureAwait(false);
+
       ChipFactorySerialNumber = await CommandAsync(
         userData: default,
-        arg: 0,
+        arg: ReadFlashDataSubCode.ChipFactorySerialNumber,
         cancellationToken: default,
-        constructCommand: RetrieveChipFactorySerialNumberCommand.ConstructCommand,
-        parseResponse: RetrieveChipFactorySerialNumberCommand.ParseResponse
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
       ).ConfigureAwait(false);
     }
 
@@ -263,12 +319,36 @@ namespace Smdn.Devices.MCP2221 {
       validateHardwareRevision?.Invoke(HardwareRevision);
       validateFirmwareRevision?.Invoke(FirmwareRevision);
 
+      ManufacturerDescriptor = Command(
+        userData: default,
+        arg: ReadFlashDataSubCode.UsbDescriptorStringManufacturer,
+        cancellationToken: default,
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
+      );
+
+      ProductDescriptor = Command(
+        userData: default,
+        arg: ReadFlashDataSubCode.UsbDescriptorStringProduct,
+        cancellationToken: default,
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
+      );
+
+      SerialNumberDescriptor = Command(
+        userData: default,
+        arg: ReadFlashDataSubCode.UsbDescriptorStringSerialNumber,
+        cancellationToken: default,
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
+      );
+
       ChipFactorySerialNumber = Command(
         userData: default,
-        arg: 0,
+        arg: ReadFlashDataSubCode.ChipFactorySerialNumber,
         cancellationToken: default,
-        constructCommand: RetrieveChipFactorySerialNumberCommand.ConstructCommand,
-        parseResponse: RetrieveChipFactorySerialNumberCommand.ParseResponse
+        constructCommand: RetrieveFlashStringCommand.ConstructCommand,
+        parseResponse: RetrieveFlashStringCommand.ParseResponse
       );
     }
   }

@@ -202,6 +202,8 @@ namespace Smdn.Devices.MCP2221 {
     public string ManufacturerDescriptor { get; private set; } = null;
     public string ProductDescriptor { get; private set; } = null;
     public string SerialNumberDescriptor { get; private set; } = null;
+
+    /// <remarks>Always returns <c>01234567</c>.</remarks>
     public string ChipFactorySerialNumber { get; private set; } = null;
 
     private MCP2221(IUsbHidDevice hidDevice, IUsbHidStream hidStream, IServiceProvider? serviceProvider)

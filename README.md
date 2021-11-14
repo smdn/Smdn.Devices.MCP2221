@@ -46,10 +46,10 @@ See [Smdn.Devices.MCP2221.GpioAdapter examples](examples/Smdn.Devices.MCP2221.Gp
   - [ ] Flash read/write
     - [ ] GP Settings
     - [ ] Chip Settings
-    - [ ] USB Manufacturer Descriptor String
-    - [ ] USB Product Descriptor String
-    - [ ] USB Serial Number Descriptor String
-    - [x] Chip Factory Serial Number (read only)
+    - [x] USB Manufacturer Descriptor String (read only)
+    - [x] USB Product Descriptor String (read only)
+    - [x] USB Serial Number Descriptor String (read only)
+    - [x] Chip Factory Serial Number (read only, [always returns `01234567` (issue #8)](../../issues/8))
     - [x] Hardware/Firmware revision (read only)
     - [ ] Passwords and chip setting protection
 - [ ] Reset

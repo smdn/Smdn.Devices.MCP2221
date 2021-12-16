@@ -3,11 +3,11 @@
 
 using System;
 
-namespace Smdn.Devices.MCP2221 {
-  public class I2CReadException : I2CCommandException {
-    public I2CReadException(string message) : base(message) { }
-    public I2CReadException(string message, Exception innerException) : base(message, innerException) { }
-    public I2CReadException(I2CAddress address, string message) : base(address, message) { }
-    public I2CReadException(I2CAddress address, string message, Exception innerException) : base(address, message, innerException) { }
-  }
+namespace Smdn.Devices.MCP2221;
+
+public class I2CReadException : I2CCommandException {
+  public I2CReadException(string message) : base(message) { }
+  public I2CReadException(string message, Exception innerException) : base(message, innerException) { }
+  public I2CReadException(I2CAddress address, string message) : base(address, message) { }
+  public I2CReadException(I2CAddress address, string message, Exception innerException) : base(address, message, innerException) { }
 }

@@ -5,16 +5,16 @@ using System;
 
 using Smdn.Devices.UsbHid;
 
-namespace Smdn.Devices.MCP2221 {
-  public class DeviceNotFoundException : InvalidOperationException {
-    public DeviceNotFoundException()
-      : base("MCP2221/MCP2221A not found")
-    {
-    }
+namespace Smdn.Devices.MCP2221;
 
-    public DeviceNotFoundException(string message)
-      : base(message)
-    {
-    }
+public class DeviceNotFoundException : InvalidOperationException {
+  public DeviceNotFoundException()
+    : base("MCP2221/MCP2221A not found")
+  {
+  }
+
+  public DeviceNotFoundException(string message)
+    : base(message)
+  {
   }
 }

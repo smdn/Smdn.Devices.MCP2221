@@ -5,9 +5,9 @@ using System;
 
 using Smdn.Devices.UsbHid;
 
-namespace Smdn.Devices.MCP2221 {
-  public class CommandException : InvalidOperationException {
-    public CommandException(string message) : base(message) { }
-    public CommandException(string message, Exception innerException) : base(message, innerException) { }
-  }
+namespace Smdn.Devices.MCP2221;
+
+public class CommandException : InvalidOperationException {
+  public CommandException(string message) : base(message) { }
+  public CommandException(string message, Exception innerException) : base(message, innerException) { }
 }

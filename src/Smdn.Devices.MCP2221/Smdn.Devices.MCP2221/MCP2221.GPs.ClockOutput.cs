@@ -5,18 +5,18 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Smdn.Devices.MCP2221 {
-  partial class MCP2221 {
-    internal interface IClockOutputFunctionality {
-      ValueTask ConfigureAsClockOutputAsync(
-        CancellationToken cancellationToken = default
-      );
-      void ConfigureAsClockOutput(
-        CancellationToken cancellationToken = default
-      );
+namespace Smdn.Devices.MCP2221;
+
+partial class MCP2221 {
+  internal interface IClockOutputFunctionality {
+    ValueTask ConfigureAsClockOutputAsync(
+      CancellationToken cancellationToken = default
+    );
+    void ConfigureAsClockOutput(
+      CancellationToken cancellationToken = default
+    );
 #if __FUTURE_VERSION
-      int ClockFrequency { get; set; }
+    int ClockFrequency { get; set; }
 #endif
-    }
   }
 }

@@ -6,55 +6,55 @@ using System.Device.I2c;
 
 using Smdn.Devices.MCP2221;
 
-namespace Smdn.Devices.MCP2221.GpioAdapter {
-  [CLSCompliant(false)]
-  public class MCP2221I2cDevice : I2cDevice {
-    private readonly MCP2221.I2CFunctionality bus;
-    private readonly I2CAddress address;
-    public override I2cConnectionSettings ConnectionSettings { get; }
+namespace Smdn.Devices.MCP2221.GpioAdapter;
 
-    public I2CBusSpeed BusSpeed {
-      get => bus.BusSpeed;
-      set => bus.BusSpeed = value;
-    }
+[CLSCompliant(false)]
+public class MCP2221I2cDevice : I2cDevice {
+  private readonly MCP2221.I2CFunctionality bus;
+  private readonly I2CAddress address;
+  public override I2cConnectionSettings ConnectionSettings { get; }
 
-    public MCP2221I2cDevice(MCP2221.I2CFunctionality i2cBus, I2CAddress i2cDeviceAddress)
-    {
-      this.bus = i2cBus ?? throw new ArgumentNullException(nameof(i2cBus));
-      this.address = i2cDeviceAddress;
-      this.ConnectionSettings = new I2cConnectionSettings(busId: 0, deviceAddress: (int)address);
-    }
+  public I2CBusSpeed BusSpeed {
+    get => bus.BusSpeed;
+    set => bus.BusSpeed = value;
+  }
 
-    public unsafe override byte ReadByte()
-    {
-      Span<byte> buffer = stackalloc byte[1];
+  public MCP2221I2cDevice(MCP2221.I2CFunctionality i2cBus, I2CAddress i2cDeviceAddress)
+  {
+    this.bus = i2cBus ?? throw new ArgumentNullException(nameof(i2cBus));
+    this.address = i2cDeviceAddress;
+    this.ConnectionSettings = new I2cConnectionSettings(busId: 0, deviceAddress: (int)address);
+  }
 
-      Read(buffer);
+  public unsafe override byte ReadByte()
+  {
+    Span<byte> buffer = stackalloc byte[1];
 
-      return buffer[0];
-    }
+    Read(buffer);
 
-    public override void Read(Span<byte> buffer)
-    {
-      bus.Read(address, buffer);
-    }
+    return buffer[0];
+  }
 
-    public unsafe override void WriteByte(byte value)
-    {
-      Span<byte> buffer = stackalloc byte[1] {value};
+  public override void Read(Span<byte> buffer)
+  {
+    bus.Read(address, buffer);
+  }
 
-      Write(buffer);
-    }
+  public unsafe override void WriteByte(byte value)
+  {
+    Span<byte> buffer = stackalloc byte[1] {value};
 
-    public override void Write(ReadOnlySpan<byte> buffer)
-    {
-      bus.Write(address, buffer);
-    }
+    Write(buffer);
+  }
 
-    public override void WriteRead(ReadOnlySpan<byte> writeBuffer, Span<byte> readBuffer)
-    {
-      Write(writeBuffer);
-      Read(readBuffer);
-    }
+  public override void Write(ReadOnlySpan<byte> buffer)
+  {
+    bus.Write(address, buffer);
+  }
+
+  public override void WriteRead(ReadOnlySpan<byte> writeBuffer, Span<byte> readBuffer)
+  {
+    Write(writeBuffer);
+    Read(readBuffer);
   }
 }

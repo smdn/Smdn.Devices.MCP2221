@@ -4,18 +4,18 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Smdn.Devices.UsbHid {
-  public interface IUsbHidStream :
-    IDisposable,
-    IAsyncDisposable
-  {
-    bool RequiresPacketOnly { get; }
+namespace Smdn.Devices.UsbHid;
 
-    ValueTask WriteAsync(ReadOnlyMemory<byte> buffer);
-    void Write(ReadOnlySpan<byte> buffer);
+public interface IUsbHidStream :
+  IDisposable,
+  IAsyncDisposable
+{
+  bool RequiresPacketOnly { get; }
 
-    ValueTask<int> ReadAsync(Memory<byte> buffer);
-    int Read(Span<byte> buffer);
-  }
+  ValueTask WriteAsync(ReadOnlyMemory<byte> buffer);
+  void Write(ReadOnlySpan<byte> buffer);
+
+  ValueTask<int> ReadAsync(Memory<byte> buffer);
+  int Read(Span<byte> buffer);
 }
 

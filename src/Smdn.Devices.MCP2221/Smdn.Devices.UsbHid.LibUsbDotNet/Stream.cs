@@ -13,135 +13,135 @@ using LibUsbDotNet.LibUsb;
 
 using Smdn.Devices.UsbHid;
 
-namespace Smdn.Devices.UsbHid.LibUsbDotNet {
-  internal class Stream : IUsbHidStream {
-    internal const int DefaultReadBufferSize = 0x100; // XXX
-    private static readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(10);
+namespace Smdn.Devices.UsbHid.LibUsbDotNet;
 
-    private UsbEndpointWriter _writer;
-    private UsbEndpointWriter Writer => _writer ?? throw new ObjectDisposedException(GetType().Name);
+internal class Stream : IUsbHidStream {
+  internal const int DefaultReadBufferSize = 0x100; // XXX
+  private static readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(10);
 
-    private UsbEndpointReader _reader;
-    private UsbEndpointReader Reader => _reader ?? throw new ObjectDisposedException(GetType().Name);
+  private UsbEndpointWriter _writer;
+  private UsbEndpointWriter Writer => _writer ?? throw new ObjectDisposedException(GetType().Name);
 
-    private readonly int maxOutPacketSize;
-    private readonly int maxInPacketSize;
+  private UsbEndpointReader _reader;
+  private UsbEndpointReader Reader => _reader ?? throw new ObjectDisposedException(GetType().Name);
 
-    public bool RequiresPacketOnly => true;
+  private readonly int maxOutPacketSize;
+  private readonly int maxInPacketSize;
 
-    internal Stream(
-      UsbEndpointWriter writer,
-      int maxOutPacketSize,
-      UsbEndpointReader reader,
-      int maxInPacketSize
-    )
-    {
-      this._writer = writer;
-      this._reader = reader;
-      this.maxOutPacketSize = maxOutPacketSize;
-      this.maxInPacketSize = maxInPacketSize;
-    }
+  public bool RequiresPacketOnly => true;
 
-    public void Dispose()
-    {
-      // UsbEndpointWriter/UsbEndpointReader does not implement IDisposable
-      _writer = null;
-      _reader = null;
-    }
+  internal Stream(
+    UsbEndpointWriter writer,
+    int maxOutPacketSize,
+    UsbEndpointReader reader,
+    int maxInPacketSize
+  )
+  {
+    this._writer = writer;
+    this._reader = reader;
+    this.maxOutPacketSize = maxOutPacketSize;
+    this.maxInPacketSize = maxInPacketSize;
+  }
 
-    public ValueTask DisposeAsync()
-    {
-      _writer = null;
-      _reader = null;
+  public void Dispose()
+  {
+    // UsbEndpointWriter/UsbEndpointReader does not implement IDisposable
+    _writer = null;
+    _reader = null;
+  }
 
-#if NET5_0_OR_GREATER
-      return ValueTask.CompletedTask;
-#else
-      return new ValueTask(Task.CompletedTask);
-#endif
-    }
-
-    public unsafe void Write(ReadOnlySpan<byte> buffer)
-    {
-      if (maxOutPacketSize < buffer.Length)
-        throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutPacketSize})", nameof(buffer));
-
-      Span<byte> buf = stackalloc byte[buffer.Length];
-
-      buffer.CopyTo(buf);
-
-      var err = Writer.Write(
-        pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
-        offset: 0,
-        count: buf.Length,
-        timeout: (int)defaultTimeout.TotalMilliseconds,
-        out var transferLength
-      );
-    }
-
-    public unsafe ValueTask WriteAsync(ReadOnlyMemory<byte> buffer)
-    {
-      if (maxOutPacketSize < buffer.Length)
-        throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutPacketSize})", nameof(buffer));
-
-      Span<byte> buf = stackalloc byte[buffer.Length];
-
-      buffer.Span.CopyTo(buf);
-
-      // TODO: SubmitAsyncTransfer
-      var err = Writer.Write(
-        pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
-        offset: 0,
-        count: buf.Length,
-        timeout: (int)defaultTimeout.TotalMilliseconds,
-        out var transferLength
-      );
+  public ValueTask DisposeAsync()
+  {
+    _writer = null;
+    _reader = null;
 
 #if NET5_0_OR_GREATER
-      return ValueTask.CompletedTask;
+    return ValueTask.CompletedTask;
 #else
-      return default;
+    return new ValueTask(Task.CompletedTask);
 #endif
-    }
+  }
 
-    public unsafe int Read(Span<byte> buffer)
-    {
-      if (maxInPacketSize < buffer.Length)
-        throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
+  public unsafe void Write(ReadOnlySpan<byte> buffer)
+  {
+    if (maxOutPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutPacketSize})", nameof(buffer));
 
-      var err = Reader.Read(
-        buffer: (IntPtr)Unsafe.AsPointer(ref buffer.GetPinnableReference()),
-        offset: 0,
-        count: buffer.Length,
-        timeout: (int)defaultTimeout.TotalMilliseconds,
-        out var transferLength
-      );
+    Span<byte> buf = stackalloc byte[buffer.Length];
 
-      return transferLength;
-    }
+    buffer.CopyTo(buf);
 
-    public unsafe ValueTask<int> ReadAsync(Memory<byte> buffer)
-    {
-      if (maxInPacketSize < buffer.Length)
-        throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
+    var err = Writer.Write(
+      pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
+      offset: 0,
+      count: buf.Length,
+      timeout: (int)defaultTimeout.TotalMilliseconds,
+      out var transferLength
+    );
+  }
 
-      // TODO: SubmitAsyncTransfer
-      var err = Reader.Read(
-        buffer: (IntPtr)Unsafe.AsPointer(ref buffer.Span.GetPinnableReference()),
-        offset: 0,
-        count: buffer.Length,
-        timeout: (int)defaultTimeout.TotalMilliseconds,
-        out var transferLength
-      );
+  public unsafe ValueTask WriteAsync(ReadOnlyMemory<byte> buffer)
+  {
+    if (maxOutPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutPacketSize})", nameof(buffer));
 
-      return
+    Span<byte> buf = stackalloc byte[buffer.Length];
+
+    buffer.Span.CopyTo(buf);
+
+    // TODO: SubmitAsyncTransfer
+    var err = Writer.Write(
+      pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
+      offset: 0,
+      count: buf.Length,
+      timeout: (int)defaultTimeout.TotalMilliseconds,
+      out var transferLength
+    );
+
 #if NET5_0_OR_GREATER
-      ValueTask.FromResult<int>
+    return ValueTask.CompletedTask;
 #else
-      new ValueTask<int>
+    return default;
 #endif
-      (transferLength);
-    }
+  }
+
+  public unsafe int Read(Span<byte> buffer)
+  {
+    if (maxInPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
+
+    var err = Reader.Read(
+      buffer: (IntPtr)Unsafe.AsPointer(ref buffer.GetPinnableReference()),
+      offset: 0,
+      count: buffer.Length,
+      timeout: (int)defaultTimeout.TotalMilliseconds,
+      out var transferLength
+    );
+
+    return transferLength;
+  }
+
+  public unsafe ValueTask<int> ReadAsync(Memory<byte> buffer)
+  {
+    if (maxInPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
+
+    // TODO: SubmitAsyncTransfer
+    var err = Reader.Read(
+      buffer: (IntPtr)Unsafe.AsPointer(ref buffer.Span.GetPinnableReference()),
+      offset: 0,
+      count: buffer.Length,
+      timeout: (int)defaultTimeout.TotalMilliseconds,
+      out var transferLength
+    );
+
+    return
+#if NET5_0_OR_GREATER
+    ValueTask.FromResult<int>
+#else
+    new ValueTask<int>
+#endif
+    (transferLength);
   }
 }
 

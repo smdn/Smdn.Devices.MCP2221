@@ -3,9 +3,9 @@
 
 using System.Threading.Tasks;
 
-namespace Smdn.Devices.MCP2221 {
-  internal static class ValueTaskExtension {
-    public static async ValueTask AsValueTask<T>(this ValueTask<T> task)
-      => await task.ConfigureAwait(false);
-  }
+namespace Smdn.Devices.MCP2221;
+
+internal static class ValueTaskExtension {
+  public static async ValueTask AsValueTask<T>(this ValueTask<T> task)
+    => await task.ConfigureAwait(false);
 }

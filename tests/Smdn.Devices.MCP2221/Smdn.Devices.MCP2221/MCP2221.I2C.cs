@@ -8,57 +8,57 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Smdn.Devices.UsbHid;
 
-namespace Smdn.Devices.MCP2221 {
-  partial class MCP2221Tests {
-    [TestFixture]
-    public class I2CFunctionality {
-      private readonly I2CAddress address = new I2CAddress(0x20);
+namespace Smdn.Devices.MCP2221;
 
-      private static byte[] ToByteArray(string hexByteSequence)
-        => hexByteSequence.Split('-').Select(hex => Convert.ToByte(hex, 16)).ToArray();
+partial class MCP2221Tests {
+  [TestFixture]
+  public class I2CFunctionality {
+    private readonly I2CAddress address = new I2CAddress(0x20);
 
-      private static void AppendResponse(PseudoUsbHidStream stream, params string[] responseSequences)
-      {
-        var currentPosition = stream.ReadStream.Position;
+    private static byte[] ToByteArray(string hexByteSequence)
+      => hexByteSequence.Split('-').Select(hex => Convert.ToByte(hex, 16)).ToArray();
 
-        foreach (var sequence in responseSequences) {
-          stream.ReadStream.WriteByte(ReportInput);
-          stream.ReadStream.Write(ToByteArray(sequence));
-        }
+    private static void AppendResponse(PseudoUsbHidStream stream, params string[] responseSequences)
+    {
+      var currentPosition = stream.ReadStream.Position;
 
-        stream.ReadStream.Position = currentPosition;
+      foreach (var sequence in responseSequences) {
+        stream.ReadStream.WriteByte(ReportInput);
+        stream.ReadStream.Write(ToByteArray(sequence));
       }
 
-      private static async Task<(MCP2221, PseudoUsbHidStream)> CreatePseudoDeviceWithConfiguredI2C()
-      {
-        var baseDevice = CreatePreudoDevice();
-        var device = await MCP2221.OpenAsync(() => baseDevice);
+      stream.ReadStream.Position = currentPosition;
+    }
 
-        AppendResponse(
-          baseDevice.Stream,
-          "10-00-00-20-75-00-00-00-00-03-00-03-00-03-75-00-00-00-10-28-00-60-01-01-00-00-F1-19-F0-00-00-00-30-30-0B-30-10-23-13-71-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F4-02-76-02-00-00-00-00"
-        );
+    private static async Task<(MCP2221, PseudoUsbHidStream)> CreatePseudoDeviceWithConfiguredI2C()
+    {
+      var baseDevice = CreatePreudoDevice();
+      var device = await MCP2221.OpenAsync(() => baseDevice);
 
-        return (device, baseDevice.Stream);
-      }
+      AppendResponse(
+        baseDevice.Stream,
+        "10-00-00-20-75-00-00-00-00-03-00-03-00-03-75-00-00-00-10-28-00-60-01-01-00-00-F1-19-F0-00-00-00-30-30-0B-30-10-23-13-71-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F4-02-76-02-00-00-00-00"
+      );
 
-      [Test] public async Task Write() => await TestWrite(d => { d.I2C.Write(address, new byte[] {0x00, 0x00, 0x00}); return Task.CompletedTask; });
+      return (device, baseDevice.Stream);
+    }
 
-      [Test] public async Task WriteAsync() => await TestWrite(async d => { await d.I2C.WriteAsync(address, new byte[] {0x00, 0x00, 0x00}); });
+    [Test] public async Task Write() => await TestWrite(d => { d.I2C.Write(address, new byte[] {0x00, 0x00, 0x00}); return Task.CompletedTask; });
 
-      private async Task TestWrite(Func<MCP2221, Task> writeAction)
-      {
-        var (device, stream) = await CreatePseudoDeviceWithConfiguredI2C();
+    [Test] public async Task WriteAsync() => await TestWrite(async d => { await d.I2C.WriteAsync(address, new byte[] {0x00, 0x00, 0x00}); });
 
-        AppendResponse(
-          stream,
-          "10-00-00-20-75-00-00-00-00-03-00-03-00-03-75-00-00-00-10-28-00-60-01-01-00-00-F1-19-F0-00-00-00-30-30-0B-30-10-23-13-71-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F4-02-76-02-00-00-00-00",
-          "90-00-10-20-75-00-00-00-00-03-00-03-00-03-75-00-00-00-10-28-00-60-01-01-00-00-F1-19-F0-00-00-00-30-30-0B-30-10-23-13-71-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F4-02-76-02-00-00-00-00",
-          $"10-00-00-00-00-00-00-00-00-01-00-01-00-01-75-00-{address}-00-10-28-00-60-01-01-00-00-F1-79-F0-00-00-00-30-30-0B-30-10-23-13-79-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F5-02-59-02-00-00-00-00"
-        );
+    private async Task TestWrite(Func<MCP2221, Task> writeAction)
+    {
+      var (device, stream) = await CreatePseudoDeviceWithConfiguredI2C();
 
-        Assert.DoesNotThrowAsync(async () => await writeAction(device));
-      }
+      AppendResponse(
+        stream,
+        "10-00-00-20-75-00-00-00-00-03-00-03-00-03-75-00-00-00-10-28-00-60-01-01-00-00-F1-19-F0-00-00-00-30-30-0B-30-10-23-13-71-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F4-02-76-02-00-00-00-00",
+        "90-00-10-20-75-00-00-00-00-03-00-03-00-03-75-00-00-00-10-28-00-60-01-01-00-00-F1-19-F0-00-00-00-30-30-0B-30-10-23-13-71-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F4-02-76-02-00-00-00-00",
+        $"10-00-00-00-00-00-00-00-00-01-00-01-00-01-75-00-{address}-00-10-28-00-60-01-01-00-00-F1-79-F0-00-00-00-30-30-0B-30-10-23-13-79-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F5-02-59-02-00-00-00-00"
+      );
+
+      Assert.DoesNotThrowAsync(async () => await writeAction(device));
     }
   }
 }

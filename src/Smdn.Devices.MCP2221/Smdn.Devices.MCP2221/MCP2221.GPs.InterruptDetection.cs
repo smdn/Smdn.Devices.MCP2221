@@ -5,17 +5,17 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Smdn.Devices.MCP2221 {
-  partial class MCP2221 {
-    internal interface IInterruptDetectionFunctionality {
-      ValueTask ConfigureAsInterruptDetectionAsync(
-        CancellationToken cancellationToken = default
-      );
-      void ConfigureAsInterruptDetection(
-        CancellationToken cancellationToken = default
-      );
+namespace Smdn.Devices.MCP2221;
+
+partial class MCP2221 {
+  internal interface IInterruptDetectionFunctionality {
+    ValueTask ConfigureAsInterruptDetectionAsync(
+      CancellationToken cancellationToken = default
+    );
+    void ConfigureAsInterruptDetection(
+      CancellationToken cancellationToken = default
+    );
 #if __FUTURE_VERSION
 #endif
-    }
   }
 }

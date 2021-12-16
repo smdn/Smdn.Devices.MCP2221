@@ -4,16 +4,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace Smdn.Devices.MCP2221 {
-  public enum I2CBusSpeed {
-    Default = default,
+namespace Smdn.Devices.MCP2221;
 
-    StandardMode = Default,
-    LowSpeedMode,
-    FastMode,
+public enum I2CBusSpeed {
+  Default = default,
 
-    Speed10kBitsPerSec = LowSpeedMode,
-    Speed100kBitsPerSec = StandardMode,
-    Speed400kBitsPerSec = FastMode,
-  }
+  StandardMode = Default,
+  LowSpeedMode,
+  FastMode,
+
+  Speed10kBitsPerSec = LowSpeedMode,
+  Speed100kBitsPerSec = StandardMode,
+  Speed400kBitsPerSec = FastMode,
 }

@@ -5,18 +5,18 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Smdn.Devices.MCP2221 {
-  partial class MCP2221 {
-    internal interface IDACFunctionality {
-      ValueTask ConfigureAsDACAsync(
-        CancellationToken cancellationToken = default
-      );
-      void ConfigureAsDAC(
-        CancellationToken cancellationToken = default
-      );
+namespace Smdn.Devices.MCP2221;
+
+partial class MCP2221 {
+  internal interface IDACFunctionality {
+    ValueTask ConfigureAsDACAsync(
+      CancellationToken cancellationToken = default
+    );
+    void ConfigureAsDAC(
+      CancellationToken cancellationToken = default
+    );
 #if __FUTURE_VERSION
-      int DACValue { set; }
+    int DACValue { set; }
 #endif
-    }
   }
 }

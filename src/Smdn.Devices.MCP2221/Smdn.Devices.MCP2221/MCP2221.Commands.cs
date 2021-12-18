@@ -10,17 +10,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0040
 partial class MCP2221 {
+#pragma warning restore IDE0040
   internal delegate void ConstructCommandAction<TArg>(Span<byte> command, ReadOnlySpan<byte> userData, TArg arg);
   internal delegate TResponse ParseResponseFunc<TArg, TResponse>(ReadOnlySpan<byte> response, TArg arg);
 
-  private const int commandLength = 64;
-  private const int responseLength = 64;
-  private const int commandReportLength = 1 + commandLength;
-  private const int responseReportLength = 1 + responseLength;
+  private const int CommandLength = 64;
+  private const int ResponseLength = 64;
+  private const int CommandReportLength = 1 + CommandLength;
+  private const int ResponseReportLength = 1 + ResponseLength;
 
-  private static readonly EventId eventIdCommand = new EventId(1, "sent command");
-  private static readonly EventId eventIdResponse = new EventId(2, "received response");
+  private static readonly EventId eventIdCommand = new(1, "sent command");
+  private static readonly EventId eventIdResponse = new(2, "received response");
 
   private static string ConvertByteSequenceToString(ReadOnlySpan<byte> sequence)
   {
@@ -51,25 +53,25 @@ partial class MCP2221 {
 
     ThrowIfDisposed();
 
-    var commandReport = ArrayPool<byte>.Shared.Rent(commandReportLength);
-    var responseReport = ArrayPool<byte>.Shared.Rent(responseReportLength);
+    var commandReport = ArrayPool<byte>.Shared.Rent(CommandReportLength);
+    var responseReport = ArrayPool<byte>.Shared.Rent(ResponseReportLength);
 
     try {
-      var commandReportMemory = commandReport.AsMemory(0, commandReportLength);
-      var responseReportMemory = responseReport.AsMemory(0, responseReportLength);
+      var commandReportMemory = commandReport.AsMemory(0, CommandReportLength);
+      var responseReportMemory = responseReport.AsMemory(0, ResponseReportLength);
 
-      //commandReportMemory[0] = 0x00; // report
+      // commandReportMemory[0] = 0x00; // report
       commandReportMemory.Span.Clear();
 
       cancellationToken.ThrowIfCancellationRequested();
 
       constructCommand(
-        commandReportMemory.Span.Slice(1, commandLength),
+        commandReportMemory.Span.Slice(1, CommandLength),
         userData.Span,
         arg
       );
 
-      logger?.LogTrace(eventIdCommand, "> {0}", ConvertByteSequenceToString(commandReportMemory.Span.Slice(1, commandLength)));
+      logger?.LogTrace(eventIdCommand, "> {0}", ConvertByteSequenceToString(commandReportMemory.Span.Slice(1, CommandLength)));
 
       try {
         await HidStream.WriteAsync(
@@ -89,13 +91,13 @@ partial class MCP2221 {
         throw new CommandException("reading response report failed", ex);
       }
 
-      logger?.LogTrace(eventIdResponse, "< {0}", ConvertByteSequenceToString(responseReportMemory.Span.Slice(1, responseLength)));
+      logger?.LogTrace(eventIdResponse, "< {0}", ConvertByteSequenceToString(responseReportMemory.Span.Slice(1, ResponseLength)));
 
       if (commandReportMemory.Span[0] != responseReportMemory.Span[0])
         throw new CommandException($"unexpected command echo (command code: {commandReportMemory.Span[0]:X2}, command code echo: {responseReportMemory.Span[0]:X2})");
 
       return parseResponse(
-        responseReportMemory.Span.Slice(1, responseLength),
+        responseReportMemory.Span.Slice(1, ResponseLength),
         arg
       );
     }
@@ -120,10 +122,10 @@ partial class MCP2221 {
 
     ThrowIfDisposed();
 
-    Span<byte> commandReport = stackalloc byte[commandReportLength];
-    Span<byte> responseReport = stackalloc byte[responseReportLength];
+    Span<byte> commandReport = stackalloc byte[CommandReportLength];
+    Span<byte> responseReport = stackalloc byte[ResponseReportLength];
 
-    //commandReport[0] = 0x00; // report
+    // commandReport[0] = 0x00; // report
     commandReport.Clear();
 
     cancellationToken.ThrowIfCancellationRequested();
@@ -200,7 +202,7 @@ partial class MCP2221 {
     UsbDescriptorStringManufacturer = 0x02,
     UsbDescriptorStringProduct      = 0x03,
     UsbDescriptorStringSerialNumber = 0x04,
-    ChipFactorySerialNumber         = 0x05
+    ChipFactorySerialNumber         = 0x05,
   }
 
   private static class RetrieveFlashStringCommand {
@@ -238,14 +240,14 @@ partial class MCP2221 {
       }
       else {
         // 0x02: The number of bytes + 2 in the provided USB Manufacturer/Product/Serial Number Descriptor String.
-        var lengthInBytes = (int)resp[2] - 2;
+        var lengthInBytes = resp[2] - 2;
         var length = lengthInBytes / 2;
 
         Span<char> descriptorStringChars = stackalloc char[length];
 
         for (var i = 0; i < length; i++) {
-          var lower  = resp[4 + 2 * i + 0];
-          var higher = resp[4 + 2 * i + 1];
+          var lower  = resp[4 + (2 * i) + 0];
+          var higher = resp[4 + (2 * i) + 1];
 
           descriptorStringChars[i] = (char)(lower | (higher << 8));
         }

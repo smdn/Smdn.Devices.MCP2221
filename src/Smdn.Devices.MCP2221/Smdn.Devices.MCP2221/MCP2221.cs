@@ -13,10 +13,12 @@ using Smdn.Devices.UsbHid;
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0055
 public partial class MCP2221 :
   IDisposable,
   IAsyncDisposable
 {
+#pragma warning restore IDE0055
   public const int DeviceVendorID = 0x04d8;
   public const int DeviceProductID = 0x00dd;
 
@@ -90,8 +92,8 @@ public partial class MCP2221 :
   private static void ValidateHardwareRevision(string revision)
   {
     switch (revision) {
+      // case HardwareRevisionMCP2221A:
       case HardwareRevisionMCP2221:
-      //case HardwareRevisionMCP2221A:
         break;
 
       default:
@@ -190,11 +192,11 @@ public partial class MCP2221 :
   /*
    * instance members
    */
-  private IUsbHidDevice _hidDevice;
-  public IUsbHidDevice HidDevice => _hidDevice ?? throw new ObjectDisposedException(GetType().Name);
+  private IUsbHidDevice hidDevice;
+  public IUsbHidDevice HidDevice => hidDevice ?? throw new ObjectDisposedException(GetType().Name);
 
-  private IUsbHidStream _hidStream;
-  private IUsbHidStream HidStream => _hidStream ?? throw new ObjectDisposedException(GetType().Name);
+  private IUsbHidStream hidStream;
+  private IUsbHidStream HidStream => hidStream ?? throw new ObjectDisposedException(GetType().Name);
 
   private readonly ILogger logger;
 
@@ -209,14 +211,14 @@ public partial class MCP2221 :
 
   private MCP2221(IUsbHidDevice hidDevice, IUsbHidStream hidStream, IServiceProvider? serviceProvider)
   {
-    this._hidDevice = hidDevice ?? throw new ArgumentNullException(nameof(hidDevice));
-    this._hidStream = hidStream ?? throw new ArgumentNullException(nameof(hidStream));
+    this.hidDevice = hidDevice ?? throw new ArgumentNullException(nameof(hidDevice));
+    this.hidStream = hidStream ?? throw new ArgumentNullException(nameof(hidStream));
 
     this.GP0 = new GP0Functionality(this);
     this.GP1 = new GP1Functionality(this);
     this.GP2 = new GP2Functionality(this);
     this.GP3 = new GP3Functionality(this);
-    this.gps = new GPFunctionality[] {
+    this.GPs = new GPFunctionality[] {
       this.GP0,
       this.GP1,
       this.GP2,
@@ -230,25 +232,25 @@ public partial class MCP2221 :
 
   public void Dispose()
   {
-    _hidStream?.Dispose();
-    _hidStream = null;
+    hidStream?.Dispose();
+    hidStream = null;
 
-    _hidDevice?.Dispose();
-    _hidDevice = null;
+    hidDevice?.Dispose();
+    hidDevice = null;
   }
 
   public async ValueTask DisposeAsync()
   {
-    if (_hidStream != null) {
-      await _hidStream.DisposeAsync().ConfigureAwait(false);
-      _hidStream = null;
+    if (hidStream != null) {
+      await hidStream.DisposeAsync().ConfigureAwait(false);
+      hidStream = null;
     }
 
-    if (_hidDevice != null) {
-      await _hidDevice.DisposeAsync().ConfigureAwait(false);
-      _hidDevice = null;
+    if (hidDevice != null) {
+      await hidDevice.DisposeAsync().ConfigureAwait(false);
+      hidDevice = null;
     }
   }
 
-  private void ThrowIfDisposed() => _ = _hidStream ?? throw new ObjectDisposedException(GetType().Name);
+  private void ThrowIfDisposed() => _ = hidStream ?? throw new ObjectDisposedException(GetType().Name);
 }

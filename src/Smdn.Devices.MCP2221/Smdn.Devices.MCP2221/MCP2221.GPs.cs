@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0040
 partial class MCP2221 {
+#pragma warning restore IDE0040
+
 #if __FUTURE_VERSION
   public interface IReadOnlyGPFunctionalityList : IReadOnlyList<GPFunctionality> {
     void SetDirection(
@@ -46,8 +49,7 @@ partial class MCP2221 {
   }
 #endif
 
-  private readonly IReadOnlyList<GPFunctionality> gps;
-  public IReadOnlyList<GPFunctionality> GPs => gps;
+  public IReadOnlyList<GPFunctionality> GPs { get; }
 
   public GP0Functionality GP0 { get; }
   public GP1Functionality GP1 { get; }
@@ -246,7 +248,7 @@ partial class MCP2221 {
   }
 
   public abstract partial class GPFunctionality {
-    private const int numberOfGPs = 4;
+    private const int NumberOfGPs = 4;
 
     private readonly MCP2221 device;
     private protected abstract int GPIndex { get; }
@@ -301,26 +303,25 @@ partial class MCP2221 {
         const int firstIndexOfGPSettings = 8; // GP0 Settings
 
         // copy current GP0-GP3 settings
-        args.gpSettings.Span.CopyTo(comm.Slice(firstIndexOfGPSettings, numberOfGPs));
+        args.gpSettings.Span.CopyTo(comm.Slice(firstIndexOfGPSettings, NumberOfGPs));
 
         // construct new GP<n> settings
+        var bitsGpioOutputValue = (bool)args.gpioValue
+          ? 0b_000_1_0_000
+          : 0b_000_0_0_000;
+        var bitsGpioDirection = args.gpioDirection switch {
+          PinMode.Input => 0b_000_0_1_000,
+          PinMode.Output => 0b_000_0_0_000,
+          _ => throw new ArgumentOutOfRangeException(nameof(args.gpioDirection), args.gpioDirection, $"must be {nameof(PinMode.Input)} or {nameof(PinMode.Output)}"),
+        };
+        var bitsGPnDesignation = (byte)args.gpDesignation & 0b_000_0_0_111;
+
         comm[firstIndexOfGPSettings + args.gpIndex] = (byte)(
           // Byte Index 8-11 GP0-3 Settings
-          // Bit 7-5: Don't care
-          0b_000_0_0_000 |
-          // Bit 4: GPIO Output value
-          ((bool)args.gpioValue
-            ? 0b_000_1_0_000
-            : 0b_000_0_0_000
-          ) |
-          // Bit 3: GPIO Direction
-          args.gpioDirection switch {
-            PinMode.Input  => 0b_000_0_1_000,
-            PinMode.Output => 0b_000_0_0_000,
-            _ => throw new ArgumentOutOfRangeException(nameof(args.gpioDirection), args.gpioDirection, $"must be {nameof(PinMode.Input)} or {nameof(PinMode.Output)}"),
-          } |
-          // Bit 2-0: GP<n> Designation
-          ((byte)args.gpDesignation & 0b_000_0_0_111)
+          0b_000_0_0_000 | // Bit 7-5: Don't care
+          bitsGpioOutputValue | // Bit 4: GPIO Output value
+          bitsGpioDirection | // Bit 3: GPIO Direction
+          bitsGPnDesignation // Bit 2-0: GP<n> Designation
         );
       }
 
@@ -350,7 +351,7 @@ partial class MCP2221 {
       CancellationToken cancellationToken = default
     )
     {
-      var gpSettings = ArrayPool<byte>.Shared.Rent(numberOfGPs);
+      var gpSettings = ArrayPool<byte>.Shared.Rent(NumberOfGPs);
 
       try {
         // retrieve current GP0-GP3 settings

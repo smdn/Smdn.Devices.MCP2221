@@ -3,8 +3,6 @@
 
 using System;
 
-using Smdn.Devices.UsbHid;
-
 namespace Smdn.Devices.UsbHid;
 
 public class UsbHidException : InvalidOperationException {

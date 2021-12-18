@@ -11,10 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using HidSharp;
-using HidSharp.Exceptions;
 using HidDevice = HidSharp.HidDevice;
-
-using Smdn.Devices.UsbHid;
 
 namespace Smdn.Devices.UsbHid.HidSharp;
 
@@ -49,8 +46,8 @@ internal class Device : IUsbHidDevice {
   /*
    * instance members
    */
-  private HidDevice _hidDevice;
-  private HidDevice HidDevice => _hidDevice ?? throw new ObjectDisposedException(GetType().Name);
+  private HidDevice hidDevice;
+  private HidDevice HidDevice => hidDevice ?? throw new ObjectDisposedException(GetType().Name);
 
   private readonly ILogger logger;
 
@@ -63,24 +60,28 @@ internal class Device : IUsbHidDevice {
       try {
         return HidDevice.GetSerialNumber();
       }
+
       // HidSharp.Exceptions.DeviceIOException is internal class
       catch (Exception ex) when (ex.GetType().FullName.Equals("HidSharp.Exceptions.DeviceIOException", StringComparison.Ordinal)) {
         return null;
       }
     }
   }
+
   public Version ReleaseNumber => HidDevice.ReleaseNumber;
   public string DevicePath => HidDevice.DevicePath;
   public string FileSystemName => HidDevice.GetFileSystemName();
 
   internal Device(HidDevice hidDevice, ILogger logger)
   {
-    this._hidDevice = hidDevice;
+    this.hidDevice = hidDevice;
     this.logger = logger;
   }
 
-  private const int maxRetryOpen = 5;
-  private const int retryOpenIntervalMilliseconds = 200;
+#pragma warning disable SA1203
+  private const int MaxRetryOpen = 5;
+  private const int RetryOpenIntervalMilliseconds = 200;
+#pragma warning restore SA1203
 
   public async ValueTask<IUsbHidStream> OpenStreamAsync()
   {
@@ -88,10 +89,10 @@ internal class Device : IUsbHidDevice {
       try {
         return new Stream(HidDevice.Open());
       }
-      catch (Exception ex) when (n < maxRetryOpen) {
-        logger?.LogWarning(EventIds.UsbHidOpenEndPoint, ex, $"retry open ({n}/{maxRetryOpen})");
+      catch (Exception ex) when (n < MaxRetryOpen) {
+        logger?.LogWarning(EventIds.UsbHidOpenEndPoint, ex, $"retry open ({n}/{MaxRetryOpen})");
 
-        await Task.Delay(retryOpenIntervalMilliseconds).ConfigureAwait(false); // then continue
+        await Task.Delay(RetryOpenIntervalMilliseconds).ConfigureAwait(false); // then continue
       }
     }
   }
@@ -102,10 +103,10 @@ internal class Device : IUsbHidDevice {
       try {
         return new Stream(HidDevice.Open());
       }
-      catch (Exception ex) when (n < maxRetryOpen) {
-        logger?.LogWarning(EventIds.UsbHidOpenEndPoint, ex, $"retry open ({n}/{maxRetryOpen})");
+      catch (Exception ex) when (n < MaxRetryOpen) {
+        logger?.LogWarning(EventIds.UsbHidOpenEndPoint, ex, $"retry open ({n}/{MaxRetryOpen})");
 
-        Thread.Sleep(retryOpenIntervalMilliseconds);
+        Thread.Sleep(RetryOpenIntervalMilliseconds);
       }
     }
   }
@@ -113,13 +114,13 @@ internal class Device : IUsbHidDevice {
   public void Dispose()
   {
     // HidDevice does not implement IDisposable
-    //_hidDevice?.Dispose();
-    _hidDevice = null;
+    // _hidDevice?.Dispose();
+    hidDevice = null;
   }
 
   public ValueTask DisposeAsync()
   {
-    _hidDevice = null;
+    hidDevice = null;
 
 #if NET5_0_OR_GREATER
     return ValueTask.CompletedTask;

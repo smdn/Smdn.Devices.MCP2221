@@ -12,8 +12,12 @@ public class I2CCommandException : CommandException {
   public I2CCommandException(string message, Exception innerException) : this(I2CAddress.Zero, message, innerException) { }
 
   public I2CCommandException(I2CAddress address, string message) : base(message)
-    => this.Address = address;
+  {
+    this.Address = address;
+  }
 
   public I2CCommandException(I2CAddress address, string message, Exception innerException) : base(message, innerException)
-    => this.Address = address;
+  {
+    this.Address = address;
+  }
 }

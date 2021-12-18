@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Smdn.Devices.UsbHid;
 
+#pragma warning disable IDE0055
 public interface IUsbHidDevice :
   IDisposable,
   IAsyncDisposable
 {
+#pragma warning restore IDE0055
   string ProductName { get; }
   string Manufacturer { get; }
   int VendorID { get; }

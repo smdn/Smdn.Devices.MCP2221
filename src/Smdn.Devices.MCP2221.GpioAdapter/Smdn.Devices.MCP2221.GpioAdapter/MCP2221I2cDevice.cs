@@ -4,8 +4,6 @@
 using System;
 using System.Device.I2c;
 
-using Smdn.Devices.MCP2221;
-
 namespace Smdn.Devices.MCP2221.GpioAdapter;
 
 [CLSCompliant(false)]
@@ -42,7 +40,7 @@ public class MCP2221I2cDevice : I2cDevice {
 
   public unsafe override void WriteByte(byte value)
   {
-    Span<byte> buffer = stackalloc byte[1] {value};
+    Span<byte> buffer = stackalloc byte[1] { value };
 
     Write(buffer);
   }

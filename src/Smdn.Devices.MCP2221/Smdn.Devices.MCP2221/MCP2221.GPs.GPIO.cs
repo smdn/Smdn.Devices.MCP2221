@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0040
 partial class MCP2221 {
+#pragma warning restore IDE0040
   internal interface IGPIOFunctionality {
     ValueTask ConfigureAsGPIOAsync(
       PinMode initialDirection = PinMode.Output,
@@ -54,7 +56,9 @@ partial class MCP2221 {
     );
   }
 
+#pragma warning disable IDE0040
   partial class GPFunctionality : IGPIOFunctionality {
+#pragma warning restore IDE0040
     [CLSCompliant(false)]
     public ValueTask ConfigureAsGPIOAsync(
       PinMode initialDirection = PinMode.Output,
@@ -167,7 +171,7 @@ partial class MCP2221 {
         if (gpPinValue == 0xEF || gpDirectionValue == 0xEF)
           throw new CommandException($"{gp.PinName} is not set for GPIO operation");
 
-        return (PinValue)gpPinValue;
+        return gpPinValue;
       }
     }
 

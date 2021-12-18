@@ -3,8 +3,6 @@
 
 using System;
 
-using Smdn.Devices.UsbHid;
-
 namespace Smdn.Devices.MCP2221;
 
 public class CommandException : InvalidOperationException {

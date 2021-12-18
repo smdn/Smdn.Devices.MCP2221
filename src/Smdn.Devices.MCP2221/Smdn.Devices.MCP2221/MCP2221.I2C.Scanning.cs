@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,8 +16,10 @@ System.Collections.Generic.IReadOnlyCollection
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0040
 partial class MCP2221 {
   partial class I2CFunctionality {
+#pragma warning restore IDE0040
     public async ValueTask<(IReadOnlyI2CAddressSet writeAddressSet, IReadOnlyI2CAddressSet readAddressSet)> ScanBusAsync(
       I2CAddress addressRangeMin = default,
       I2CAddress addressRangeMax = default,

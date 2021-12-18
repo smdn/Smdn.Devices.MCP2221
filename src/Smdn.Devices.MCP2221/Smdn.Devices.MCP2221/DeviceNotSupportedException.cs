@@ -5,7 +5,7 @@ using System;
 
 namespace Smdn.Devices.MCP2221;
 
-class DeviceNotSupportedException : NotSupportedException {
+internal class DeviceNotSupportedException : NotSupportedException {
   public DeviceNotSupportedException(string message)
     : base(message)
   {

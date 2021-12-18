@@ -1,13 +1,14 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0040
 partial class MCP2221 {
+#pragma warning restore IDE0040
   internal interface IClockOutputFunctionality {
     ValueTask ConfigureAsClockOutputAsync(
       CancellationToken cancellationToken = default

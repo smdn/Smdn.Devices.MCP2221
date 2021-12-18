@@ -2,18 +2,16 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0040
 partial class MCP2221 {
   partial class I2CFunctionality {
+#pragma warning restore IDE0040
     private static Exception CreateUnexpectedResponseException(I2CAddress? address, byte response)
       => address == null
         ? new CommandException($"unexpected response (0x{response:X2})")
@@ -133,7 +131,7 @@ partial class MCP2221 {
       }
 #pragma warning restore 0164
 
-      static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2CAddress address, I2CEngineState engineState)
+      private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2CAddress address, I2CEngineState engineState)
       {
         if (currentState == OperationState.Initial && (engineState.LineValueSCL.IsLow() || engineState.LineValueSDA.IsLow()))
           throw CreateI2CErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
@@ -155,13 +153,13 @@ partial class MCP2221 {
            * still in progress / NACK reply
            */
           // 0x25: write operation still in progress?
-          0x25 when (currentState == OperationState.Initial) => OperationState.CancelAndRetry, // remains previous operation state(?)
-          0x25 when (0 < engineState.TimeoutValue) => OperationState.Continue, // current operation in progress
+          0x25 when currentState == OperationState.Initial => OperationState.CancelAndRetry, // remains previous operation state(?)
+          0x25 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
           0x25 => throw new I2CNAckException(address), // time out
 
           // 0x61: read operation still in progress?
           // 0x61 when (currentState == OperationState.Initial) => OperationState.CancelAndRetry, // issuing cancellation in this state will trasit state to 0x62, and will be in state which cannot reset with command
-          0x61 when (0 < engineState.TimeoutValue) => OperationState.Continue, // current operation in progress
+          0x61 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
           // 0x62: has been marked for cancellation?
           0x62 => throw CreateI2CErrorException(address, engineState.StateMachineStateValue, "I2C engine has been in invalid state. It may need to be reset or powered off.", engineState.ToString()),
 
@@ -182,7 +180,7 @@ partial class MCP2221 {
         if (operationState == OperationState.Initial) {
           comm[3] = 0x20; // Set I2C/SMBus communication speed
           comm[4] = busSpeed switch {
-            I2CBusSpeed.Speed10kBitsPerSec  => 0xAD,
+            I2CBusSpeed.Speed10kBitsPerSec => 0xAD,
             I2CBusSpeed.Speed100kBitsPerSec => 0x75,
             I2CBusSpeed.Speed400kBitsPerSec => 0x1B,
             _ => 0x75, // as default (or should throw InvalidEnumValueException?)
@@ -198,7 +196,7 @@ partial class MCP2221 {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
         _ = resp[1] switch {
           0x00 => true, // Command completed successfully
-          _    => throw CreateUnexpectedResponseException(args.address, resp[1]),
+          _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
         };
 
         lastEngineState = I2CEngineState.Parse(resp);
@@ -209,7 +207,7 @@ partial class MCP2221 {
           var isSpeedConsidered = resp[3] switch {
             0x00 => false, // No Set I2C/SMBus communication speed was issued
             0x20 => true, // The new I2C/SMBus communication speed is now considered
-            //0x21 => throw; // I2C transfer in progress
+            // 0x21 => throw; // I2C transfer in progress
             _ => false, // throw
           };
 
@@ -242,7 +240,7 @@ partial class MCP2221 {
         operationState = resp[1] switch {
           0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
           0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-          _    => throw CreateUnexpectedResponseException(args.address, resp[1]),
+          _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
         };
 
         return operationState == OperationState.AdvanceToNextStep;
@@ -263,7 +261,7 @@ partial class MCP2221 {
         operationState = resp[1] switch {
           0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
           0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-          _    => throw CreateUnexpectedResponseException(args.address, resp[1]),
+          _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
         };
 
         return operationState == OperationState.AdvanceToNextStep;
@@ -273,8 +271,8 @@ partial class MCP2221 {
       {
         // [MCP2221A] 3.1.10 I2C READ DATA - GET I2C DATA
         comm[0] = 0x40; // I2C Read Data - Get I2C Data
-        /*?*/ comm[1] = (byte)(userData.Length & 0x00FF); // Requested I2C transfer length - low byte
-        /*?*/ comm[2] = (byte)(userData.Length >> 8); // Requested I2C transfer length - high byte
+        comm[1] = (byte)(userData.Length & 0x00FF); // [??] Requested I2C transfer length - low byte
+        comm[2] = (byte)(userData.Length >> 8); // [??] Requested I2C transfer length - high byte
       }
 
       private bool GetParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> buffer) args)
@@ -284,14 +282,14 @@ partial class MCP2221 {
           0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
           0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
           0x41 => throw new I2CReadException(args.address, "can not read from I2C slave"), // Error reading the I2C slave data
-          _    => throw CreateUnexpectedResponseException(args.address, resp[1]),
+          _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
         };
 
         if (operationState == OperationState.AdvanceToNextStep) {
           ReadLength = resp[3] switch {
-            _ when (resp[3] is >= 0 and <= 60) => (int)resp[3],
+            _ when resp[3] is >= 0 and <= 60 => resp[3],
             127 => throw new I2CCommandException("error has orccurred on reading"),
-            _   => throw new I2CCommandException(args.address, $"unexpected data length ({resp[3]})"),
+            _ => throw new I2CCommandException(args.address, $"unexpected data length ({resp[3]})"),
           };
 
           resp.Slice(4, ReadLength).CopyTo(args.buffer.Span);

@@ -3,8 +3,6 @@
 
 using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,12 +10,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Devices.MCP2221;
 
+#pragma warning disable IDE0040
 partial class MCP2221 {
+#pragma warning restore IDE0040
   public I2CFunctionality I2C { get; }
 
   public sealed partial class I2CFunctionality {
     public const int MaxBlockLength = 0xFFFF;
-    private const int maxTransferLengthPerCommand = 64 - 4;
+    private const int MaxTransferLengthPerCommand = 64 - 4;
 
     private readonly MCP2221 device;
 
@@ -28,8 +28,8 @@ partial class MCP2221 {
       this.device = device;
     }
 
-    private static readonly EventId eventIdI2CCommand = new EventId(10, "I2C command");
-    private static readonly EventId eventIdI2CEngineState = new EventId(11, "I2C engine state");
+    private static readonly EventId eventIdI2CCommand = new(10, "I2C command");
+    private static readonly EventId eventIdI2CEngineState = new(11, "I2C engine state");
 
     private static class CancelTransferCommand {
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Exception exceptionCauseOfCancellation) args)
@@ -117,16 +117,16 @@ partial class MCP2221 {
       try {
         device.logger?.LogInformation(eventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
 
-        for (;;) {
-          var lengthToTransfer = Math.Min(buffer.Length, maxTransferLengthPerCommand);
+        for (; ; ) {
+          var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
 
-          foreach (var commandArgs in new OperationContext(device.logger, BusSpeed).IterateWriteCommands()) {
+          foreach (var (constructCommand, parseResponse) in new OperationContext(device.logger, BusSpeed).IterateWriteCommands()) {
             await device.CommandAsync(
               userData: buffer.Slice(0, lengthToTransfer),
               arg: (address, Memory<byte>.Empty),
               cancellationToken: cancellationToken,
-              constructCommand: commandArgs.constructCommand,
-              parseResponse: commandArgs.parseResponse
+              constructCommand: constructCommand,
+              parseResponse: parseResponse
             ).ConfigureAwait(false);
           }
 
@@ -170,16 +170,16 @@ partial class MCP2221 {
       try {
         device.logger?.LogInformation(eventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
 
-        for (;;) {
-          var lengthToTransfer = Math.Min(buffer.Length, maxTransferLengthPerCommand);
+        for (; ; ) {
+          var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
 
-          foreach (var commandArgs in new OperationContext(device.logger, BusSpeed).IterateWriteCommands()) {
+          foreach (var (constructCommand, parseResponse) in new OperationContext(device.logger, BusSpeed).IterateWriteCommands()) {
             device.Command(
               userData: buffer.Slice(0, lengthToTransfer),
               arg: (address, Memory<byte>.Empty),
               cancellationToken: cancellationToken,
-              constructCommand: commandArgs.constructCommand,
-              parseResponse: commandArgs.parseResponse
+              constructCommand: constructCommand,
+              parseResponse: parseResponse
             );
           }
 
@@ -223,24 +223,24 @@ partial class MCP2221 {
       try {
         device.logger?.LogInformation(eventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
 
-        var readBuffer = ArrayPool<byte>.Shared.Rent(maxTransferLengthPerCommand);
+        var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
         try {
           var totalReadLength = 0;
 
-          for (;;) {
-            var lengthToTransfer = Math.Min(buffer.Length, maxTransferLengthPerCommand);
+          for (; ; ) {
+            var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
             var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
 
             var context = new OperationContext(device.logger, BusSpeed);
 
-            foreach (var commandArgs in context.IterateReadCommands()) {
+            foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
               await device.CommandAsync(
                 userData: buffer.Slice(0, lengthToTransfer),
                 arg: (address, readBufferMemory),
                 cancellationToken: cancellationToken,
-                constructCommand: commandArgs.constructCommand,
-                parseResponse: commandArgs.parseResponse
+                constructCommand: constructCommand,
+                parseResponse: parseResponse
               ).ConfigureAwait(false);
             }
 
@@ -297,24 +297,24 @@ partial class MCP2221 {
       try {
         device.logger?.LogInformation(eventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
 
-        var readBuffer = ArrayPool<byte>.Shared.Rent(maxTransferLengthPerCommand);
+        var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
         try {
           var totalReadLength = 0;
 
-          for (;;) {
-            var lengthToTransfer = Math.Min(buffer.Length, maxTransferLengthPerCommand);
+          for (; ; ) {
+            var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
             var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
 
             var context = new OperationContext(device.logger, BusSpeed);
 
-            foreach (var commandArgs in context.IterateReadCommands()) {
+            foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
               device.Command(
                 userData: buffer.Slice(0, lengthToTransfer),
                 arg: (address, readBufferMemory),
                 cancellationToken: cancellationToken,
-                constructCommand: commandArgs.constructCommand,
-                parseResponse: commandArgs.parseResponse
+                constructCommand: constructCommand,
+                parseResponse: parseResponse
               );
             }
 
@@ -383,7 +383,7 @@ partial class MCP2221 {
         if (0 == await ReadAsync(address, buffer.AsMemory(0, 1), cancellationToken).ConfigureAwait(false))
           return -1;
         else
-          return (int)buffer[0];
+          return buffer[0];
       }
       finally {
         ArrayPool<byte>.Shared.Return(buffer);
@@ -395,12 +395,12 @@ partial class MCP2221 {
       CancellationToken cancellationToken = default
     )
     {
-      Span<byte> buffer = stackalloc byte [1];
+      Span<byte> buffer = stackalloc byte[1];
 
       if (0 == Read(address, buffer, cancellationToken))
         return -1;
       else
-        return (int)buffer[0];
+        return buffer[0];
     }
   }
 }

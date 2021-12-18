@@ -8,16 +8,13 @@ using System.Buffers;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-using HidSharp;
 using HidStream = HidSharp.HidStream;
-
-using Smdn.Devices.UsbHid;
 
 namespace Smdn.Devices.UsbHid.HidSharp;
 
 internal class Stream : IUsbHidStream {
-  private HidStream _hidStream;
-  private HidStream HidStream => _hidStream ?? throw new ObjectDisposedException(GetType().Name);
+  private HidStream hidStream;
+  private HidStream HidStream => hidStream ?? throw new ObjectDisposedException(GetType().Name);
 
   private int MaxOutputReportLength => HidStream.Device.GetMaxOutputReportLength();
   private int MaxInputReportLength => HidStream.Device.GetMaxInputReportLength();
@@ -26,20 +23,20 @@ internal class Stream : IUsbHidStream {
 
   internal Stream(HidStream hidStream)
   {
-    this._hidStream = hidStream;
+    this.hidStream = hidStream;
   }
 
   public void Dispose()
   {
-    _hidStream?.Dispose();
-    _hidStream = null;
+    hidStream?.Dispose();
+    hidStream = null;
   }
 
   public async ValueTask DisposeAsync()
   {
-    if (_hidStream != null) {
-      await _hidStream.DisposeAsync().ConfigureAwait(false);
-      _hidStream = null;
+    if (hidStream != null) {
+      await hidStream.DisposeAsync().ConfigureAwait(false);
+      hidStream = null;
     }
   }
 

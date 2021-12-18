@@ -17,7 +17,7 @@ SPDX-License-Identifier: MIT
     </AssemblyAttribute>
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="common resources">
     <None Include="$(MSBuildThisFileDirectory)package-icon.png" Pack="true" Visible="false" PackagePath="\$(MSBuildProjectName).png"/>
   </ItemGroup>
 

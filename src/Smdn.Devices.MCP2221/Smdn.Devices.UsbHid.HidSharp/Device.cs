@@ -7,10 +7,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+using HidSharp;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using HidSharp;
 using HidDevice = HidSharp.HidDevice;
 
 namespace Smdn.Devices.UsbHid.HidSharp;

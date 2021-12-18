@@ -237,6 +237,8 @@ public partial class MCP2221 :
 
     hidDevice?.Dispose();
     hidDevice = null;
+
+    GC.SuppressFinalize(this);
   }
 
   public async ValueTask DisposeAsync()
@@ -250,6 +252,8 @@ public partial class MCP2221 :
       await hidDevice.DisposeAsync().ConfigureAwait(false);
       hidDevice = null;
     }
+
+    GC.SuppressFinalize(this);
   }
 
   private void ThrowIfDisposed() => _ = hidStream ?? throw new ObjectDisposedException(GetType().Name);

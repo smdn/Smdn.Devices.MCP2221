@@ -140,7 +140,8 @@ struct I2CEngineState {
   public override string ToString()
     => string.Concat(
       "{",
-      nameof(I2CEngineState), ": ",
+      nameof(I2CEngineState),
+      ": ",
       string.Join(
         ", ",
         new (string Name, object Value)[] {

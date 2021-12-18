@@ -5,6 +5,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Device.Gpio;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -276,6 +277,7 @@ partial class MCP2221 {
     }
 
     private static class SetGPSettingsCommand {
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       public static void ConstructCommand(
         Span<byte> comm,
         ReadOnlySpan<byte> userData,
@@ -325,6 +327,9 @@ partial class MCP2221 {
         );
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+      [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable IDE0060, SA1313 // [IDE0060] Remove unused parameter [SA1313] SA1313ParameterNamesMustBeginWithLowerCaseLetter
       public static bool ParseResponse(
         ReadOnlySpan<byte> resp,
         (
@@ -335,6 +340,7 @@ partial class MCP2221 {
           PinValue
         ) _
       )
+#pragma warning restore IDE0060, SA1313
       {
         return resp[1] switch {
           0x00 => true, // Command completed successfully

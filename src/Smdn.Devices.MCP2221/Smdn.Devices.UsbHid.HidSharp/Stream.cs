@@ -117,13 +117,15 @@ internal class Stream : IUsbHidStream {
     }
 
     try {
-      return
+#pragma warning disable SA1114
 #if NET5_0_OR_GREATER
-      ValueTask.FromResult<int>
+      return ValueTask.FromResult<int>(
 #else
-      new ValueTask<int>
+      return new ValueTask<int>(
 #endif
-      (HidStream.Read(buf.Array, buf.Offset, buf.Count));
+#pragma warning restore SA1114
+        HidStream.Read(buf.Array, buf.Offset, buf.Count)
+      );
     }
     finally {
       if (rentBuffer != null) {

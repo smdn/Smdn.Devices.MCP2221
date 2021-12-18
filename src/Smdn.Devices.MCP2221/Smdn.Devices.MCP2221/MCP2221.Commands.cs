@@ -3,6 +3,7 @@
 
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,6 +39,7 @@ partial class MCP2221 {
     }
   }
 
+#pragma warning disable CA1068 // CA1068: CancellationToken parameters must come last
   internal async ValueTask<TResponse> CommandAsync<TArg, TResponse>(
     ReadOnlyMemory<byte> userData,
     TArg arg,
@@ -45,6 +47,7 @@ partial class MCP2221 {
     ConstructCommandAction<TArg> constructCommand,
     ParseResponseFunc<TArg, TResponse> parseResponse
   )
+#pragma warning restore CA1068
   {
     if (constructCommand is null)
       throw new ArgumentNullException(nameof(constructCommand));
@@ -107,6 +110,7 @@ partial class MCP2221 {
     }
   }
 
+#pragma warning disable CA1068 // CA1068: CancellationToken parameters must come last
   internal unsafe TResponse Command<TArg, TResponse>(
     ReadOnlySpan<byte> userData,
     TArg arg,
@@ -114,6 +118,7 @@ partial class MCP2221 {
     ConstructCommandAction<TArg> constructCommand,
     ParseResponseFunc<TArg, TResponse> parseResponse
   )
+#pragma warning restore CA1068
   {
     if (constructCommand is null)
       throw new ArgumentNullException(nameof(constructCommand));
@@ -168,16 +173,21 @@ partial class MCP2221 {
 #endif
 
   private static class RetrieveRevisionCommand {
+#pragma warning disable IDE0060, SA1313 // [IDE0060] Remove unused parameter [SA1313] SA1313ParameterNamesMustBeginWithLowerCaseLetter
     public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, int _)
+#pragma warning restore IDE0060, SA1313
     {
       // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
       comm[0] = 0x10; // Status/Set Parameter
     }
 
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable IDE0060, SA1313 // [IDE0060] Remove unused parameter [SA1313] SA1313ParameterNamesMustBeginWithLowerCaseLetter
     public static (
       string firmwareRevision,
       string hardwareRevision
     ) ParseResponse(ReadOnlySpan<byte> resp, int _)
+#pragma warning restore IDE0060, SA1313
     {
       static void CreateRevisionString(Span<char> str, (char major, char minor) revision)
       {

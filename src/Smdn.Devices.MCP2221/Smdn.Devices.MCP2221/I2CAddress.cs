@@ -97,5 +97,5 @@ public readonly struct I2CAddress :
   internal byte GetReadAddress() => (byte)((address << 1) | 0b_0000_0001);
   internal byte GetWriteAddress() => (byte)(address << 1);
 
-  public override string ToString() => address.ToString("X2");
+  public override string ToString() => address.ToString("X2", provider: null);
 }

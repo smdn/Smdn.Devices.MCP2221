@@ -3,6 +3,7 @@
 
 using System;
 using System.Device.Gpio;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -120,9 +121,11 @@ partial class MCP2221 {
       );
 
     private static class SetDirectionCommand {
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (GPFunctionality gp, PinMode newDirection) args)
         => throw new NotImplementedException();
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, PinMode newDirection) args)
         => throw new NotImplementedException();
     }
@@ -200,6 +203,7 @@ partial class MCP2221 {
       );
 
     private static class SetValueCommand {
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (GPFunctionality gp, PinValue newValue) args)
       {
         // [MCP2221A] 3.1.11 SET GPIO OUTPUT VALUES
@@ -211,6 +215,7 @@ partial class MCP2221 {
         comm[3 + (4 * args.gp.GPIndex)] = (byte)args.newValue; // GP<n> output value
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, PinValue newValue) args)
       {
         if (resp[1] != 0x00) // Command completed successfully

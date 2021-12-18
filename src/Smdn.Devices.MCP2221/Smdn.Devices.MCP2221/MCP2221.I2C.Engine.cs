@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Logging;
 
@@ -17,9 +18,9 @@ partial class MCP2221 {
         ? new CommandException($"unexpected response (0x{response:X2})")
         : new I2CCommandException(address.Value, $"unexpected response (0x{response:X2})");
     private static Exception CreateI2CErrorException(I2CAddress address, byte? stateValue, string message, string i2cEngineState = null)
-      => new I2CCommandException(address, $"{message} (0x{stateValue?.ToString("X2") ?? "??"}, {i2cEngineState ?? "(details not available)"})");
+      => new I2CCommandException(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
     private static Exception CreateUnknownEngineStateException(I2CAddress address, byte? stateValue, string i2cEngineState = null)
-      => new I2CCommandException(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2") ?? "??"}, {i2cEngineState ?? "(details not available)"})");
+      => new I2CCommandException(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
 
     private enum OperationState {
       Initial,
@@ -42,6 +43,8 @@ partial class MCP2221 {
       public int ReadLength { get; private set; } = -1;
 
 #pragma warning disable 0164
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+      [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
       public IEnumerable<(
         ConstructCommandAction<(I2CAddress, Memory<byte>)> constructCommand,
         ParseResponseFunc<(I2CAddress, Memory<byte>), bool> parseResponse
@@ -83,6 +86,8 @@ partial class MCP2221 {
           yield break;
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+      [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
       public IEnumerable<(
         ConstructCommandAction<(I2CAddress, Memory<byte>)> constructCommand,
         ParseResponseFunc<(I2CAddress, Memory<byte>), bool> parseResponse
@@ -170,6 +175,7 @@ partial class MCP2221 {
         };
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private void StatusConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
@@ -191,6 +197,7 @@ partial class MCP2221 {
         }
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private bool StatusParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
@@ -224,6 +231,7 @@ partial class MCP2221 {
         return operationState == OperationState.AdvanceToNextStep;
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private void WriteConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.5 I2C WRITE DATA
@@ -234,6 +242,7 @@ partial class MCP2221 {
         userData.CopyTo(comm.Slice(4));
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private bool WriteParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.5 I2C WRITE DATA
@@ -246,6 +255,7 @@ partial class MCP2221 {
         return operationState == OperationState.AdvanceToNextStep;
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private void ReadConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.8 I2C READ DATA
@@ -255,6 +265,7 @@ partial class MCP2221 {
         comm[3] = args.address.GetReadAddress(); // I2C slave address to communicate with
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private bool ReadParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.8 I2C READ DATA
@@ -267,6 +278,7 @@ partial class MCP2221 {
         return operationState == OperationState.AdvanceToNextStep;
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private void GetConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.10 I2C READ DATA - GET I2C DATA
@@ -275,6 +287,7 @@ partial class MCP2221 {
         comm[2] = (byte)(userData.Length >> 8); // [??] Requested I2C transfer length - high byte
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private bool GetParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> buffer) args)
       {
         // [MCP2221A] 3.1.10 I2C READ DATA - GET I2C DATA

@@ -3,6 +3,7 @@
 
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,6 +33,7 @@ partial class MCP2221 {
     private static readonly EventId eventIdI2CEngineState = new(11, "I2C engine state");
 
     private static class CancelTransferCommand {
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Exception exceptionCauseOfCancellation) args)
       {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
@@ -40,6 +42,7 @@ partial class MCP2221 {
         comm[2] = 0x10; // Cancel current I2C/SMBus transfer
       }
 
+      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       public static I2CEngineState ParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Exception exceptionCauseOfCancellation) args)
       {
         if (resp[1] != 0x00) // Command completed successfully

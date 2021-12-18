@@ -7,15 +7,8 @@ SPDX-License-Identifier: MIT
     <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
+    <AssemblyCLSCompliant>true</AssemblyCLSCompliant>
   </PropertyGroup>
-
-  <ItemGroup Label="assembly attributes">
-    <!-- https://github.com/dotnet/msbuild/pull/6285 -->
-    <AssemblyAttribute Include="System.CLSCompliantAttribute">
-      <_Parameter1>True</_Parameter1>
-      <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
-    </AssemblyAttribute>
-  </ItemGroup>
 
   <ItemGroup Label="common resources">
     <None Include="$(MSBuildThisFileDirectory)package-icon.png" Pack="true" Visible="false" PackagePath="\$(MSBuildProjectName).png"/>

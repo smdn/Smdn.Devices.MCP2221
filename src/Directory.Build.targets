@@ -55,6 +55,16 @@ SPDX-License-Identifier: MIT
     </ItemGroup>
   </Target>
 
+  <Target Name="GetAssemblyAttributeCLSCompliant" BeforeTargets="GetAssemblyAttributes">
+    <ItemGroup Label="assembly attributes">
+      <!-- https://github.com/dotnet/msbuild/pull/6285 -->
+      <AssemblyAttribute Include="System.CLSCompliantAttribute" Condition=" '$(AssemblyCLSCompliant)' != '' ">
+        <_Parameter1>$(AssemblyCLSCompliant)</_Parameter1>
+        <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
   <Target Name="WarnNupkgConfiguration" AfterTargets="Pack" Condition=" '$(Configuration)' != 'Release' ">
     <Warning Text="generated nupkg with configuration '$(Configuration)'" />
   </Target>

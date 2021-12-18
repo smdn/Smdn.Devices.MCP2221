@@ -1,0 +1,39 @@
+# EditorConfig is awesome: https://EditorConfig.org
+#
+# code-analysis
+#   https://docs.microsoft.com/ja-jp/dotnet/fundamentals/code-analysis/categories
+#   https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
+#   https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/
+#
+[*.cs]
+dotnet_analyzer_diagnostic.category-Design.severity           = warning
+dotnet_analyzer_diagnostic.category-Globalization.severity    = warning
+dotnet_analyzer_diagnostic.category-Interoperability.severity = warning
+dotnet_analyzer_diagnostic.category-Maintainability.severity  = warning
+dotnet_analyzer_diagnostic.category-Naming.severity           = warning
+dotnet_analyzer_diagnostic.category-Performance.severity      = warning
+dotnet_analyzer_diagnostic.category-SingleFile.severity       = warning
+dotnet_analyzer_diagnostic.category-Reliability.severity      = warning
+dotnet_analyzer_diagnostic.category-Security.severity         = warning
+dotnet_analyzer_diagnostic.category-Style.severity            = warning
+dotnet_analyzer_diagnostic.category-Usage.severity            = warning
+
+dotnet_diagnostic.IDE0001.severity    = suggestion    # Simplify name
+dotnet_diagnostic.IDE0002.severity    = suggestion    # Simplify member access
+dotnet_diagnostic.IDE0003.severity    = suggestion    # Remove `this` or `Me` qualification
+dotnet_diagnostic.IDE0007.severity    = suggestion    # Use explicit type instead of `var`
+dotnet_diagnostic.IDE0010.severity    = suggestion    # Add missing cases to switch statement
+dotnet_diagnostic.IDE0022.severity    = suggestion    # Use expression body for methods
+dotnet_diagnostic.IDE0046.severity    = suggestion    # Use conditional expression for return
+dotnet_diagnostic.IDE0055.severity    = silent        # Fix formatting
+dotnet_diagnostic.IDE0056.severity    = suggestion    # Use index operator
+dotnet_diagnostic.IDE0057.severity    = suggestion    # Use range operator
+dotnet_diagnostic.IDE0058.severity    = none          # Remove unused expression value
+dotnet_diagnostic.IDE0072.severity    = suggestion    # Add missing cases to switch expression
+dotnet_diagnostic.IDE0130.severity    = none          # Match namespaces to folder structure
+
+dotnet_diagnostic.CA1707.severity     = none          # Identifiers should not contain underscores
+dotnet_diagnostic.CA1805.severity     = suggestion    # Do not initialize unnecessarily
+
+csharp_style_namespace_declarations   = file_scoped:warning
+dotnet_diagnostic.IDE0161.severity    = warning       # Convert to file-scoped namespace

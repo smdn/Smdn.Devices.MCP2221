@@ -3,3 +3,6 @@ obj/
 *.userprefs
 .vs/
 TestResult.xml
+TestResults/
+mono_crash.mem.*.blob
+mono_crash.*.json

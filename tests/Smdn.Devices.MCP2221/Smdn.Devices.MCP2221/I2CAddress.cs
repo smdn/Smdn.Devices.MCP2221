@@ -106,7 +106,29 @@ public class I2CAddressTests {
   public void OperatorInequality(int address, int addressOther, bool expectedValue)
     => Assert.AreEqual(new I2CAddress(address) != new I2CAddress(addressOther), expectedValue);
 
+  [TestCase(0x10, 0x10, false)]
+  [TestCase(0x10, 0x11, false)]
+  [TestCase(0x11, 0x10, true)]
+  public void OperatorGreaterThan(int address, int addressOther, bool expectedValue)
+    => Assert.AreEqual(new I2CAddress(address) > new I2CAddress(addressOther), expectedValue);
 
+  [TestCase(0x10, 0x10, true)]
+  [TestCase(0x10, 0x11, false)]
+  [TestCase(0x11, 0x10, true)]
+  public void OperatorGreaterThanOrEqualsTo(int address, int addressOther, bool expectedValue)
+    => Assert.AreEqual(new I2CAddress(address) >= new I2CAddress(addressOther), expectedValue);
+
+  [TestCase(0x10, 0x10, false)]
+  [TestCase(0x10, 0x11, true)]
+  [TestCase(0x11, 0x10, false)]
+  public void OperatorLessThan(int address, int addressOther, bool expectedValue)
+    => Assert.AreEqual(new I2CAddress(address) < new I2CAddress(addressOther), expectedValue);
+
+  [TestCase(0x10, 0x10, true)]
+  [TestCase(0x10, 0x11, true)]
+  [TestCase(0x11, 0x10, false)]
+  public void OperatorLessThanOrEqualsTo(int address, int addressOther, bool expectedValue)
+    => Assert.AreEqual(new I2CAddress(address) <= new I2CAddress(addressOther), expectedValue);
 
   [TestCase(0x10, 0x10, 0)]
   [TestCase(0x10, 0x11, -1)]

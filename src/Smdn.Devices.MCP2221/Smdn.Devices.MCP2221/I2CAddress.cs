@@ -89,6 +89,10 @@ public readonly struct I2CAddress :
   public static bool operator !=(I2CAddress x, I2CAddress y) => !x.Equals(y);
 
   public int CompareTo(I2CAddress other) => Comparer<byte>.Default.Compare(this.address, other.address);
+  public static bool operator <(I2CAddress left, I2CAddress right) => left.address < right.address;
+  public static bool operator <=(I2CAddress left, I2CAddress right) => left.address <= right.address;
+  public static bool operator >(I2CAddress left, I2CAddress right) => left.address > right.address;
+  public static bool operator >=(I2CAddress left, I2CAddress right) => left.address >= right.address;
 
   public static explicit operator byte(I2CAddress address) => address.address;
   public static explicit operator int(I2CAddress address) => address.address;

@@ -20,7 +20,7 @@ namespace Smdn.Devices.MCP2221;
 partial class MCP2221 {
   partial class I2CFunctionality {
 #pragma warning restore IDE0040
-    public async ValueTask<(IReadOnlyI2CAddressSet writeAddressSet, IReadOnlyI2CAddressSet readAddressSet)> ScanBusAsync(
+    public async ValueTask<(IReadOnlyI2CAddressSet WriteAddressSet, IReadOnlyI2CAddressSet ReadAddressSet)> ScanBusAsync(
       I2CAddress addressRangeMin = default,
       I2CAddress addressRangeMax = default,
       IProgress<I2CScanBusProgress> progress = null,
@@ -65,7 +65,7 @@ partial class MCP2221 {
       return (writeAddressSet, readAddressSet);
     }
 
-    public (IReadOnlyI2CAddressSet writeAddressSet, IReadOnlyI2CAddressSet readAddressSet) ScanBus(
+    public (IReadOnlyI2CAddressSet WriteAddressSet, IReadOnlyI2CAddressSet ReadAddressSet) ScanBus(
       I2CAddress addressRangeMin = default,
       I2CAddress addressRangeMax = default,
       IProgress<I2CScanBusProgress> progress = null,

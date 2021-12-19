@@ -34,7 +34,9 @@ partial class MCP2221 {
 
     private static class CancelTransferCommand {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Exception exceptionCauseOfCancellation) args)
+#pragma warning restore IDE0060
       {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
         comm[0] = 0x10; // Status/Set Parameters
@@ -371,9 +373,7 @@ partial class MCP2221 {
       byte value,
       CancellationToken cancellationToken = default
     )
-    {
-      Write(address, stackalloc byte[1] { value }, cancellationToken);
-    }
+      => Write(address, stackalloc byte[1] { value }, cancellationToken);
 
     public async ValueTask<int> ReadByteAsync(
       I2CAddress address,

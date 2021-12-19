@@ -34,9 +34,7 @@ public class MCP2221I2cDevice : I2cDevice {
   }
 
   public override void Read(Span<byte> buffer)
-  {
-    bus.Read(address, buffer);
-  }
+    => bus.Read(address, buffer);
 
   public unsafe override void WriteByte(byte value)
   {
@@ -46,9 +44,7 @@ public class MCP2221I2cDevice : I2cDevice {
   }
 
   public override void Write(ReadOnlySpan<byte> buffer)
-  {
-    bus.Write(address, buffer);
-  }
+    => bus.Write(address, buffer);
 
   public override void WriteRead(ReadOnlySpan<byte> writeBuffer, Span<byte> readBuffer)
   {

@@ -54,7 +54,7 @@ partial class MCP2221 {
         operationState = OperationState.Initial;
 
       WRITE_INIT:
-        logger?.LogDebug(I2CFunctionality.eventIdI2CCommand, "WRITE_INIT");
+        logger?.LogDebug(eventIdI2CCommand, "WRITE_INIT");
 
         yield return (
           StatusConstructCommand,
@@ -65,7 +65,7 @@ partial class MCP2221 {
           goto WRITE_INIT;
 
       WRITE_DO:
-        logger?.LogDebug(I2CFunctionality.eventIdI2CCommand, "WRITE_DO");
+        logger?.LogDebug(eventIdI2CCommand, "WRITE_DO");
 
         yield return (
           WriteConstructCommand,
@@ -73,7 +73,7 @@ partial class MCP2221 {
         );
 
       WRITE_STATUS:
-        logger?.LogDebug(I2CFunctionality.eventIdI2CCommand, "WRITE_STATUS");
+        logger?.LogDebug(eventIdI2CCommand, "WRITE_STATUS");
 
         yield return (
           StatusConstructCommand,
@@ -98,7 +98,7 @@ partial class MCP2221 {
         ReadLength = -1;
 
       READ_INIT:
-        logger?.LogDebug(I2CFunctionality.eventIdI2CCommand, "READ_INIT");
+        logger?.LogDebug(eventIdI2CCommand, "READ_INIT");
 
         yield return (
           StatusConstructCommand,
@@ -109,7 +109,7 @@ partial class MCP2221 {
           goto READ_INIT;
 
       READ_DO:
-        logger?.LogDebug(I2CFunctionality.eventIdI2CCommand, "READ_DO");
+        logger?.LogDebug(eventIdI2CCommand, "READ_DO");
 
         yield return (
           ReadConstructCommand,

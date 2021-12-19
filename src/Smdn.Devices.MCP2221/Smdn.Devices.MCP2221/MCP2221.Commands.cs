@@ -216,7 +216,9 @@ partial class MCP2221 {
   }
 
   private static class RetrieveFlashStringCommand {
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
     public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, ReadFlashDataSubCode subCode)
+#pragma warning restore IDE0060
     {
       // [MCP2221A] 3.1.2 READ FLASH DATA
       comm[0] = 0xB0; // Read Flash Data

@@ -92,7 +92,9 @@ partial class MCP2221 {
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, GPFunctionality gp)
         => throw new NotImplementedException();
 
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
       public static PinMode ParseResponse(ReadOnlySpan<byte> resp, GPFunctionality gp)
+#pragma warning restore IDE0060
         => throw new NotImplementedException();
     }
 
@@ -126,7 +128,10 @@ partial class MCP2221 {
         => throw new NotImplementedException();
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
       public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, PinMode newDirection) args)
+#pragma warning restore IDE0060
+
         => throw new NotImplementedException();
     }
 
@@ -157,7 +162,9 @@ partial class MCP2221 {
       );
 
     private static class GetValueCommand {
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, GPFunctionality gp)
+#pragma warning restore IDE0060
       {
         // [MCP2221A] 3.1.12 GET GPIO VALUES
         comm[0] = 0x51; // Get GPIO Values
@@ -204,7 +211,9 @@ partial class MCP2221 {
 
     private static class SetValueCommand {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (GPFunctionality gp, PinValue newValue) args)
+#pragma warning restore IDE0060
       {
         // [MCP2221A] 3.1.11 SET GPIO OUTPUT VALUES
         comm[0] = 0x50; // Set GPIO Output Values

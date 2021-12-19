@@ -262,7 +262,9 @@ partial class MCP2221 {
     }
 
     private static class GetGPSettingsCommand {
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, Memory<byte> gpSettings)
+#pragma warning restore IDE0060
       {
         // [MCP2221A] 3.1.14 GET SRAM SETTINGS
         comm[0] = 0x61; // Get SRAM Settings

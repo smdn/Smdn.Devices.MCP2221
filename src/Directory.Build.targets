@@ -68,4 +68,21 @@ SPDX-License-Identifier: MIT
   <Target Name="WarnNupkgConfiguration" AfterTargets="Pack" Condition=" '$(Configuration)' != 'Release' ">
     <Warning Text="generated nupkg with configuration '$(Configuration)'" />
   </Target>
+
+  <Import Project="$(NuGetPackageRoot)\smdn.reflection.reversegenerating.listapi.msbuild.tasks\1.0.2\tasks\net6.0\GenerateApiList.task" Condition=" '$(Configuration)' == 'Release' " />
+
+  <Target Name="GenerateAPIListOfPackage" AfterTargets="Pack" Condition=" '$(Configuration)' == 'Release' " Label="API list generator">
+    <ItemGroup>
+      <GenerateApiListTargets Include="%(NuGetPackInput.Identity)" Condition="
+        '%(NuGetPackInput.MSBuildSourceProjectFile)' == '$(MSBuildProjectFullPath)' and
+        '' != '%(NuGetPackInput.TargetFramework)' and
+        $([System.String]::new('%(NuGetPackInput.TargetPath)').EndsWith('.dll'))
+      ">
+        <OutputFilePath>$(APIListOutputBaseDirectory)\$(AssemblyName)\$(AssemblyName)-%(NuGetPackInput.TargetFramework).apilist.cs</OutputFilePath>
+        <LoadIntoReflectionOnlyContext>$(APIListLoadIntoReflectionOnlyContext)</LoadIntoReflectionOnlyContext>
+      </GenerateApiListTargets>
+    </ItemGroup>
+
+    <GenerateApiList Assemblies="@(GenerateApiListTargets)" />
+  </Target>
 </Project>

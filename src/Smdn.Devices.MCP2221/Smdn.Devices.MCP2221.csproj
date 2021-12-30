@@ -29,6 +29,10 @@ SPDX-License-Identifier: MIT
     <DefineConstants>$(DefineConstants);USBHIDDRIVER_$(UsbHidDriver.ToUpper())</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
   <PropertyGroup Label="metadata">
     <Description>
 <![CDATA[Smdn.Devices.MCP2221 is a .NET library for controlling MCP2221/MCP2221A USB2.0 to I2C/UART Protocol Converter with GPIO.

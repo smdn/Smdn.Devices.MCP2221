@@ -1,7 +1,7 @@
-// Smdn.Devices.MCP2221.dll (Smdn.Devices.MCP2221-0.9.1 (netstandard2.1))
+// Smdn.Devices.MCP2221.dll (Smdn.Devices.MCP2221-0.9.2 (netstandard2.1))
 //   Name: Smdn.Devices.MCP2221
-//   AssemblyVersion: 0.9.1.0
-//   InformationalVersion: 0.9.1 (netstandard2.1)
+//   AssemblyVersion: 0.9.2.0
+//   InformationalVersion: 0.9.2 (netstandard2.1)
 //   TargetFramework: .NETStandard,Version=v2.1
 //   Configuration: Release
 
@@ -136,9 +136,9 @@ namespace Smdn.Devices.MCP2221 {
       public int ReadByte(I2CAddress address, CancellationToken cancellationToken = default) {}
       [AsyncStateMachine]
       public ValueTask<int> ReadByteAsync(I2CAddress address, CancellationToken cancellationToken = default) {}
-      public (IReadOnlyCollection<I2CAddress> writeAddressSet, IReadOnlyCollection<I2CAddress> readAddressSet) ScanBus(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
+      public (IReadOnlyCollection<I2CAddress> WriteAddressSet, IReadOnlyCollection<I2CAddress> ReadAddressSet) ScanBus(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
       [AsyncStateMachine]
-      public ValueTask<(IReadOnlyCollection<I2CAddress> writeAddressSet, IReadOnlyCollection<I2CAddress> readAddressSet)> ScanBusAsync(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
+      public ValueTask<(IReadOnlyCollection<I2CAddress> WriteAddressSet, IReadOnlyCollection<I2CAddress> ReadAddressSet)> ScanBusAsync(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
       public void Write(I2CAddress address, ReadOnlySpan<byte> buffer, CancellationToken cancellationToken = default) {}
       public void Write(I2CAddress address, byte[] buffer, int offset, int count, CancellationToken cancellationToken = default) {}
       [AsyncStateMachine]
@@ -213,8 +213,12 @@ namespace Smdn.Devices.MCP2221 {
     public static bool operator == (I2CAddress x, I2CAddress y) {}
     public static explicit operator byte(I2CAddress address) {}
     public static explicit operator int(I2CAddress address) {}
+    public static bool operator > (I2CAddress left, I2CAddress right) {}
+    public static bool operator >= (I2CAddress left, I2CAddress right) {}
     public static implicit operator I2CAddress(byte address) {}
     public static bool operator != (I2CAddress x, I2CAddress y) {}
+    public static bool operator < (I2CAddress left, I2CAddress right) {}
+    public static bool operator <= (I2CAddress left, I2CAddress right) {}
   }
 
   public readonly struct I2CScanBusProgress {

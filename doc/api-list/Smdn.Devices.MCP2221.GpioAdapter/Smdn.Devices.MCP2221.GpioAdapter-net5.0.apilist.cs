@@ -1,7 +1,7 @@
-// Smdn.Devices.MCP2221.GpioAdapter.dll (Smdn.Devices.MCP2221.GpioAdapter)
+// Smdn.Devices.MCP2221.GpioAdapter.dll (Smdn.Devices.MCP2221.GpioAdapter-0.9.1 (net5.0))
 //   Name: Smdn.Devices.MCP2221.GpioAdapter
-//   AssemblyVersion: 0.9.0.0
-//   InformationalVersion: 0.9 (net5.0)
+//   AssemblyVersion: 0.9.1.0
+//   InformationalVersion: 0.9.1 (net5.0)
 //   TargetFramework: .NETCoreApp,Version=v5.0
 //   Configuration: Release
 

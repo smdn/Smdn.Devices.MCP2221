@@ -1,12 +1,13 @@
-// Smdn.Devices.MCP2221.dll (Smdn.Devices.MCP2221)
+// Smdn.Devices.MCP2221.dll (Smdn.Devices.MCP2221-0.9.1 (net5.0))
 //   Name: Smdn.Devices.MCP2221
-//   AssemblyVersion: 0.9.0.0
-//   InformationalVersion: 0.9 (net5.0)
+//   AssemblyVersion: 0.9.1.0
+//   InformationalVersion: 0.9.1 (net5.0)
 //   TargetFramework: .NETCoreApp,Version=v5.0
 //   Configuration: Release
 
 using System;
 using System.Collections.Generic;
+using System.Device.Gpio;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,16 +16,6 @@ using Smdn.Devices.MCP2221;
 using Smdn.Devices.UsbHid;
 
 namespace Smdn.Devices.MCP2221 {
-  public enum GPIODirection : byte {
-    Input = 1,
-    Output = 0,
-  }
-
-  public enum GPIOLevel : byte {
-    High = 1,
-    Low = 0,
-  }
-
   public enum I2CBusSpeed : int {
     Default = 0,
     FastMode = 2,
@@ -68,10 +59,13 @@ namespace Smdn.Devices.MCP2221 {
     public I2CReadException(string message, Exception innerException) {}
   }
 
+  [Nullable(byte.MinValue)]
+  [NullableContext(1)]
   public class MCP2221 :
     IAsyncDisposable,
     IDisposable
   {
+    [NullableContext(byte.MinValue)]
     public sealed class GP0Functionality : GPFunctionality {
       public void ConfigureAsLEDURX(CancellationToken cancellationToken = default) {}
       public ValueTask ConfigureAsLEDURXAsync(CancellationToken cancellationToken = default) {}
@@ -79,6 +73,7 @@ namespace Smdn.Devices.MCP2221 {
       public ValueTask ConfigureAsSSPNDAsync(CancellationToken cancellationToken = default) {}
     }
 
+    [NullableContext(byte.MinValue)]
     public sealed class GP1Functionality : GPFunctionality {
       public void ConfigureAsADC(CancellationToken cancellationToken = default) {}
       public ValueTask ConfigureAsADCAsync(CancellationToken cancellationToken = default) {}
@@ -90,6 +85,7 @@ namespace Smdn.Devices.MCP2221 {
       public ValueTask ConfigureAsLEDUTXAsync(CancellationToken cancellationToken = default) {}
     }
 
+    [NullableContext(byte.MinValue)]
     public sealed class GP2Functionality : GPFunctionality {
       public void ConfigureAsADC(CancellationToken cancellationToken = default) {}
       public ValueTask ConfigureAsADCAsync(CancellationToken cancellationToken = default) {}
@@ -99,6 +95,7 @@ namespace Smdn.Devices.MCP2221 {
       public ValueTask ConfigureAsUSBCFGAsync(CancellationToken cancellationToken = default) {}
     }
 
+    [NullableContext(byte.MinValue)]
     public sealed class GP3Functionality : GPFunctionality {
       public void ConfigureAsADC(CancellationToken cancellationToken = default) {}
       public ValueTask ConfigureAsADCAsync(CancellationToken cancellationToken = default) {}
@@ -108,22 +105,24 @@ namespace Smdn.Devices.MCP2221 {
       public ValueTask ConfigureAsLEDI2CAsync(CancellationToken cancellationToken = default) {}
     }
 
+    [NullableContext(byte.MinValue)]
     public abstract class GPFunctionality {
       public string PinDesignation { get; }
       public string PinName { get; }
 
-      public void ConfigureAsGPIO(GPIODirection initialDirection = GPIODirection.Output, GPIOValue initialValue = default, CancellationToken cancellationToken = default) {}
-      public ValueTask ConfigureAsGPIOAsync(GPIODirection initialDirection = GPIODirection.Output, GPIOValue initialValue = default, CancellationToken cancellationToken = default) {}
-      public GPIODirection GetDirection(CancellationToken cancellationToken = default) {}
-      public ValueTask<GPIODirection> GetDirectionAsync(CancellationToken cancellationToken = default) {}
-      public GPIOValue GetValue(CancellationToken cancellationToken = default) {}
-      public ValueTask<GPIOValue> GetValueAsync(CancellationToken cancellationToken = default) {}
-      public void SetDirection(GPIODirection newDirection, CancellationToken cancellationToken = default) {}
-      public ValueTask SetDirectionAsync(GPIODirection newDirection, CancellationToken cancellationToken = default) {}
-      public void SetValue(GPIOValue newValue, CancellationToken cancellationToken = default) {}
-      public ValueTask SetValueAsync(GPIOValue newValue, CancellationToken cancellationToken = default) {}
+      public void ConfigureAsGPIO(PinMode initialDirection = PinMode.Output, PinValue initialValue = default, CancellationToken cancellationToken = default) {}
+      public ValueTask ConfigureAsGPIOAsync(PinMode initialDirection = PinMode.Output, PinValue initialValue = default, CancellationToken cancellationToken = default) {}
+      public PinMode GetDirection(CancellationToken cancellationToken = default) {}
+      public ValueTask<PinMode> GetDirectionAsync(CancellationToken cancellationToken = default) {}
+      public PinValue GetValue(CancellationToken cancellationToken = default) {}
+      public ValueTask<PinValue> GetValueAsync(CancellationToken cancellationToken = default) {}
+      public void SetDirection(PinMode newDirection, CancellationToken cancellationToken = default) {}
+      public ValueTask SetDirectionAsync(PinMode newDirection, CancellationToken cancellationToken = default) {}
+      public void SetValue(PinValue newValue, CancellationToken cancellationToken = default) {}
+      public ValueTask SetValueAsync(PinValue newValue, CancellationToken cancellationToken = default) {}
     }
 
+    [NullableContext(byte.MinValue)]
     public sealed class I2CFunctionality {
       public const int MaxBlockLength = 65535;
 
@@ -152,70 +151,43 @@ namespace Smdn.Devices.MCP2221 {
 
     public const int DeviceProductID = 221;
     public const int DeviceVendorID = 1240;
-    [Nullable(1)]
     public const string FirmwareRevisionMCP2221 = "1.1";
-    [Nullable(1)]
     public const string FirmwareRevisionMCP2221A = "1.2";
-    [Nullable(1)]
     public const string HardwareRevisionMCP2221 = "A.6";
-    [Nullable(1)]
     public const string HardwareRevisionMCP2221A = "A.6";
 
-    [Nullable(1)]
     public string ChipFactorySerialNumber { get; }
-    [Nullable(1)]
     public string FirmwareRevision { get; }
+    [Nullable(byte.MinValue)]
     public MCP2221.GP0Functionality GP0 { get; }
+    [Nullable(byte.MinValue)]
     public MCP2221.GP1Functionality GP1 { get; }
+    [Nullable(byte.MinValue)]
     public MCP2221.GP2Functionality GP2 { get; }
+    [Nullable(byte.MinValue)]
     public MCP2221.GP3Functionality GP3 { get; }
+    [Nullable(byte.MinValue)]
     public IReadOnlyList<MCP2221.GPFunctionality> GPs { get; }
-    [Nullable(1)]
     public string HardwareRevision { get; }
-    [Nullable(1)]
     public IUsbHidDevice HidDevice { get; }
+    [Nullable(byte.MinValue)]
     public MCP2221.I2CFunctionality I2C { get; }
+    public string ManufacturerDescriptor { get; }
+    public string ProductDescriptor { get; }
+    public string SerialNumberDescriptor { get; }
 
     public void Dispose() {}
     [AsyncStateMachine]
     public ValueTask DisposeAsync() {}
-    [NullableContext(1)]
     public static MCP2221 Open(Func<IUsbHidDevice> createHidDevice, [Nullable(2)] IServiceProvider serviceProvider = null) {}
-    [NullableContext(1)]
     public static MCP2221 Open([Nullable(2)] IServiceProvider serviceProvider = null) {}
-    [NullableContext(1)]
     public static MCP2221 Open([Nullable] Predicate<IUsbHidDevice> findDevicePredicate, [Nullable(2)] IServiceProvider serviceProvider = null) {}
     [AsyncStateMachine]
-    [NullableContext(1)]
     [return: Nullable] public static ValueTask<MCP2221> OpenAsync(Func<IUsbHidDevice> createHidDevice, [Nullable(2)] IServiceProvider serviceProvider = null) {}
     [NullableContext(2)]
     [return: Nullable] public static ValueTask<MCP2221> OpenAsync(IServiceProvider serviceProvider = null) {}
     [NullableContext(2)]
     [return: Nullable] public static ValueTask<MCP2221> OpenAsync([Nullable] Predicate<IUsbHidDevice> findDevicePredicate, IServiceProvider serviceProvider = null) {}
-  }
-
-  public readonly struct GPIOValue {
-    public static readonly GPIOValue Default; // = "Low"
-    public static readonly GPIOValue High; // = "High"
-    public static readonly GPIOValue Low; // = "Low"
-
-    public GPIOValue(GPIOLevel state) {}
-    public GPIOValue(bool @value) {}
-    public GPIOValue(byte @value) {}
-    public GPIOValue(int @value) {}
-
-    public bool IsHigh { get; }
-    public bool IsLow { get; }
-
-    public override string ToString() {}
-    public static explicit operator GPIOLevel(GPIOValue @value) {}
-    public static explicit operator bool(GPIOValue @value) {}
-    public static explicit operator byte(GPIOValue @value) {}
-    public static explicit operator int(GPIOValue @value) {}
-    public static implicit operator GPIOValue(GPIOLevel @value) {}
-    public static implicit operator GPIOValue(bool @value) {}
-    public static implicit operator GPIOValue(byte @value) {}
-    public static implicit operator GPIOValue(int @value) {}
   }
 
   public readonly struct I2CAddress :

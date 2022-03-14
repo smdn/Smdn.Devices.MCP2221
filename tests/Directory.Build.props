@@ -8,6 +8,14 @@ SPDX-License-Identifier: MIT
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <IsPackable>false</IsPackable>
+
+    <!-- configure code analysis mode -->
+    <!-- ref: https://docs.microsoft.com/ja-jp/dotnet/core/project-sdk/msbuild-props#code-analysis-properties -->
+    <AnalysisMode>None</AnalysisMode>
+    <AnalysisModeInteroperability>Recommended</AnalysisModeInteroperability>
+    <AnalysisModeReliability>Recommended</AnalysisModeReliability>
+    <AnalysisModeSecurity>Recommended</AnalysisModeSecurity>
+    <AnalysisModeUsage>Recommended</AnalysisModeUsage>
   </PropertyGroup>
 
   <ItemGroup>

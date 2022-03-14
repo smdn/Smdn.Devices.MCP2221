@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 
-#pragma warning disable CA1848
+#pragma warning disable CA1848, CA2254
 
 using System;
 using System.Buffers;
@@ -76,7 +76,7 @@ partial class MCP2221 {
         arg
       );
 
-      logger?.LogTrace(eventIdCommand, "> {0}", ConvertByteSequenceToString(commandReportMemory.Span.Slice(1, CommandLength)));
+      logger?.LogTrace(eventIdCommand, "> " + ConvertByteSequenceToString(commandReportMemory.Span.Slice(1, CommandLength)));
 
       try {
         await HidStream.WriteAsync(
@@ -96,7 +96,7 @@ partial class MCP2221 {
         throw new CommandException("reading response report failed", ex);
       }
 
-      logger?.LogTrace(eventIdResponse, "< {0}", ConvertByteSequenceToString(responseReportMemory.Span.Slice(1, ResponseLength)));
+      logger?.LogTrace(eventIdResponse, "< " + ConvertByteSequenceToString(responseReportMemory.Span.Slice(1, ResponseLength)));
 
       if (commandReportMemory.Span[0] != responseReportMemory.Span[0])
         throw new CommandException($"unexpected command echo (command code: {commandReportMemory.Span[0]:X2}, command code echo: {responseReportMemory.Span[0]:X2})");
@@ -143,7 +143,7 @@ partial class MCP2221 {
       arg
     );
 
-    logger?.LogTrace(eventIdCommand, "> {0}", ConvertByteSequenceToString(commandReport.Slice(1)));
+    logger?.LogTrace(eventIdCommand, "> " + ConvertByteSequenceToString(commandReport.Slice(1)));
 
     try {
       HidStream.Write(commandReport.Slice(HidStream.RequiresPacketOnly ? 1 : 0));
@@ -159,7 +159,7 @@ partial class MCP2221 {
       throw new CommandException("reading response report failed", ex);
     }
 
-    logger?.LogTrace(eventIdResponse, "< {0}", ConvertByteSequenceToString(responseReport.Slice(1)));
+    logger?.LogTrace(eventIdResponse, "< " + ConvertByteSequenceToString(responseReport.Slice(1)));
 
     if (commandReport[0] != responseReport[0])
       throw new CommandException($"unexpected command echo (command code: {commandReport[0]:X2}, command code echo: {responseReport[0]:X2})");

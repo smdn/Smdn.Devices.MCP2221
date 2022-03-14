@@ -4,48 +4,21 @@ SPDX-License-Identifier: MIT
 -->
 <Project>
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
-    <Deterministic>true</Deterministic>
-    <EnablePackageValidation>true</EnablePackageValidation>
-    <AssemblyCLSCompliant>true</AssemblyCLSCompliant>
-  </PropertyGroup>
-
-  <ItemGroup Label="common resources">
-    <None Include="$(MSBuildThisFileDirectory)package-icon.png" Pack="true" Visible="false" PackagePath="\$(MSBuildProjectName).png"/>
-  </ItemGroup>
-
-  <ItemGroup Label="code analysis">
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.354">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json" Link="stylecop.json" />
-  </ItemGroup>
-
-  <PropertyGroup Label="code analysis">
-    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <ItemGroup Label="API list generator">
-    <PackageReference Include="Smdn.Reflection.ReverseGenerating.ListApi.MSBuild.Tasks" Version="1.0.2" Condition=" '$(Configuration)' == 'Release' ">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <PropertyGroup Label="API list generator">
+    <SmdnBuildAssetRootDirectory>$(MSBuildThisFileDirectory)..\</SmdnBuildAssetRootDirectory>
     <APIListOutputBaseDirectory>$(MSBuildThisFileDirectory)..\doc\api-list\</APIListOutputBaseDirectory>
   </PropertyGroup>
 
-  <PropertyGroup Label="metadata">
-    <Authors>smdn</Authors>
-    <CopyrightYear>2021</CopyrightYear>
+  <ImportGroup Label="project assets">
+    <Import Project="$(MSBuildThisFileDirectory)ProjectAssets.props" />
+    <Import Project="$(SmdnProjectAssets_PropsImports)" />
+  </ImportGroup>
 
-    <!-- NuGet -->
-    <PackageIcon>$(MSBuildProjectName).png</PackageIcon>
+  <PropertyGroup Label="package properties">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://smdn.jp/electronics/libs/Smdn.Devices.MCP2221/</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Label="repository properties" Condition="'$(GITHUB_ACTIONS)' != 'true'">
     <RepositoryUrl>https://github.com/smdn/Smdn.Devices.MCP2221</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>

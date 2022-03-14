@@ -4,9 +4,10 @@ SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
     <VersionPrefix>0.9.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">

@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: "2022 smdn <smdn@smdn.jp>"
+
+# ref: https://docs.github.com/ja/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-a-custom-configuration-file
+name: "CodeQL configurations"

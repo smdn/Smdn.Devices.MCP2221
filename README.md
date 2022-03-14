@@ -1,5 +1,7 @@
 [![GitHub license](https://img.shields.io/github/license/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/blob/main/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/issues)
+[![tests/main](https://img.shields.io/github/workflow/status/smdn/Smdn.Devices.MCP2221/Run%20tests/main?label=tests%2Fmain)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/test.yml)
+[![CodeQL](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml)
 [![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/)
 [![NuGet Smdn.Devices.MCP2221.GpioAdapter](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.GpioAdapter.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221.GpioAdapter/)
 

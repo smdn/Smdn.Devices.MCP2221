@@ -16,7 +16,19 @@ SPDX-License-Identifier: MIT
     <AnalysisModeReliability>Recommended</AnalysisModeReliability>
     <AnalysisModeSecurity>Recommended</AnalysisModeSecurity>
     <AnalysisModeUsage>Recommended</AnalysisModeUsage>
+
+    <!-- determines the test target project name from the test project name (Smdn.Fundamentals.*.Tests -> Smdn.Fundamentals.*) -->
+    <TestTargetProjectName
+      Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"
+    >$(MSBuildProjectFile.Replace('.Tests.csproj', ''))</TestTargetProjectName>
   </PropertyGroup>
+
+  <ItemGroup Label="add test target project reference">
+    <ProjectReference
+      Condition="'$(TestTargetProjectName)' != ''"
+      Include="$(MSBuildThisFileDirectory)..\src\$(TestTargetProjectName)\$(TestTargetProjectName).csproj"
+    />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.13.2" />

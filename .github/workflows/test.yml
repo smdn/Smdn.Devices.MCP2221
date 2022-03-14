@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: "2022 smdn <smdn@smdn.jp>"
+
+name: Run tests
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+    - 'src/**/*.cs'
+    - 'src/**/*.csproj'
+    - 'tests/**/*.cs'
+    - 'tests/**/*.csproj'
+
+  pull_request:
+    branches: [ main ]
+    paths:
+    - 'src/**/*.cs'
+    - 'src/**/*.csproj'
+    - 'tests/**/*.cs'
+    - 'tests/**/*.csproj'
+
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "The project name to run the test."
+        required: false
+        type: string
+      os:
+        description: "The OS label which run the test on. (ex: ubuntu-latest, windows-latest, macos-latest)"
+        required: false
+        type: string
+
+jobs:
+  run-test:
+    uses: smdn/Smdn.Fundamentals/.github/workflows/test.yml@workflows/test-v1.0.2
+    with:
+      project:            ${{ github.event.inputs.project }}
+      os:                 ${{ github.event.inputs.os }}
+      dotnet_sdk_version: '6.0.200'
+    secrets:
+      token_repo: ${{ secrets.GITHUB_TOKEN }}

@@ -3,5 +3,9 @@
 *.sln           text eol=crlf
 *.csproj        text eol=crlf
 *.vbproj        text eol=crlf
+*.proj          text eol=crlf
+*.targets       text eol=crlf
+*.props         text eol=crlf
+*.ruleset       text eol=crlf
 *.resx          text eol=crlf
-
+*.runsettings   text eol=crlf

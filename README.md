@@ -2,10 +2,10 @@
 [![GitHub issues](https://img.shields.io/github/issues/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/issues)
 [![tests/main](https://img.shields.io/github/workflow/status/smdn/Smdn.Devices.MCP2221/Run%20tests/main?label=tests%2Fmain)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/test.yml)
 [![CodeQL](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml)
-[![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/)
-[![NuGet Smdn.Devices.MCP2221.GpioAdapter](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.GpioAdapter.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221.GpioAdapter/)
 
 # Smdn.Devices.MCP2221
+[![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/)
+
 [Smdn.Devices.MCP2221](src/Smdn.Devices.MCP2221/) is a .NET library for controlling [MCP2221](https://www.microchip.com/wwwproducts/en/MCP2221)/[MCP2221A USB2.0 to I<sup>2</sup>C/UART Protocol Converter with GPIO](https://www.microchip.com/wwwproducts/en/MCP2221A). This library enables you to control MCP2221/MCP2221A's GPIO, I<sup>2</sup>C interface, and other functionalities via USB-HID interface.
 
 With this library, you can control I<sup>2</sup>C devices and others devices on any PCs with USB ports. It is not needed the board like the Raspberry Pi or Arduino. Also it is not required to install native device drivers on your system.
@@ -13,6 +13,8 @@ With this library, you can control I<sup>2</sup>C devices and others devices on 
 See [Smdn.Devices.MCP2221 examples](examples/Smdn.Devices.MCP2221/).
 
 ## Smdn.Devices.MCP2221.GpioAdapter
+[![NuGet Smdn.Devices.MCP2221.GpioAdapter](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.GpioAdapter.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221.GpioAdapter/)
+
 [Smdn.Devices.MCP2221.GpioAdapter](src/Smdn.Devices.MCP2221.GpioAdapter/) provides the MCP2221/MCP2221A adapter interface for [System.Device.Gpio](https://www.nuget.org/packages/System.Device.Gpio/). This library enables you to use the many device bindings provided by [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/).
 
 See [Smdn.Devices.MCP2221.GpioAdapter examples](examples/Smdn.Devices.MCP2221.GpioAdapter/).

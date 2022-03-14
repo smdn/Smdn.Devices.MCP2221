@@ -13,6 +13,12 @@ SPDX-License-Identifier: MIT
     <Import Project="$(SmdnProjectAssets_PropsImports)" />
   </ImportGroup>
 
+  <ItemGroup Label="code analysis">
+    <AdditionalFilesToOverride Include="*" Link="stylecop.json" />
+    <AdditionalFiles Remove="@(AdditionalFilesToOverride)" MatchOnMetadata="Link" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
   <PropertyGroup Label="package properties">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://smdn.jp/electronics/libs/Smdn.Devices.MCP2221/</PackageProjectUrl>

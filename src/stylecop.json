@@ -1,0 +1,18 @@
+{
+  "settings": {
+    "indentation": {
+      "indentationSize": 2,
+      "tabSize": 2,
+      "useTabs": false
+    },
+    "maintainabilityRules": {
+      "topLevelTypes": ["class", "struct", "interface", "delegate", "enum"]
+    },
+    "namingRules": {
+      "allowedHungarianPrefixes": [ "gp" ]
+    },
+    "documentationRules": {
+      "xmlHeader": false
+    }
+  }
+}

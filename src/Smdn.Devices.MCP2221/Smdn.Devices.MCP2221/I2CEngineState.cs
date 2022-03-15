@@ -7,11 +7,7 @@ using System.Linq;
 
 namespace Smdn.Devices.MCP2221;
 
-internal
-#if NET5_0_OR_GREATER
-readonly
-#endif
-struct I2CEngineState {
+internal readonly struct I2CEngineState {
   public enum TransferStatus : byte {
     NoSpecialOperation = 0x00, // No special operation
     MarkedForCancellation = 0x10, // The current I2C/SMBus transfer was marked for cancellation
@@ -20,104 +16,18 @@ struct I2CEngineState {
 
   public bool IsInitialState => StateMachineStateValue == 0 && Address == 0 && CommunicationSpeedDividerValue == 0;
 
-  public TransferStatus BusStatus {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
+  public TransferStatus BusStatus { get; init; }
+  public byte StateMachineStateValue { get; init; }
+  public int RequestedTransferLength { get; init; }
+  public int AlreadyTransferredLength { get; init; }
+  public int DataBufferCounter { get; init; }
 
-  public byte StateMachineStateValue {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public int RequestedTransferLength {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public int AlreadyTransferredLength {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public int DataBufferCounter {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public ushort Address {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public int ReadPendingValue {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public byte CommunicationSpeedDividerValue {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public byte TimeoutValue {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public PinValue LineValueSCL {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
-
-  public PinValue LineValueSDA {
-    get;
-#if NET5_0_OR_GREATER
-    init;
-#else
-    private set;
-#endif
-  }
+  public ushort Address { get; init; }
+  public int ReadPendingValue { get; init; }
+  public byte CommunicationSpeedDividerValue { get; init; }
+  public byte TimeoutValue { get; init; }
+  public PinValue LineValueSCL { get; init; }
+  public PinValue LineValueSDA { get; init; }
 
   public static I2CEngineState Parse(ReadOnlySpan<byte> resp)
     => new() {

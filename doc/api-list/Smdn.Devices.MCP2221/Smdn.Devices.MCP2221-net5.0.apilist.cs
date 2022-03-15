@@ -1,7 +1,7 @@
-// Smdn.Devices.MCP2221.dll (Smdn.Devices.MCP2221-0.9.2 (net5.0))
+// Smdn.Devices.MCP2221.dll (Smdn.Devices.MCP2221-0.9.3)
 //   Name: Smdn.Devices.MCP2221
-//   AssemblyVersion: 0.9.2.0
-//   InformationalVersion: 0.9.2 (net5.0)
+//   AssemblyVersion: 0.9.3.0
+//   InformationalVersion: 0.9.3+3968a13d13f49f54dd615bc0a80ddf4bd9d3ef84
 //   TargetFramework: .NETCoreApp,Version=v5.0
 //   Configuration: Release
 

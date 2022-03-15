@@ -49,7 +49,7 @@ class PseudoUsbHidDevice : IUsbHidDevice {
     stream = new PseudoUsbHidStream(createWriteStream?.Invoke(), createReadStream?.Invoke());
 
     return
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
     ValueTask.FromResult<IUsbHidStream>
 #else
     new ValueTask<IUsbHidStream>

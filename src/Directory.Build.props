@@ -19,6 +19,10 @@ SPDX-License-Identifier: MIT
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Smdn.MSBuild.DefineConstants.NETSdkApi" Version="[1.1.0]" PrivateAssets="all" IncludeAssets="build" />
+  </ItemGroup>
+
   <PropertyGroup Label="package properties">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://smdn.jp/electronics/libs/Smdn.Devices.MCP2221/</PackageProjectUrl>

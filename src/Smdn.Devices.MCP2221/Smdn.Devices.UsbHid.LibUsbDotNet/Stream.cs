@@ -55,7 +55,7 @@ internal class Stream : IUsbHidStream {
     _writer = null;
     _reader = null;
 
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_COMPLETEDTASK
     return ValueTask.CompletedTask;
 #else
     return new ValueTask(Task.CompletedTask);
@@ -98,7 +98,7 @@ internal class Stream : IUsbHidStream {
       out var transferLength
     );
 
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_COMPLETEDTASK
     return ValueTask.CompletedTask;
 #else
     return default;
@@ -136,7 +136,7 @@ internal class Stream : IUsbHidStream {
     );
 
     return
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
     ValueTask.FromResult<int>
 #else
     new ValueTask<int>

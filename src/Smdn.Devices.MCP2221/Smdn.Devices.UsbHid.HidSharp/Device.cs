@@ -125,7 +125,7 @@ internal class Device : IUsbHidDevice {
   {
     hidDevice = null;
 
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_COMPLETEDTASK
     return ValueTask.CompletedTask;
 #else
     return new ValueTask(Task.CompletedTask);

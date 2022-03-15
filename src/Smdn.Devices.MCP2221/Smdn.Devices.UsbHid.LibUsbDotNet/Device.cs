@@ -165,7 +165,7 @@ internal class Device : IUsbHidDevice {
   public ValueTask<IUsbHidStream> OpenStreamAsync()
   {
     return
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
     ValueTask.FromResult<IUsbHidStream>
 #else
     new ValueTask<IUsbHidStream>
@@ -187,7 +187,7 @@ internal class Device : IUsbHidDevice {
     _usbDevice?.Dispose();
     _usbDevice = null;
 
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
     return ValueTask.CompletedTask;
 #else
     return new ValueTask(Task.CompletedTask);

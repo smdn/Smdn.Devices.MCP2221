@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using IReadOnlyI2CAddressSet =
-#if NET5_0_OR_GREATER
+#if SYSTEM_COLLECTIONS_GENERIC_IREADONLYSET
 System.Collections.Generic.IReadOnlySet
 #else
 System.Collections.Generic.IReadOnlyCollection

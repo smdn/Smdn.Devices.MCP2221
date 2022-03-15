@@ -75,7 +75,7 @@ internal class Stream : IUsbHidStream {
       ArrayPool<byte>.Shared.Return(buf);
     }
 
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_COMPLETEDTASK
     return ValueTask.CompletedTask;
 #else
     return default;
@@ -118,7 +118,7 @@ internal class Stream : IUsbHidStream {
 
     try {
 #pragma warning disable SA1114
-#if NET5_0_OR_GREATER
+#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
       return ValueTask.FromResult<int>(
 #else
       return new ValueTask<int>(

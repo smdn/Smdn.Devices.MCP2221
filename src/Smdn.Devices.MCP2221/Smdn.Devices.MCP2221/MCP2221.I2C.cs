@@ -54,7 +54,7 @@ partial class MCP2221 {
 
         var state = I2CEngineState.Parse(resp);
         var isBusStatusDefined =
-#if NET5_0_OR_GREATER
+#if SYSTEM_ENUM_ISDEFINED_OF_TENUM
           Enum.IsDefined<I2CEngineState.TransferStatus>(state.BusStatus);
 #else
           Enum.IsDefined(typeof(I2CEngineState.TransferStatus), state.BusStatus);

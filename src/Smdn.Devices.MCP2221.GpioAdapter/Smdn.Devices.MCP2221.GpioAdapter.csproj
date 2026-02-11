@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
@@ -8,11 +8,12 @@ SPDX-License-Identifier: MIT
     <VersionPrefix>0.9.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <!-- <PackageValidationBaselineVersion>0.9.0</PackageValidationBaselineVersion> -->
+    <Nullable>disable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  <PropertyGroup Label="API list configurations">
     <APIListLoadIntoReflectionOnlyContext>true</APIListLoadIntoReflectionOnlyContext>
   </PropertyGroup>
 
@@ -23,6 +24,7 @@ This library enables you to use the many device bindings provided by Iot.Device.
 ]]>
     </Description>
     <PackageTags>MCP2221,MCP2221A,USB,I2C,System.Device.Gpio,Iot.Device.Bindings</PackageTags>
+    <CopyrightYear>2021</CopyrightYear>
   </PropertyGroup>
 
   <ItemGroup>

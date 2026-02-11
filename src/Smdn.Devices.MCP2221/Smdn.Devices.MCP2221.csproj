@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
@@ -28,11 +28,9 @@ SPDX-License-Identifier: MIT
     <VersionSuffix></VersionSuffix>
     <!-- <PackageValidationBaselineVersion>0.9.0</PackageValidationBaselineVersion> -->
     <DefineConstants>$(DefineConstants);USBHIDDRIVER_$(UsbHidDriver.ToUpper())</DefineConstants>
+    <Nullable>disable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
   <PropertyGroup Label="metadata">
@@ -42,6 +40,7 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
 ]]>
     </Description>
     <PackageTags>USB,USB-HID,MCP2221,MCP2221A,I2C,GPIO</PackageTags>
+    <CopyrightYear>2021</CopyrightYear>
   </PropertyGroup>
 
   <ItemGroup>

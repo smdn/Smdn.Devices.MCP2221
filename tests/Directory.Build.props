@@ -3,37 +3,24 @@ SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project>
-  <PropertyGroup>
-    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
-    <Deterministic>true</Deterministic>
-    <IsPackable>false</IsPackable>
+  <Import Project="Sdk.props" Sdk="Smdn.MSBuild.ProjectAssets.Library" />
 
-    <!-- configure code analysis mode -->
-    <!-- ref: https://docs.microsoft.com/ja-jp/dotnet/core/project-sdk/msbuild-props#code-analysis-properties -->
-    <AnalysisMode>None</AnalysisMode>
-    <AnalysisModeInteroperability>Recommended</AnalysisModeInteroperability>
-    <AnalysisModeReliability>Recommended</AnalysisModeReliability>
-    <AnalysisModeSecurity>Recommended</AnalysisModeSecurity>
-    <AnalysisModeUsage>Recommended</AnalysisModeUsage>
+  <Import
+    Condition=" '$(IsTestProject)' == 'true' "
+    Project="$(MSBuildThisFileDirectory)TargetFrameworks.props"
+  />
 
-    <!-- determines the test target project name from the test project name (Smdn.Fundamentals.*.Tests -> Smdn.Fundamentals.*) -->
-    <TestTargetProjectName
-      Condition="$(MSBuildProjectFile.EndsWith('.Tests.csproj'))"
-    >$(MSBuildProjectFile.Replace('.Tests.csproj', ''))</TestTargetProjectName>
-  </PropertyGroup>
-
-  <ItemGroup Label="add test target project reference">
-    <ProjectReference
-      Condition="'$(TestTargetProjectName)' != ''"
-      Include="$(MSBuildThisFileDirectory)..\src\$(TestTargetProjectName)\$(TestTargetProjectName).csproj"
-    />
+  <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
+    <PackageReference Include="NUnit" Version="4.4.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.14.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="6.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1"/>
-    <PackageReference Include="Smdn.MSBuild.DefineConstants.NETSdkApi" Version="[1.1.0]" PrivateAssets="all" IncludeAssets="build" />
+    <PackageReference
+      Include="Smdn.MSBuild.DefineConstants.NETSdkApi"
+      Version="[1.8.1]"
+      PrivateAssets="all"
+      IncludeAssets="build"
+    />
   </ItemGroup>
 </Project>

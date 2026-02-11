@@ -1,6 +1,7 @@
 * text=auto
 
 *.sln           text eol=crlf
+*.slnx          text eol=crlf
 *.csproj        text eol=crlf
 *.vbproj        text eol=crlf
 *.proj          text eol=crlf

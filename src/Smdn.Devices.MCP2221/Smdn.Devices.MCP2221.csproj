@@ -58,7 +58,7 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
   <Choose>
     <When Condition=" '$(UsbHidDriver)' == 'HIDSharp' ">
       <ItemGroup>
-        <PackageReference Include="HidSharp" Version="2.1.0" />
+        <PackageReference Include="HidSharp" Version="[2.1.0,3.0.0)" />
       </ItemGroup>
       <PropertyGroup>
         <UsbHidDriverMessage>USB-HID driver: HidSharp (Apache License 2.0)</UsbHidDriverMessage>

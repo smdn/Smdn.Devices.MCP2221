@@ -10,18 +10,18 @@ namespace Smdn.Devices.UsbHid;
 
 class PseudoUsbHidDevice : IUsbHidDevice {
   public string ProductName => nameof(PseudoUsbHidDevice);
-  public string Manufacturer => typeof(PseudoUsbHidDevice).Assembly.GetName().Name;
+  public string Manufacturer => typeof(PseudoUsbHidDevice).Assembly.GetName().Name!;
   public int VendorID => 0xCAFE;
   public int ProductID => 0xFEED;
   public string SerialNumber => typeof(PseudoUsbHidDevice).Assembly.GetName().FullName;
-  public Version ReleaseNumber => typeof(PseudoUsbHidDevice).Assembly.GetName().Version;
+  public Version ReleaseNumber => typeof(PseudoUsbHidDevice).Assembly.GetName().Version!;
   public string DevicePath => "<null>";
   public string FileSystemName => "/dev/null";
 
   private readonly Func<Stream> createWriteStream;
   private readonly Func<Stream> createReadStream;
 
-  private PseudoUsbHidStream stream = null;
+  private PseudoUsbHidStream? stream = null;
   public PseudoUsbHidStream Stream => stream ?? throw new ObjectDisposedException(GetType().FullName);
 
   public PseudoUsbHidDevice(Func<Stream> createWriteStream, Func<Stream> createReadStream)
@@ -46,7 +46,7 @@ class PseudoUsbHidDevice : IUsbHidDevice {
 
   public ValueTask<IUsbHidStream> OpenStreamAsync()
   {
-    stream = new PseudoUsbHidStream(createWriteStream?.Invoke(), createReadStream?.Invoke());
+    stream = new PseudoUsbHidStream(createWriteStream.Invoke(), createReadStream.Invoke());
 
     return
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
@@ -59,6 +59,6 @@ class PseudoUsbHidDevice : IUsbHidDevice {
 
   public IUsbHidStream OpenStream()
   {
-    return new PseudoUsbHidStream(createWriteStream?.Invoke(), createReadStream?.Invoke());
+    return new PseudoUsbHidStream(createWriteStream.Invoke(), createReadStream.Invoke());
   }
 }

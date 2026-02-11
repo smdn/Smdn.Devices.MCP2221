@@ -54,7 +54,7 @@ public partial class MCP2221Tests {
   [Test]
   public void OpenAsync()
   {
-    MCP2221 device = null;
+    MCP2221? device = null;
 
     Assert.That(async () => device = await MCP2221.OpenAsync(CreatePreudoDevice), Throws.Nothing);
 
@@ -77,11 +77,11 @@ public partial class MCP2221Tests {
 
   [Test]
   public void OpenAsync_ArgumentNull()
-    => Assert.That(async () => await MCP2221.OpenAsync((Func<IUsbHidDevice>)null), Throws.ArgumentNullException);
+    => Assert.That(async () => await MCP2221.OpenAsync((Func<IUsbHidDevice>)null!), Throws.ArgumentNullException);
 
   [Test]
   public void OpenAsync_CreateDeviceReturnNull()
-    => Assert.That(async () => await MCP2221.OpenAsync(() => (IUsbHidDevice)null), Throws.TypeOf<DeviceNotFoundException>());
+    => Assert.That(async () => await MCP2221.OpenAsync(() => (IUsbHidDevice)null!), Throws.TypeOf<DeviceNotFoundException>());
 
 
 

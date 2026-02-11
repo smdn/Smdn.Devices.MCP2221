@@ -106,7 +106,7 @@ public class I2CAddressTests {
     object val1_1 = (int)0x11; Assert.That(address.Equals(val1_1), Is.False);
     object val2_0 = (byte)0x10; Assert.That(address.Equals(val2_0), Is.True);
     object val2_1 = (byte)0x11; Assert.That(address.Equals(val2_1), Is.False);
-    object val3 = null; Assert.That(address.Equals(val3), Is.False);
+    object? val3 = null; Assert.That(address.Equals(val3), Is.False);
     object val4 = 16.0; Assert.That(address.Equals(val4), Is.False);
   }
 

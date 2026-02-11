@@ -58,7 +58,7 @@ partial class MCP2221Tests {
         $"10-00-00-00-00-00-00-00-00-01-00-01-00-01-75-00-{address}-00-10-28-00-60-01-01-00-00-F1-79-F0-00-00-00-30-30-0B-30-10-23-13-79-05-00-00-26-94-14-41-36-31-32-FB-03-00-00-00-00-F5-02-59-02-00-00-00-00"
       );
 
-      Assert.DoesNotThrowAsync(async () => await writeAction(device));
+      Assert.That(async () => await writeAction(device), Throws.Nothing);
     }
   }
 }

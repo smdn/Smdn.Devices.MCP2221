@@ -11,6 +11,8 @@ SPDX-License-Identifier: MIT
     <Nullable>disable</Nullable>
     <IsAotCompatible>false</IsAotCompatible>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AnalysisMode>None</AnalysisMode>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 

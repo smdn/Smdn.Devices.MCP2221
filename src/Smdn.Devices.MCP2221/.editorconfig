@@ -1,0 +1,179 @@
+# SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+# SPDX-License-Identifier: MIT
+#
+# EditorConfig is awesome: https://EditorConfig.org
+#
+[*.cs]
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/categories
+dotnet_analyzer_diagnostic.category-Design.severity           = default
+dotnet_analyzer_diagnostic.category-Documentation.severity    = default
+dotnet_analyzer_diagnostic.category-Globalization.severity    = default
+dotnet_analyzer_diagnostic.category-Interoperability.severity = default
+dotnet_analyzer_diagnostic.category-Maintainability.severity  = default
+dotnet_analyzer_diagnostic.category-Naming.severity           = default
+dotnet_analyzer_diagnostic.category-Performance.severity      = default
+dotnet_analyzer_diagnostic.category-SingleFile.severity       = default
+dotnet_analyzer_diagnostic.category-Reliability.severity      = default
+dotnet_analyzer_diagnostic.category-Security.severity         = default
+dotnet_analyzer_diagnostic.category-Style.severity            = default
+dotnet_analyzer_diagnostic.category-Usage.severity            = default
+dotnet_analyzer_diagnostic.category-CodeQuality.severity      = default
+
+#
+# Code quality rules
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
+#
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/design-defaults
+dotnet_diagnostic.CA1000.severity     = default       # Identifiers should not contain underscores
+dotnet_diagnostic.CA1001.severity     = default       # Types that own disposable fields should be disposable
+dotnet_diagnostic.CA1002.severity     = default       # Do not expose generic lists
+dotnet_diagnostic.CA1003.severity     = default       # Use generic event handler instances
+dotnet_diagnostic.CA1008.severity     = default       # Enums should have zero value
+dotnet_diagnostic.CA1012.severity     = default       # Abstract types should not have constructors
+dotnet_diagnostic.CA1014.severity     = default       # Mark assemblies with CLSCompliantAttribute
+dotnet_diagnostic.CA1016.severity     = error         # Mark assemblies with AssemblyVersionAttribute
+dotnet_diagnostic.CA1018.severity     = default       # Mark attributes with AttributeUsageAttribute
+dotnet_diagnostic.CA1019.severity     = default       # Define accessors for attribute arguments
+dotnet_diagnostic.CA1021.severity     = none          # Avoid out parameters
+dotnet_diagnostic.CA1027.severity     = default       # Mark enums with FlagsAttribute
+dotnet_diagnostic.CA1031.severity     = default       # Do not catch general exception types
+dotnet_diagnostic.CA1032.severity     = default       # Implement standard exception constructors
+dotnet_diagnostic.CA1033.severity     = default       # Interface methods should be callable by child types
+dotnet_diagnostic.CA1036.severity     = default       # Override methods on comparable types
+dotnet_diagnostic.CA1045.severity     = none          # Do not pass types by reference
+dotnet_diagnostic.CA1050.severity     = default       # Declare types in namespaces
+dotnet_diagnostic.CA1052.severity     = default       # Static holder types should be sealed
+dotnet_diagnostic.CA1053.severity     = default       # Static holder types should not have constructors
+dotnet_diagnostic.CA1054.severity     = default       # URI parameters should not be strings
+dotnet_diagnostic.CA1055.severity     = default       # URI return values should not be strings
+dotnet_diagnostic.CA1056.severity     = default       # URI properties should not be strings
+dotnet_diagnostic.CA1058.severity     = default       # Types should not extend certain base types
+dotnet_diagnostic.CA1062.severity     = default       # Validate arguments of public methods
+dotnet_diagnostic.CA1063.severity     = default       # Implement IDisposable correctly
+dotnet_diagnostic.CA1064.severity     = default       # Exceptions should be public
+dotnet_diagnostic.CA1065.severity     = default       # Do not raise exceptions in unexpected locations
+dotnet_diagnostic.CA1066.severity     = default       # Implement IEquatable when overriding Equals
+dotnet_diagnostic.CA1067.severity     = default       # Override Equals when implementing IEquatable
+dotnet_diagnostic.CA1068.severity     = default       # CancellationToken parameters must come last
+dotnet_diagnostic.CA1068.severity     = default       # Enums should not have duplicate values
+dotnet_diagnostic.CA1070.severity     = default       # Do not declare event fields as virtual
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1200
+dotnet_diagnostic.CA1200.severity     = default       # Avoid using cref tags with a prefix
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/globalization-defaults
+dotnet_diagnostic.CA1305.severity     = default       # Specify IFormatProvider
+dotnet_diagnostic.CA1307.severity     = default       # Specify StringComparison for clarity
+dotnet_diagnostic.CA1311.severity     = default       # Specify a culture or use an invariant version
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/maintainability-defaults
+dotnet_diagnostic.CA1501.severity     = default       # Avoid excessive inheritance
+dotnet_diagnostic.CA1502.severity     = default       # Avoid excessive complexity
+dotnet_diagnostic.CA1505.severity     = default       # Avoid unmaintainable code
+dotnet_diagnostic.CA1506.severity     = default       # Avoid excessive class coupling
+dotnet_diagnostic.CA1507.severity     = default       # Use nameof in place of string
+dotnet_diagnostic.CA1508.severity     = default       # Avoid dead conditional code
+dotnet_diagnostic.CA1510.severity     = default       # Use ArgumentNullException throw helper
+dotnet_diagnostic.CA1511.severity     = default       # Use ArgumentException throw helper
+dotnet_diagnostic.CA1512.severity     = default       # Use ArgumentOutOfRangeException throw helper
+dotnet_diagnostic.CA1513.severity     = default       # Use ObjectDisposedException throw helper
+dotnet_diagnostic.CA1514.severity     = default       # Avoid redundant length argument
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/naming-defaults
+dotnet_diagnostic.CA1707.severity     = default       # Identifiers should not contain underscores
+dotnet_diagnostic.CA1710.severity     = default       # Identifiers should have correct suffix
+dotnet_diagnostic.CA1712.severity     = default       # Do not prefix enum values with type name
+dotnet_diagnostic.CA1714.severity     = default       # Flags enums should have plural names
+dotnet_diagnostic.CA1715.severity     = default       # Identifiers should have correct prefix
+dotnet_diagnostic.CA1717.severity     = default       # Only FlagsAttribute enums should have plural names
+dotnet_diagnostic.CA1721.severity     = default       # Property names should not match get methods
+dotnet_diagnostic.CA1724.severity     = default       # Type names should not match namespaces
+dotnet_diagnostic.CA1725.severity     = default       # Parameter names should match base declaration
+dotnet_diagnostic.CA1727.severity     = default       # Use PascalCase for named placeholders
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/performance-defaults
+dotnet_diagnostic.CA1802.severity     = default       # Use Literals Where Appropriate
+dotnet_diagnostic.CA1805.severity     = default       # Do not initialize unnecessarily
+dotnet_diagnostic.CA1810.severity     = default       # Initialize reference type static fields inline
+dotnet_diagnostic.CA1812.severity     = default       # Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1813.severity     = default       # Avoid unsealed attributes
+dotnet_diagnostic.CA1819.severity     = default       # Properties should not return arrays
+dotnet_diagnostic.CA1820.severity     = default       # Test for empty strings using string length
+dotnet_diagnostic.CA1822.severity     = default       # Mark members as static
+dotnet_diagnostic.CA1823.severity     = default       # Avoid unused private fields
+dotnet_diagnostic.CA1825.severity     = default       # Avoid zero-length array allocations
+dotnet_diagnostic.CA1826.severity     = default       # Use property instead of Linq Enumerable method
+dotnet_diagnostic.CA1827.severity     = default       # Do not use Count/LongCount when Any can be used
+dotnet_diagnostic.CA1828.severity     = default       # Do not use CountAsync/LongCountAsync when AnyAsync can be used
+dotnet_diagnostic.CA1829.severity     = default       # Use Length/Count property instead of Enumerable.Count method
+dotnet_diagnostic.CA1831.severity     = default       # Use AsSpan instead of Range-based indexers for string when appropriate
+dotnet_diagnostic.CA1832.severity     = default       # Use AsSpan or AsMemory instead of Range-based indexers for getting ReadOnlySpan or ReadOnlyMemory portion of an array
+dotnet_diagnostic.CA1833.severity     = default       # Use AsSpan or AsMemory instead of Range-based indexers for getting Span or Memory portion of an array
+dotnet_diagnostic.CA1834.severity     = default       # Use StringBuilder.Append(char) for single character strings
+dotnet_diagnostic.CA1835.severity     = default       # Prefer the 'Memory'-based overloads for 'ReadAsync' and 'WriteAsync'
+dotnet_diagnostic.CA1836.severity     = default       # Prefer IsEmpty over Count when available
+dotnet_diagnostic.CA1837.severity     = default       # Use Environment.ProcessId instead of Process.GetCurrentProcess().Id
+dotnet_diagnostic.CA1839.severity     = default       # Use Environment.ProcessPath instead of Process.GetCurrentProcess().MainModule.FileName
+dotnet_diagnostic.CA1841.severity     = default       # Prefer Dictionary Contains methods
+dotnet_diagnostic.CA1844.severity     = default       # Provide memory-based overrides of async methods when subclassing 'Stream'
+dotnet_diagnostic.CA1845.severity     = default       # Use span-based 'string.Concat'
+dotnet_diagnostic.CA1846.severity     = default       # Prefer AsSpan over Substring
+dotnet_diagnostic.CA1847.severity     = default       # Use char literal for a single character lookup
+dotnet_diagnostic.CA1849.severity     = default       # Call async methods when in an async method
+dotnet_diagnostic.CA1850.severity     = default       # Prefer static HashData method over ComputeHash
+dotnet_diagnostic.CA1851.severity     = default       # Possible multiple enumerations of IEnumerable collection
+dotnet_diagnostic.CA1852.severity     = default       # Seal internal types
+dotnet_diagnostic.CA1853.severity     = default       # Unnecessary call to 'Dictionary.ContainsKey(key)'
+dotnet_diagnostic.CA1854.severity     = default       # Prefer the 'IDictionary.TryGetValue(TKey, out TValue)' method
+dotnet_diagnostic.CA1855.severity     = default       # Use Span<T>.Clear() instead of Span<T>.Fill()
+dotnet_diagnostic.CA1858.severity     = default       # Use StartsWith instead of IndexOf
+dotnet_diagnostic.CA1859.severity     = default       # Use concrete types when possible for improved performance
+dotnet_diagnostic.CA1860.severity     = default       # Avoid using 'Enumerable.Any()' extension method
+dotnet_diagnostic.CA1861.severity     = default       # Avoid constant arrays as arguments
+dotnet_diagnostic.CA1862.severity     = default       # Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
+dotnet_diagnostic.CA1863.severity     = default       # Use 'CompositeFormat'
+dotnet_diagnostic.CA1864.severity     = default       # Prefer the 'IDictionary.TryAdd(TKey, TValue)' method
+dotnet_diagnostic.CA1865.severity     = default       # Use 'string.Method(char)' instead of 'string.Method(string)' for string with single char
+dotnet_diagnostic.CA1866.severity     = default       # Use 'string.Method(char)' instead of 'string.Method(string)' for string with single char
+dotnet_diagnostic.CA1867.severity     = default       # Use 'string.Method(char)' instead of 'string.Method(string)' for string with single char
+dotnet_diagnostic.CA1868.severity     = default       # Unnecessary call to 'Contains' for sets
+dotnet_diagnostic.CA1869.severity     = default       # Cache and reuse 'JsonSerializerOptions' instances
+dotnet_diagnostic.CA1870.severity     = default       # Use a cached 'SearchValues' instance
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/
+dotnet_diagnostic.CA2000.severity     = default       # Dispose objects before losing scope
+dotnet_diagnostic.CA2007.severity     = default       # Do not directly await a Task
+dotnet_diagnostic.CA2011.severity     = default       # Do not assign property within its setter
+dotnet_diagnostic.CA2012.severity     = default       # Use ValueTasks correctly
+dotnet_diagnostic.CA2013.severity     = default       # Do not use ReferenceEquals with value types
+dotnet_diagnostic.CA2014.severity     = default       # Do not use stackalloc in loops
+dotnet_diagnostic.CA2016.severity     = default       # Forward the CancellationToken parameter to methods that take one
+dotnet_diagnostic.CA2017.severity     = default       # Parameter count mismatch
+dotnet_diagnostic.CA2019.severity     = default       # ThreadStatic fields should not use inline initialization
+dotnet_diagnostic.CA2020.severity     = default       # Prevent behavioral change caused by built-in operators of IntPtr/UIntPtr
+dotnet_diagnostic.CA2021.severity     = default       # Don't call Enumerable.Cast<T> or Enumerable.OfType<T> with incompatible types
+
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/usage-defaults
+dotnet_diagnostic.CA2200.severity     = default       # Rethrow to preserve stack details
+dotnet_diagnostic.CA2201.severity     = default       # Do not raise reserved exception types
+dotnet_diagnostic.CA2207.severity     = default       # Initialize value type static fields inline
+dotnet_diagnostic.CA2208.severity     = default       # Instantiate argument exceptions correctly
+dotnet_diagnostic.CA2213.severity     = default       # Disposable fields should be disposed
+dotnet_diagnostic.CA2214.severity     = default       # Do not call overridable methods in constructors
+dotnet_diagnostic.CA2215.severity     = default       # Dispose methods should call base class dispose
+dotnet_diagnostic.CA2219.severity     = default       # Do not raise exceptions in exception clauses
+dotnet_diagnostic.CA2226.severity     = default       # Operators should have symmetrical overloads
+dotnet_diagnostic.CA2227.severity     = default       # Collection properties should be read only
+dotnet_diagnostic.CA2234.severity     = default       # Pass System.Uri objects instead of strings
+dotnet_diagnostic.CA2241.severity     = default       # Provide correct arguments to formatting methods
+dotnet_diagnostic.CA2242.severity     = default       # Test for NaN correctly
+dotnet_diagnostic.CA2245.severity     = default       # Do not assign a property to itself
+dotnet_diagnostic.CA2248.severity     = default       # Provide correct 'enum' argument to 'Enum.HasFlag'
+dotnet_diagnostic.CA2249.severity     = default       # Consider using String.Contains instead of String.IndexOf
+dotnet_diagnostic.CA2250.severity     = default       # Use ThrowIfCancellationRequested
+dotnet_diagnostic.CA2251.severity     = default       # Use String.Equals over String.Compare
+dotnet_diagnostic.CA2255.severity     = default       # The ModuleInitializer attribute should not be used in libraries
+dotnet_diagnostic.CA2259.severity     = default       # Ensure ThreadStatic is only used with static fields
+dotnet_diagnostic.CA2260.severity     = default       # Implement generic math interfaces correctly
+dotnet_diagnostic.CA2261.severity     = default       # Do not use ConfigureAwaitOptions.SuppressThrowing with Task<TResult>

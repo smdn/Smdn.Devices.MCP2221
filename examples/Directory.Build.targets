@@ -1,0 +1,27 @@
+﻿<!--
+SPDX-FileCopyrightText: 2023 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project InitialTargets="ReplaceSmdnDevicesMCP2221PackageReferencesToProjectReferences">
+  <!-- Replace PackageReference to ProjectReference of the local project -->
+  <Target
+    Name="ReplaceSmdnDevicesMCP2221PackageReferencesToProjectReferences"
+    Condition=" '$(UseLocalProjectInsteadOfPublishedPackage)' == 'true' "
+  >
+    <ItemGroup>
+      <_SmdnDevicesMCP2221Reference
+        Include="@(PackageReference)"
+        Condition="$([System.String]::new('%(Identity)').StartsWith('Smdn.Devices.MCP2221'))"
+        ProjectPath="$(MSBuildThisFileDirectory)..\src\%(Identity)\%(Identity).csproj"
+      />
+    </ItemGroup>
+
+    <ItemGroup>
+      <!-- Remove package references to Smdn.Devices.MCP2221.* -->
+      <PackageReference Remove="@(_SmdnDevicesMCP2221Reference)" />
+
+      <!-- Include project reference to Smdn.Devices.MCP2221.* -->
+      <ProjectReference Include="%(_SmdnDevicesMCP2221Reference.ProjectPath)" />
+    </ItemGroup>
+  </Target>
+</Project>

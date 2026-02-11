@@ -1,9 +1,13 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project>
   <PropertyGroup>
-    <LibrarySourceDirectory>$(MSBuildThisFileDirectory)\..\src\</LibrarySourceDirectory>
+    <!--
+      Set this property to `true` if you want to build and run the examples using the local projects
+      instead of published NuGet packages.
+    -->
+    <UseLocalProjectInsteadOfPublishedPackage>false</UseLocalProjectInsteadOfPublishedPackage>
   </PropertyGroup>
 </Project>

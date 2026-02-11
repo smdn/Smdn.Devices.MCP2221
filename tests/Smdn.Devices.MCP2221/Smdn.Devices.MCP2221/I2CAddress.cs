@@ -8,7 +8,7 @@ namespace Smdn.Devices.MCP2221;
 
 [TestFixture]
 public class I2CAddressTests {
-  [Test] public void Constants_Zero() => Assert.That((byte)I2CAddress.Zero, Is.EqualTo(0x00));
+  [Test] public void Constants_Zero() => Assert.That((byte)I2CAddress.Zero, Is.Zero);
   [Test] public void Constants_DeviceMinValue() => Assert.That((byte)I2CAddress.DeviceMinValue, Is.EqualTo(0x08));
   [Test] public void Constants_DeviceMaxValue() => Assert.That((byte)I2CAddress.DeviceMaxValue, Is.EqualTo(0x77));
 

@@ -13,12 +13,12 @@ using Smdn.Devices.UsbHid;
 
 namespace Smdn.Devices.MCP2221;
 
-#pragma warning disable IDE0055
+#pragma warning disable IDE0055, CA1724
 public partial class MCP2221 :
   IDisposable,
   IAsyncDisposable
 {
-#pragma warning restore IDE0055
+#pragma warning restore IDE0055, CA1724
   public const int DeviceVendorID = 0x04d8;
   public const int DeviceProductID = 0x00dd;
 

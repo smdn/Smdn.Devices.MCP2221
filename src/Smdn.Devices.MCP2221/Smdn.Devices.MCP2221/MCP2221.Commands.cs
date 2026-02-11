@@ -13,9 +13,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Smdn.Devices.MCP2221;
 
-#pragma warning disable IDE0040
+#pragma warning disable IDE0040, CA1724
 partial class MCP2221 {
-#pragma warning restore IDE0040
+#pragma warning restore IDE0040, CA1724
   internal delegate void ConstructCommandAction<TArg>(Span<byte> command, ReadOnlySpan<byte> userData, TArg arg);
   internal delegate TResponse ParseResponseFunc<TArg, TResponse>(ReadOnlySpan<byte> response, TArg arg);
 

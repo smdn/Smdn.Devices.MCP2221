@@ -47,7 +47,9 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,2.0.0)" />
+    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,5.0.0)" />
+    <!-- System.Device.Gpio version 4.0.0 or later does not support .NET Standard 2.x -->
+    <PackageReference Update="System.Device.Gpio" Version="[1.4.0,4.0.0)" Condition="$(TargetFramework.StartsWith('netstandard2.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
   </ItemGroup>

@@ -34,6 +34,8 @@ This library enables you to use the many device bindings provided by Iot.Device.
     <ProjectReference VersionRange="[0.9.1,1.0.0)" Include="..\Smdn.Devices.MCP2221\Smdn.Devices.MCP2221.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,2.0.0)" />
+    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,5.0.0)" />
+    <!-- System.Device.Gpio version 4.0.0 or later does not support .NET Standard 2.x -->
+    <PackageReference Update="System.Device.Gpio" Version="[1.4.0,4.0.0)" Condition="$(TargetFramework.StartsWith('netstandard2.'))" />
   </ItemGroup>
 </Project>

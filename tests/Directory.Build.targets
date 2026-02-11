@@ -1,0 +1,9 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <ItemGroup>
+    <PackageReference Include="NUnit.Analyzers" Version="4.11.2" />
+  </ItemGroup>
+</Project>

@@ -96,28 +96,37 @@ dotnet add package Smdn.Devices.MCP2221
 Nextly, write your codes. The simplest code, blinking the LEDs connected to the GP pins is like below.
 
 ```cs
-using System;
-using System.Threading;
+using System.Device.Gpio;
+
 using Smdn.Devices.MCP2221;
 
+// Find and open the first MCP2221 device connected to the USB port.
 using var device = MCP2221.Open();
 
-// configure GP0-GP3 as GPIO output
+// Configure the GP pins (GP0-GP3) as GPIO output.
 device.GP0.ConfigureAsGPIO(PinMode.Output);
 device.GP1.ConfigureAsGPIO(PinMode.Output);
 device.GP2.ConfigureAsGPIO(PinMode.Output);
 device.GP3.ConfigureAsGPIO(PinMode.Output);
 
-// blink GP0-GP3
+// Blink the configured GPIO pins.
 foreach (var gp in device.GPs) {
-  Console.WriteLine($"blink {gp.PinDesignation}");
+  Console.WriteLine($"Blinking {gp.PinDesignation}");
 
   for (var n = 0; n < 10; n++) {
-    gp.SetValue(false); Thread.Sleep(100);
-    gp.SetValue(true); Thread.Sleep(100);
+    // Set the pin output to Low (logic 0)
+    gp.SetValue(false);
+    Thread.Sleep(100);
+
+    // Set the pin output to High (logic 0)
+    gp.SetValue(true);
+    Thread.Sleep(100);
   }
 }
 ```
+
+[See the actual action in the video](https://www.youtube.com/watch?v=MnIunESm71E)
+[![See the actual action in the video](https://img.youtube.com/vi/MnIunESm71E/mqdefault.jpg)](https://www.youtube.com/watch?v=MnIunESm71E)
 
 For detailed instructions, including wiring of the devices and parts, see [blink example](examples/Smdn.Devices.MCP2221/blink-csharp) page.
 

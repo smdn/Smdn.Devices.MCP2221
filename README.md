@@ -1,6 +1,5 @@
 [![GitHub license](https://img.shields.io/github/license/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/blob/main/LICENSE.txt)
-[![GitHub issues](https://img.shields.io/github/issues/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/issues)
-[![tests/main](https://img.shields.io/github/workflow/status/smdn/Smdn.Devices.MCP2221/Run%20tests/main?label=tests%2Fmain)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/test.yml)
+[![tests/main](https://img.shields.io/github/actions/workflow/status/smdn/Smdn.Devices.MCP2221/test.yml?branch=main&label=tests%2Fmain)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/test.yml)
 [![CodeQL](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml)
 
 # Smdn.Devices.MCP2221

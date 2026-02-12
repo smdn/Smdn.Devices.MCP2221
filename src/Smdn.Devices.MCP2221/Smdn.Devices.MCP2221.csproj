@@ -38,7 +38,7 @@ SPDX-License-Identifier: MIT
 
   <PropertyGroup Label="metadata">
     <Description>
-<![CDATA[Smdn.Devices.MCP2221 is a .NET library for controlling MCP2221/MCP2221A USB2.0 to I2C/UART Protocol Converter with GPIO.
+<![CDATA[Smdn.Devices.MCP2221 is a .NET library for controlling MCP2221/MCP2221A, USB2.0 to I2C/UART Protocol Converter with GPIO.
 This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and other functionalities via USB-HID interface.
 ]]>
     </Description>

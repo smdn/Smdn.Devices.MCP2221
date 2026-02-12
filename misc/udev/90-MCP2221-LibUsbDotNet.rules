@@ -1,25 +1,52 @@
 # SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 # SPDX-License-Identifier: MIT
 #
+#
 #      udev rules for MCP2221/MCP2221A + LibUsbDotNet (libusb)
 #
-# copy this file to `/etc/udev/rules.d/` and run `sudo udevadm control --reload-rules && sudo udevadm trigger -s usb`
-# tested on Ubuntu 20.04.2 LTS
 #
-# reference:
+# To enable user-space libraries (like LibUsbDotNet or libusb) to communicate
+# with the MCP2221 directly via USB, the system must grant appropriate
+# permissions to the USB device node. This rule ensures the device is
+# accessible without root privileges upon connection.
+#
+# The rules below assign the USB device for MCP2221/MCP2221A (04d8:00dd)
+# to the 'plugdev' group and grant access to unprivileged users.
+#
+# How to apply:
+#   1. Copy this file to /etc/udev/rules.d/
+#   2. Reload the udev rules: `sudo udevadm control --reload-rules`
+#   3. Trigger the rules for hidraw subsystem: `sudo udevadm trigger -s hidraw`
+#
+# How to revert:
+#   1. Delete this file from /etc/udev/rules.d/
+#   2. Run the reload and trigger commands mentioned above.
+#
+# Note on driver unbinding:
+#   LibUsbDotNet requires direct access to the USB interface. The 'RUN'
+#   command below automatically unbinds the 'usbhid' driver from the device
+#   upon connection to prevent it from locking the interface, allowing
+#   libusb to take control without manual intervention.
+#
+# Note on driver conflict:
+#   In Ubuntu 24.04+, you MUST still blacklist the 'hid_mcp2221' module.
+#   If the 'hid_mcp2221' driver claims the device, it will hide the USB
+#   interfaces from 'usbhid', making the auto-unbind rule below ineffective.
+#   Refer to 'misc/modprobe/blacklist-MCP2221.conf' for more details.
+#
+# Reference:
 #   http://reactivated.net/writing_udev_rules.html
 #   https://wiki.archlinux.jp/index.php/Udev
 #
 
-SUBSYSTEM=="usb", DRIVER=="usb|usbhid", \
-# [mandatory] matching keys for MCP2221/MCP2221A
-  ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", \
-# [optional] matching keys for the device bus number and device path of MCP2221/MCP2221A
-#  ATTRS{busnum}=="x", ATTRS{devpath}!="y", \
-# [mandatory] unbind kernel driver from MCP2221/MCP2221A's HID interface
-  RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/usbhid/unbind'", \
-# [optional] grant non-root user access to MCP2221/MCP2221A by specifying group for the device
-  GROUP="plugdev", TAG+="uaccess", \
-# [optional] grant non-root user access to MCP2221/MCP2221A by specifying permission for the device
-#  MODE="0666", \
+# Match MCP2221/MCP2221A by Vendor ID (04d8) and Product ID (00dd).
+# Grant unprivileged access via 'plugdev' group, '0660' mode, and systemd 'uaccess' tag.
+SUBSYSTEM=="usb", DRIVERS=="usb|usbhid", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", \
+    RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/usbhid/unbind'", \
+    GROUP="plugdev", MODE="0660", TAG+="uaccess"
 
+# Use this instead if you need to target a specific physical port (via bus number and device path).
+# Replace 'x' and 'y' with values from 'udevadm info -a -n /dev/hidrawX'.
+# SUBSYSTEM=="usb", DRIVERS=="usb|usbhid", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="00dd", ATTRS{busnum}=="x", ATTRS{devpath}=="y",
+#    RUN+="/bin/sh -c 'echo $kernel >/sys/bus/usb/drivers/usbhid/unbind'", \
+#    GROUP="plugdev", MODE="0660", TAG+="uaccess"

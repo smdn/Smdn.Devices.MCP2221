@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: "2025 smdn <smdn@smdn.jp>"
+#
+# ref: https://docs.github.com/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+#
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "03:13"
+      timezone: "Asia/Tokyo"
+    assignees:
+      - smdn
+    groups:
+      GitHub-Actions-Workflows:
+        patterns:
+          - "actions/*"
+      smdn-workflows-dotnet:
+        patterns:
+          - "smdn/workflows-dotnet/*"
+    ignore:
+      # smdn/workflows-dotnet/*: report major and minor updates only
+      - dependency-name: "smdn/workflows-dotnet/*"
+        update-types:
+          - "version-update:semver-patch"
+      # actions/checkout: report major updates only
+      - dependency-name: "actions/checkout"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    assignees:
+      - smdn
+    groups:
+      Smdn-MSBuild-ProjectAssets:
+        patterns:
+          - "Smdn.MSBuild.ProjectAssets.Common"
+          - "Smdn.MSBuild.ProjectAssets.Library"
+      NUnit:
+        patterns:
+          - "NUnit*"
+    ignore:
+      # For "Smdn.*", only major updates should be reported.
+      - dependency-name: "Smdn.*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # For project SDK packages named with "Smdn.*", all updates should be reported.
+      - dependency-name: "Smdn.MSBuild.ProjectAssets.*"
+        update-types:
+          # Since the `ignore` cannot be overwritten with an empty array, use a workaround to ignore only major updates
+          - "version-update:semver-major"
+      # For NUnit packages, only major updates should be reported.
+      - dependency-name: "NUnit*"
+        update-types: # major updates only
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # For Microsoft's extension packages, manually update them, so ignore all of them.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: # ignore all updates
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # For other packages, only major updates should be reported.
+      - dependency-name: "*"
+        update-types: # major updates only
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"

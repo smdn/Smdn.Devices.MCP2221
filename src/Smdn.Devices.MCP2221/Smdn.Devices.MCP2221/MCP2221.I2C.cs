@@ -40,7 +40,7 @@ partial class MCP2221 {
       public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Exception exceptionCauseOfCancellation) args)
 #pragma warning restore IDE0060
       {
-        // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
+        // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
         comm[0] = 0x10; // Status/Set Parameters
         comm[1] = 0x00; // Don't care
         comm[2] = 0x10; // Cancel current I2C/SMBus transfer

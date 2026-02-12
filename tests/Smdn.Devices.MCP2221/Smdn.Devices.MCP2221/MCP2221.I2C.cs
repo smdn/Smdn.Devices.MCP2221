@@ -32,7 +32,7 @@ partial class MCP2221Tests {
 
     private static async Task<(MCP2221, PseudoUsbHidStream)> CreatePseudoDeviceWithConfiguredI2C()
     {
-      var baseDevice = CreatePreudoDevice();
+      var baseDevice = CreatePseudoDevice();
       var device = await MCP2221.OpenAsync(() => baseDevice);
 
       AppendResponse(

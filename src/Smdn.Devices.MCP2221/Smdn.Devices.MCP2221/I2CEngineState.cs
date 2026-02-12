@@ -32,7 +32,7 @@ internal readonly struct I2CEngineState {
   public static I2CEngineState Parse(ReadOnlySpan<byte> resp)
     => new() {
 #pragma warning disable IDE0055 // Fix formatting
-      // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
+      // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
       BusStatus                       = (TransferStatus)resp[2],
       StateMachineStateValue          = resp[8], // Internal I2C state machine state value
       RequestedTransferLength         = resp[9] | (resp[10] << 8), // Lower/Higher byte of the requested I2C transfer length

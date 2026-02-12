@@ -9,7 +9,7 @@ using Smdn.Devices.MCP2221;
 
 using var device = MCP2221.Open();
 
-Console.WriteLine("[MCP2221 Device informations]");
+Console.WriteLine("[MCP2221 Device information]");
 Console.WriteLine($"Release number: {device.HidDevice.ReleaseNumber}");
 Console.WriteLine($"Serial number: {device.HidDevice.SerialNumber ?? "(no serial number)"}");
 Console.WriteLine($"Device path: {device.HidDevice.DevicePath}");

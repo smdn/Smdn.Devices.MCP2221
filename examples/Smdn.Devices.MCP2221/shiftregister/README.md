@@ -1,7 +1,7 @@
 # `shiftregister`
 MCP2221A + 74HC595 shift register
 
-This example controlls two cascaded 74HC595s.
+This example controls two cascaded 74HC595s.
 
 ## Wiring example
 ![## Wiring example](wiring.svg)

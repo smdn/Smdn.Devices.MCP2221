@@ -1,0 +1,78 @@
+// SPDX-FileCopyrightText: 2025 smdn <smdn@smdn.jp>
+// SPDX-License-Identifier: MIT
+//
+// cSpell Settings
+// https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker
+//
+{
+  // Version of the setting file.  Always 0.2
+  "version": "0.2",
+  // language - current active spelling language
+  "language": "en",
+  // words - list of words to be always considered correct
+  "words": [
+    "cloneable",
+    "HIDSharp",
+    "hidraw",
+    "journalctl",
+    "kbps",
+    "LEDI",
+    "LEDURX",
+    "LEDUTX",
+    "libusb",
+    "LibUsbDotNet",
+    "LINQ",
+    "memberwise",
+    "MSBuild",
+    "Pinnable",
+    "plugdev",
+    "smdn",
+    "SSPND",
+    "stylecop",
+    "SYSLIB",
+    "trimmable",
+    "uaccess",
+    "UART",
+    "udev",
+    "udevadm",
+    "usbhid",
+    "USBCFG",
+  ],
+  "ignoreWords": [
+    "IADC",
+    "IDAC",
+    "iface",
+    "IGPIO",
+    "netcoreapp",
+    "netframework",
+    "netfx",
+    "netstandard",
+    "USBHIDDRIVER",
+  ],
+  "ignoreRegExpList": [
+    "SYSTEM_[A-Z][A-Z0-9_]+",
+    "NETFRAMEWORK[0-9][A-Z0-9_]+",
+    "NETCOREAPP[0-9]_[0-9]_[A-Z0-9_]+",
+    "NETSTANDARD[0-9]_[0-9]_[A-Z0-9_]+",
+  ],
+  // flagWords - list of words to be always considered incorrect
+  // This is useful for offensive words and common spelling errors.
+  // For example "hte" should be "the"
+  "flagWords": [],
+  "suggestWords": [
+    "clonable->cloneable",
+  ],
+  "ignorePaths": [
+    "**/bin",
+    "**/obj",
+    ".git",
+    "doc/api-list/",
+  ],
+  "enabledLanguageIds": [
+    "csharp",
+    "markdown",
+    "plaintext",
+    "xml",
+    "yaml"
+  ],
+}

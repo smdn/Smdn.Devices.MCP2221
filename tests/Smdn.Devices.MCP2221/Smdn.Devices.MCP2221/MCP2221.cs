@@ -14,7 +14,7 @@ public partial class MCP2221Tests {
   private const byte ReportInput = 0x00;
   private const byte ReportOutput = 0x00;
 
-  private static PseudoUsbHidDevice CreatePreudoDevice()
+  private static PseudoUsbHidDevice CreatePseudoDevice()
     => new PseudoUsbHidDevice(
       createWriteStream: () => new MemoryStream(capacity: (1 + 64) * 5),
       createReadStream: () => {
@@ -56,7 +56,7 @@ public partial class MCP2221Tests {
   {
     MCP2221? device = null;
 
-    Assert.That(async () => device = await MCP2221.OpenAsync(CreatePreudoDevice), Throws.Nothing);
+    Assert.That(async () => device = await MCP2221.OpenAsync(CreatePseudoDevice), Throws.Nothing);
 
     Assert.That(device, Is.Not.Null);
     Assert.That(device.HidDevice, Is.Not.Null);
@@ -91,7 +91,7 @@ public partial class MCP2221Tests {
 
   private async Task TestDispose(Func<MCP2221, Task> disposeAction)
   {
-    await using var device = await MCP2221.OpenAsync(CreatePreudoDevice);
+    await using var device = await MCP2221.OpenAsync(CreatePseudoDevice);
 
     Assert.That(() => Assert.That(device.HidDevice, Is.Not.Null), Throws.Nothing);
 

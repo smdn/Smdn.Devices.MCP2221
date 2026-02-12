@@ -165,7 +165,7 @@ partial class MCP2221 {
           0x25 => throw new I2CNAckException(address), // time out
 
           // 0x61: read operation still in progress?
-          // 0x61 when (currentState == OperationState.Initial) => OperationState.CancelAndRetry, // issuing cancellation in this state will trasit state to 0x62, and will be in state which cannot reset with command
+          // 0x61 when (currentState == OperationState.Initial) => OperationState.CancelAndRetry, // issuing cancellation in this state will transit state to 0x62, and will be in state which cannot reset with command
           0x61 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
           // 0x62: has been marked for cancellation?
           0x62 => throw CreateI2CErrorException(address, engineState.StateMachineStateValue, "I2C engine has been in invalid state. It may need to be reset or powered off.", engineState.ToString()),
@@ -180,7 +180,7 @@ partial class MCP2221 {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private void StatusConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
       {
-        // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
+        // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
         comm[0] = 0x10; // Status/Set Parameters
         comm[1] = 0x00; // Don't care
         comm[2] = 0x00; // Cancel current I2C/SMBus transfer (0x00: No effect)
@@ -202,7 +202,7 @@ partial class MCP2221 {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       private bool StatusParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> _) args)
       {
-        // [MCP2221A] 3.1.1 STATUS/SET PARAMATERS
+        // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
         _ = resp[1] switch {
           0x00 => true, // Command completed successfully
           _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
@@ -210,7 +210,7 @@ partial class MCP2221 {
 
         lastEngineState = I2CEngineState.Parse(resp);
 
-        logger?.LogInformation(eventIdI2CEngineState, $"STATUS/SET PARAMATERS: {lastEngineState}");
+        logger?.LogInformation(eventIdI2CEngineState, $"STATUS/SET PARAMETERS: {lastEngineState}");
 
         if (operationState == OperationState.Initial) {
           var isSpeedConsidered = resp[3] switch {
@@ -221,7 +221,7 @@ partial class MCP2221 {
           };
 
           if (!isSpeedConsidered)
-            logger?.LogWarning(eventIdI2CEngineState, $"STATUS/SET PARAMATERS: new I2C/SMBus communication speed is not considered");
+            logger?.LogWarning(eventIdI2CEngineState, $"STATUS/SET PARAMETERS: new I2C/SMBus communication speed is not considered");
         }
 
         operationState = TransitStateOrThrowIfEngineStateInvalid(
@@ -303,7 +303,7 @@ partial class MCP2221 {
         if (operationState == OperationState.AdvanceToNextStep) {
           ReadLength = resp[3] switch {
             _ when resp[3] is >= 0 and <= 60 => resp[3],
-            127 => throw new I2CCommandException("error has orccurred on reading"),
+            127 => throw new I2CCommandException("error has occurred on reading"),
             _ => throw new I2CCommandException(args.address, $"unexpected data length ({resp[3]})"),
           };
 

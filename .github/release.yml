@@ -4,7 +4,15 @@
 # ref: https://docs.github.com/repositories/releasing-projects-on-github/automatically-generated-release-notes
 changelog:
   exclude:
-    authors:
-      - smdn
     labels:
       - release-target
+  categories:
+    - title: Notable changes (may include changes not directly related)
+      labels:
+        - "*"
+      exclude:
+        labels:
+          - dependencies
+    - title: Dependencies
+      labels:
+        - dependencies

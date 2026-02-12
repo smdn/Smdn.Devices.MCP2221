@@ -1,7 +1,9 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)ReadReadmeFileNoticeSectionContent.targets" />
+
   <Import Project="Sdk.targets" Sdk="Smdn.MSBuild.ProjectAssets.Library" />
 </Project>

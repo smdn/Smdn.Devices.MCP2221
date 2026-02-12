@@ -1,0 +1,33 @@
+<!--
+SPDX-FileCopyrightText: 2023 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <Target Name="ReadReadmeFileNoticeSectionContent">
+    <PropertyGroup>
+      <ReadmeFileNoticeSectionContent>$(
+        [System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\README.md')
+      )</ReadmeFileNoticeSectionContent>
+      <!-- extract section content -->
+      <ReadmeFileNoticeSectionContent>$([System.Text.RegularExpressions.Regex]::Replace(
+        '$(ReadmeFileNoticeSectionContent)',
+        '(?:.+)(?m-s:^.+-- #pragma section-start NupkgReadmeFile_Notice --.+$)(?&lt;notice&gt;.+)(?m-s:^.+-- #pragma section-end NupkgReadmeFile_Notice --.+$)(?:.+)',
+        '${notice}',
+        System.Text.RegularExpressions.RegexOptions.Singleline
+      ))</ReadmeFileNoticeSectionContent>
+      <!-- modify heading level -->
+      <ReadmeFileNoticeSectionContent>$([System.Text.RegularExpressions.Regex]::Replace(
+        '$(ReadmeFileNoticeSectionContent)',
+        '^##',
+        '###',
+        System.Text.RegularExpressions.RegexOptions.Multiline
+      ))</ReadmeFileNoticeSectionContent>
+      <!-- replace relative path to absolute, and trim whitespaces -->
+      <ReadmeFileNoticeSectionContent>$([System.Text.RegularExpressions.Regex]::Replace(
+        '$(ReadmeFileNoticeSectionContent)',
+        '\(\./([^\)]+)\)',
+        '($(RepositoryUrl)/tree/main/$1)'
+      ).Trim())</ReadmeFileNoticeSectionContent>
+    </PropertyGroup>
+  </Target>
+</Project>

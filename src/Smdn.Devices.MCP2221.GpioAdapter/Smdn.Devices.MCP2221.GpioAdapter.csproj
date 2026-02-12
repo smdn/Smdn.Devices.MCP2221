@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
-  <PropertyGroup Label="metadata">
+  <PropertyGroup Label="package properties">
     <Description>
 <![CDATA[Smdn.Devices.MCP2221.GpioAdapter provides the MCP2221/MCP2221A adapter for System.Device.Gpio.
 This library enables you to use the many device bindings provided by Iot.Device.Bindings.

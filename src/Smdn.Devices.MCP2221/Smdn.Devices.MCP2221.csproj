@@ -36,14 +36,15 @@ SPDX-License-Identifier: MIT
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
-  <PropertyGroup Label="metadata">
+  <PropertyGroup Label="package properties">
     <Description>
-<![CDATA[Smdn.Devices.MCP2221 is a .NET library for controlling MCP2221/MCP2221A, USB2.0 to I2C/UART Protocol Converter with GPIO.
-This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and other functionalities via USB-HID interface.
+<![CDATA[`Smdn.Devices.MCP2221` is a .NET library for controlling **MCP2221/MCP2221A**, USB2.0 to I2C/UART Protocol Converter with GPIO.
+This library enables you to control **MCP2221/MCP2221A**'s GPIO, I2C interface, and other functionalities via USB-HID interface.
 ]]>
     </Description>
     <PackageTags>USB,USB-HID,MCP2221,MCP2221A,I2C,GPIO</PackageTags>
     <CopyrightYear>2021</CopyrightYear>
+    <GenerateNupkgReadmeFileDependsOnTargets>$(GenerateNupkgReadmeFileDependsOnTargets);GenerateReadmeFileContent</GenerateNupkgReadmeFileDependsOnTargets>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,6 +53,16 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
     <PackageReference Update="System.Device.Gpio" Version="[1.4.0,4.0.0)" Condition="$(TargetFramework.StartsWith('netstandard2.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Third party notice -->
+    <None
+      Include="$(MSBuildThisFileDirectory)..\..\ThirdPartyNotices.md"
+      Pack="true"
+      PackagePath="ThirdPartyNotices.md"
+      CopyToOutputDirectory="None"
+    />
   </ItemGroup>
 
   <!-- choose USB-HID backed -->
@@ -84,5 +95,19 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
   </Target>
   <Target Name="DisplayUsbHidDriverError" BeforeTargets="BeforeBuild" Condition=" '$(UsbHidDriverMessage)' == '' ">
     <Error Text="USB-HID driver not specified or undefined: '$(UsbHidDriver)'" />
+  </Target>
+
+  <Target Name="GenerateReadmeFileContent" DependsOnTargets="ReadReadmeFileNoticeSectionContent">
+    <PropertyGroup>
+      <PackageReadmeFileContent><![CDATA[# $(PackageId) $(PackageVersion)
+$(Description)
+
+## Contributing
+This project welcomes contributions, feedbacks and suggestions. You can contribute to this project by submitting [Issues]($(RepositoryUrl)/issues/new/choose) or [Pull Requests]($(RepositoryUrl)/pulls/) on the [GitHub repository]($(RepositoryUrl)).
+
+## Notice
+$(ReadmeFileNoticeSectionContent)
+]]></PackageReadmeFileContent>
+    </PropertyGroup>
   </Target>
 </Project>

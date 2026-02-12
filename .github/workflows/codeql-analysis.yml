@@ -28,6 +28,12 @@ on:
     - cron: '23 20 03,16 * *'
   workflow_dispatch:
 
+env:
+  # cSpell:disable
+  MINIMAL_DOTNET_SDK_VERSION: 10.0.100
+  # cSpell:enable
+
+# cSpell:ignore autobuild
 jobs:
   analyze:
     name: Analyze
@@ -40,17 +46,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'csharp' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
         # Learn more about CodeQL language support at https://git.io/codeql-language-support
+        include:
+          - language: csharp
+            build-mode: manual
+            source-root: './src'
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v6.0.1
 
-    # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -59,21 +67,20 @@ jobs:
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
         config-file: ./.github/codeql/configurations.yml
 
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
+      if: ${{ (matrix.build-mode == 'autobuild') || (matrix.build-mode == '') }}
+      uses: github/codeql-action/autobuild@v4
 
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
+    - name: Prepare .NET SDK ${{ env.MINIMAL_DOTNET_SDK_VERSION }}
+      uses: smdn/workflows-dotnet/actions/prepare-dotnet-sdk@actions/prepare-dotnet-sdk/v1.0.0
+      if: ${{ (matrix.build-mode == 'manual') && (matrix.language == 'csharp') }}
+      with:
+        minimal_dotnet_sdk_version: '${{ env.MINIMAL_DOTNET_SDK_VERSION }}'
 
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-    #    and modify them (or add more) to build your code if your project
-    #    uses a compiled language
-
-    #- run: |
-    #   make bootstrap
-    #   make release
+    - name: Build all .NET projects
+      if: ${{ (matrix.build-mode == 'manual') && (matrix.language == 'csharp') }}
+      run: |
+        ./eng/BuildAllProjects.ps1
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      uses: github/codeql-action/analyze@v4

@@ -2,71 +2,28 @@
 # SPDX-FileCopyrightText: "2022 smdn <smdn@smdn.jp>"
 
 name: Publish release target
+run-name: Publish release target ${{ github.head_ref }}
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: read
 
 on:
   pull_request:
     types: [closed]
 
-  workflow_dispatch:
-    inputs:
-      pr_number_request_for_release:
-        description: "The number of pull request that requests to merge the release working branch."
-        required: true
-        type: number
-      dry_run:
-        description: "If true, performs a trial run."
-        required: false
-        type: boolean
-        default: false
-
 jobs:
-  determine-pr-number:
-    runs-on: ubuntu-latest
-
-    # in case of the trigger when the pull request from the branch named with prefix 'releases/' was merged, or ...
-    # in case of the trigger when on workflow_dispatch
-    if: |
-      (github.event.pull_request.merged == true && startsWith(github.head_ref, 'releases/')) ||
-      (github.event.inputs.pr_number_request_for_release != '')
-
-    outputs:
-      pr_number_request_for_release: ${{ steps.pr.outputs.number }}
-      dry_run: ${{ steps.pr.outputs.dry_run }}
-
-    steps:
-    - name: Determine the pull request number which triggered the event
-      id: pr
-      run: |
-        # in case of the workflow triggered by pull_request
-        if [[ -n '${{ github.event.pull_request.number }}' ]]; then
-          echo "::set-output name=number::${{ github.event.pull_request.number }}"
-          echo '::set-output name=dry_run::false'
-          exit 0
-        fi
-
-        # in case of the workflow triggered workflow_dispatch
-        if [[ -n '${{ github.event.inputs.pr_number_request_for_release }}' ]]; then
-          echo "::set-output name=number::${{ github.event.inputs.pr_number_request_for_release }}"
-
-          if [ '${{ github.event.inputs.dry_run }}' = 'true' ]; then
-            echo '::set-output name=dry_run::true'
-          else
-            echo '::set-output name=dry_run::false'
-          fi
-
-          exit 0
-        fi
-
-        echo '::error::The number of the pull request could not be determined.'
-        exit 1
-
   run-publish-release-target:
-    uses: smdn/Smdn.Fundamentals/.github/workflows/publish-release-target.yml@workflows/release-target-v1.3.0
-    needs: determine-pr-number
+    uses: smdn/workflows-dotnet/.github/workflows/publish-release-target.yml@release-target/v1.14.1
+    if: |
+      (github.event.pull_request.merged == true && startsWith(github.head_ref, 'releases/')) &&
+      (contains(github.event.pull_request.labels.*.name, 'release-target'))
     with:
-      pr_number_request_for_release: ${{ fromJSON(needs.determine-pr-number.outputs.pr_number_request_for_release) }}
+      pr_number_request_for_release: ${{ github.event.pull_request.number }}
       pr_label_request_for_release:  'release-target'
-      dry_run: ${{ fromJSON(needs.determine-pr-number.outputs.dry_run) }}
+      workflow_runs_on:              'ubuntu-24.04'
+      dotnet_sdk_version:            '10.0.100'
     secrets:
       token_repo:                 ${{ secrets.PUBLISH_NEW_RELEASE }}
       token_push_nuget_org:       ${{ secrets.PUBLISH_PACKAGE_NUGETORG }}

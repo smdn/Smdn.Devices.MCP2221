@@ -281,3 +281,29 @@ Unhandled exception. Smdn.Devices.MCP2221.DeviceUnavailableException: MCP2221/MC
 If you want to give access privileges to a non-root user instead, you can use udev rule file. See [udev rule files](misc/udev/).
 
 
+# For contributors
+Contributions are appreciated!
+
+If there's a feature you would like to add or a bug you would like to fix, please read [Contribution guidelines](./CONTRIBUTING.md) and create an Issue or Pull Request.
+
+IssueやPull Requestを送る際は、[Contribution guidelines](./CONTRIBUTING.md)をご覧頂ください。　可能なら英語が望ましいですが、日本語で構いません。
+
+
+# Notice
+<!-- #pragma section-start NupkgReadmeFile_Notice -->
+## License
+This project is licensed under the terms of the [MIT License](./LICENSE.txt).
+
+## Disclaimer
+(An English translation for the reference follows the text written in Japanese.)
+
+本プロジェクトは、`MCP2221`/`MCP2221A`の製造元・供給元・販売元とは無関係の、非公式なものです。
+
+This is an unofficial project that has no affiliation with the manufacturers/vendors/suppliers of `MCP2221`/`MCP2221A`.
+
+## Credit
+This project uses the following components. See [ThirdPartyNotices.md](./ThirdPartyNotices.md) for detail.
+
+- [LibUsbDotNet/LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet)
+- [SeekHisKingdom/HIDSharp](https://github.com/SeekHisKingdom/HIDSharp)
+<!-- #pragma section-end NupkgReadmeFile_Notice -->

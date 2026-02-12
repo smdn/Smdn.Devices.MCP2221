@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
@@ -23,16 +23,17 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net8.0;netstandard2.1</TargetFrameworks>
     <VersionPrefix>0.9.3</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <!-- <PackageValidationBaselineVersion>0.9.0</PackageValidationBaselineVersion> -->
     <DefineConstants>$(DefineConstants);USBHIDDRIVER_$(UsbHidDriver.ToUpper())</DefineConstants>
+    <IsAotCompatible>false</IsAotCompatible>
+    <Nullable>disable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AnalysisMode>None</AnalysisMode>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
   <PropertyGroup Label="metadata">
@@ -42,10 +43,13 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
 ]]>
     </Description>
     <PackageTags>USB,USB-HID,MCP2221,MCP2221A,I2C,GPIO</PackageTags>
+    <CopyrightYear>2021</CopyrightYear>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,2.0.0)" />
+    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,5.0.0)" />
+    <!-- System.Device.Gpio version 4.0.0 or later does not support .NET Standard 2.x -->
+    <PackageReference Update="System.Device.Gpio" Version="[1.4.0,4.0.0)" Condition="$(TargetFramework.StartsWith('netstandard2.'))" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
   </ItemGroup>
@@ -54,7 +58,7 @@ This library enables you to control MCP2221/MCP2221A's GPIO, I2C interface, and 
   <Choose>
     <When Condition=" '$(UsbHidDriver)' == 'HIDSharp' ">
       <ItemGroup>
-        <PackageReference Include="HidSharp" Version="2.1.0" />
+        <PackageReference Include="HidSharp" Version="[2.1.0,3.0.0)" />
       </ItemGroup>
       <PropertyGroup>
         <UsbHidDriverMessage>USB-HID driver: HidSharp (Apache License 2.0)</UsbHidDriverMessage>

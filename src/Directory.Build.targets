@@ -3,7 +3,5 @@ SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project>
-  <ImportGroup Label="project assets">
-    <Import Project="$(SmdnProjectAssets_TargetsImports)" />
-  </ImportGroup>
+  <Import Project="Sdk.targets" Sdk="Smdn.MSBuild.ProjectAssets.Library" />
 </Project>

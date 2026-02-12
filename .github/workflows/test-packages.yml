@@ -1,24 +1,11 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: "2022 smdn <smdn@smdn.jp>"
 
-name: Run tests
+name: Run tests with released packages
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-    - 'src/**/*.cs'
-    - 'src/**/*.csproj'
-    - 'tests/**/*.cs'
-    - 'tests/**/*.csproj'
-
-  pull_request:
-    branches: [ main ]
-    paths:
-    - 'src/**/*.cs'
-    - 'src/**/*.csproj'
-    - 'tests/**/*.cs'
-    - 'tests/**/*.csproj'
+  release:
+    types: [published]
 
   workflow_dispatch:
     inputs:
@@ -43,11 +30,6 @@ on:
         type: boolean
         default: false
 
-      extra_options_common:
-        description: "The common extra options to be set on running the `dotnet restore/build/test` command."
-        required: false
-        type: string
-
       dotnet_test_options_verbosity_level:
         # cSpell:disable-next-line
         description: "The argument to be set to the `--verbosity <LEVEL>` option of the `dotnet test` command. <LEVEL> := q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic]"
@@ -71,17 +53,26 @@ on:
         default: ''
 
 jobs:
+  await-package-publishing:
+    name: Wait for publishing of released package
+    if: ${{ github.event_name == 'release' }}
+    uses: smdn/workflows-dotnet/.github/workflows/nuget-await-package-publishing.yml@nuget/v1.1.1
+    with:
+      release_tag: ${{ github.event.release.tag_name }}
+
   run-test:
-    name: Run tests
+    name: Run tests with released packages
     uses: smdn/workflows-dotnet/.github/workflows/test.yml@test/v1.8.0
+    needs: await-package-publishing
+    if: ${{ always() && !failure() && !cancelled() }} # run tests even if await-package-publishing is skipped
     with:
       project:                                ${{ inputs.project }}
       os:                                     ${{ inputs.os == '' && 'ubuntu-24.04, ubuntu-22.04, windows-latest, macos-latest' || inputs.os }}
+      extra_options_common:                   '/p:TestReleasedPackage=true'
       verbose:                                ${{ inputs.verbose == 'true' }}
       dotnet_sdk_version:                     ${{ inputs.dotnet_sdk_version == '' && '10.0.100' || inputs.dotnet_sdk_version }}
       timeout_minutes_test_job:               10
       timeout_hang:                           "[ {'OS':'windows','Timeout':'6min'}, {'OS':'macos','Timeout':'3min'}, {'OS':'','Timeout':'1min'} ]"
-      extra_options_common:                   ${{ inputs.extra_options_common }}
       dotnet_test_options_verbosity_level:    ${{ inputs.dotnet_test_options_verbosity_level }}
       dotnet_test_options_framework:          ${{ inputs.dotnet_test_options_framework }}
       dotnet_test_options_filter_expression:  ${{ inputs.dotnet_test_options_filter_expression }}

@@ -1,0 +1,120 @@
+<!--
+SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project InitialTargets="ErrorIfTestTargetProjectNotResolvedOrNotExist">
+  <PropertyGroup>
+    <CanTestReleasedPackage Condition=" '$(CanTestReleasedPackage)' == '' ">true</CanTestReleasedPackage>
+    <_RunTestWithReleasedPackage
+      Condition="
+        '$(TestReleasedPackage)' == 'true' and
+        '$(CanTestReleasedPackage)' == 'true' and
+        '$(SmdnTestTargetProjectName)' != ''
+      "
+    >true</_RunTestWithReleasedPackage>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(_RunTestWithReleasedPackage)' == 'true' ">
+      <ItemGroup Label="add test target package reference">
+        <PackageReference
+          Include="$(SmdnTestTargetProjectName)"
+          Version="*-*"
+        />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup Label="add test target project reference">
+        <ProjectReference
+          Condition=" '$(SmdnTestTargetProjectFullPath)' != '' and Exists('$(SmdnTestTargetProjectFullPath)') "
+          Include="$(SmdnTestTargetProjectFullPath)"
+        />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+
+  <Target
+    Name="WarnCannotTestReleasedPackage"
+    BeforeTargets="BeforeBuild"
+    Condition=" '$(TestReleasedPackage)' == 'true' and '$(CanTestReleasedPackage)' != 'true' "
+  >
+    <Warning Text="cannot test with released package"/>
+  </Target>
+
+  <Target
+    Name="ErrorIfTestTargetProjectNotResolvedOrNotExist"
+    BeforeTargets="BeforeBuild"
+    Condition=" '$(IsTestProject)' == 'true' "
+  >
+    <Error
+      Condition=" '$(SmdnTestTargetProjectFullPath)' == '' "
+      Text="The path to the test target project could not be resolved."
+    />
+    <Error
+      Condition="!Exists('$(SmdnTestTargetProjectFullPath)')"
+      Text="The test target project '$(SmdnTestTargetProjectFullPath)' does not exist."
+    />
+  </Target>
+
+  <!--
+    ref: https://github.com/NuGet/NuGet.Client/blob/dev/src/NuGet.Core/NuGet.Build.Tasks/NuGet.targets
+  -->
+  <Target
+    Name="UpdateTestTargetPackageVersionToLatest"
+    BeforeTargets="CollectPackageReferences"
+    Condition="
+      '$(_RunTestWithReleasedPackage)' == 'true' and
+      ('$(TargetFrameworks)' == '' or '$(TargetFramework)' == '')
+    "
+  >
+    <MSBuild Projects="$(SmdnTestTargetProjectFullPath)" Targets="GetNuGetPackageLatestVersion">
+      <Output TaskParameter="TargetOutputs" PropertyName="SmdnTestTargetPackageVersionLatest" />
+    </MSBuild>
+
+    <ItemGroup>
+      <PackageReference
+        Update="$(SmdnTestTargetProjectName)"
+        Version="$(SmdnTestTargetPackageVersionLatest)"
+        Condition=" '$(SmdnTestTargetPackageVersionLatest)' != '' "
+      />
+    </ItemGroup>
+
+    <Message
+      Text="Updated PackageReference version: $(SmdnTestTargetProjectName)-$(SmdnTestTargetPackageVersionLatest)"
+      Importance="high"
+      Condition=" '$(SmdnTestTargetPackageVersionLatest)' != '' "
+    />
+  </Target>
+
+  <Target
+    Name="ListUpPackageReferencesToGitHubStepSummary"
+    AfterTargets="ResolveAssemblyReferences"
+    Condition="
+      '$(_RunTestWithReleasedPackage)' == 'true' and
+      '$(GITHUB_STEP_SUMMARY)' != '' and
+      '$(TargetFramework)' != ''
+    "
+  >
+    <ItemGroup>
+      <_NuGetPackageReferences Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != ''" />
+      <_NuGetPackageReferenceTableMarkdownLines
+        Include="|%(_NuGetPackageReferences.NuGetPackageId)|%(_NuGetPackageReferences.NuGetPackageVersion)|"
+        Condition=" '@(_NuGetPackageReferences)' != '' "
+      />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_NuGetPackageReferenceTable><![CDATA[
+<details>
+  <summary>List of PackageReference ($(TargetFramework))</summary>
+
+|Package ID|Package version|
+|----------|---------------|
+@(_NuGetPackageReferenceTableMarkdownLines, '%0A')
+</details>
+]]></_NuGetPackageReferenceTable>
+    </PropertyGroup>
+
+    <GitHubActionsStepSummaryAppendContent Contents="$(_NuGetPackageReferenceTable)" />
+  </Target>
+</Project>

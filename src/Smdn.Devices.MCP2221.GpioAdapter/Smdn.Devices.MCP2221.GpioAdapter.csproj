@@ -1,19 +1,19 @@
-<!--
+﻿<!--
 SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net8.0;netstandard2.1</TargetFrameworks>
     <VersionPrefix>0.9.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <!-- <PackageValidationBaselineVersion>0.9.0</PackageValidationBaselineVersion> -->
+    <Nullable>disable</Nullable>
+    <IsAotCompatible>false</IsAotCompatible>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' " Label="Required properties to generate API list">
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <APIListLoadIntoReflectionOnlyContext>true</APIListLoadIntoReflectionOnlyContext>
+    <AnalysisMode>None</AnalysisMode>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
   <PropertyGroup Label="metadata">
@@ -23,12 +23,15 @@ This library enables you to use the many device bindings provided by Iot.Device.
 ]]>
     </Description>
     <PackageTags>MCP2221,MCP2221A,USB,I2C,System.Device.Gpio,Iot.Device.Bindings</PackageTags>
+    <CopyrightYear>2021</CopyrightYear>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference VersionRange="[0.9.1,1.0.0)" Include="..\Smdn.Devices.MCP2221\Smdn.Devices.MCP2221.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,2.0.0)" />
+    <PackageReference Include="System.Device.Gpio" Version="[1.4.0,5.0.0)" />
+    <!-- System.Device.Gpio version 4.0.0 or later does not support .NET Standard 2.x -->
+    <PackageReference Update="System.Device.Gpio" Version="[1.4.0,4.0.0)" Condition="$(TargetFramework.StartsWith('netstandard2.'))" />
   </ItemGroup>
 </Project>

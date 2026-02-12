@@ -54,34 +54,34 @@ public partial class MCP2221Tests {
   [Test]
   public void OpenAsync()
   {
-    MCP2221 device = null;
+    MCP2221? device = null;
 
-    Assert.DoesNotThrowAsync(async () => device = await MCP2221.OpenAsync(CreatePreudoDevice));
+    Assert.That(async () => device = await MCP2221.OpenAsync(CreatePreudoDevice), Throws.Nothing);
 
-    Assert.IsNotNull(device);
-    Assert.IsNotNull(device.HidDevice);
-    Assert.IsNotNull(device.FirmwareRevision);
-    Assert.IsNotNull(device.HardwareRevision);
-    Assert.IsNotNull(device.ManufacturerDescriptor);
-    Assert.IsNotNull(device.ProductDescriptor);
-    Assert.IsNotNull(device.SerialNumberDescriptor);
-    Assert.IsNotNull(device.ChipFactorySerialNumber);
+    Assert.That(device, Is.Not.Null);
+    Assert.That(device.HidDevice, Is.Not.Null);
+    Assert.That(device.FirmwareRevision, Is.Not.Null);
+    Assert.That(device.HardwareRevision, Is.Not.Null);
+    Assert.That(device.ManufacturerDescriptor, Is.Not.Null);
+    Assert.That(device.ProductDescriptor, Is.Not.Null);
+    Assert.That(device.SerialNumberDescriptor, Is.Not.Null);
+    Assert.That(device.ChipFactorySerialNumber, Is.Not.Null);
 
-    Assert.AreEqual("1.2", device.FirmwareRevision, nameof(device.FirmwareRevision));
-    Assert.AreEqual("A.6", device.HardwareRevision, nameof(device.HardwareRevision));
-    Assert.AreEqual("Microchip Technology Inc.", device.ManufacturerDescriptor, nameof(device.ManufacturerDescriptor));
-    Assert.AreEqual("MCP2221 USB-I2C/UART Combo", device.ProductDescriptor, nameof(device.ProductDescriptor));
-    Assert.AreEqual("XXXXXXXXXX", device.SerialNumberDescriptor, nameof(device.SerialNumberDescriptor));
-    Assert.AreEqual("01234567", device.ChipFactorySerialNumber, nameof(device.ChipFactorySerialNumber));
+    Assert.That(device.FirmwareRevision, Is.EqualTo("1.2"), nameof(device.FirmwareRevision));
+    Assert.That(device.HardwareRevision, Is.EqualTo("A.6"), nameof(device.HardwareRevision));
+    Assert.That(device.ManufacturerDescriptor, Is.EqualTo("Microchip Technology Inc."), nameof(device.ManufacturerDescriptor));
+    Assert.That(device.ProductDescriptor, Is.EqualTo("MCP2221 USB-I2C/UART Combo"), nameof(device.ProductDescriptor));
+    Assert.That(device.SerialNumberDescriptor, Is.EqualTo("XXXXXXXXXX"), nameof(device.SerialNumberDescriptor));
+    Assert.That(device.ChipFactorySerialNumber, Is.EqualTo("01234567"), nameof(device.ChipFactorySerialNumber));
   }
 
   [Test]
   public void OpenAsync_ArgumentNull()
-    => Assert.ThrowsAsync<ArgumentNullException>(async () => await MCP2221.OpenAsync((Func<IUsbHidDevice>)null));
+    => Assert.That(async () => await MCP2221.OpenAsync((Func<IUsbHidDevice>)null!), Throws.ArgumentNullException);
 
   [Test]
   public void OpenAsync_CreateDeviceReturnNull()
-    => Assert.ThrowsAsync<DeviceNotFoundException>(async () => await MCP2221.OpenAsync(() => (IUsbHidDevice)null));
+    => Assert.That(async () => await MCP2221.OpenAsync(() => (IUsbHidDevice)null!), Throws.TypeOf<DeviceNotFoundException>());
 
 
 
@@ -93,42 +93,42 @@ public partial class MCP2221Tests {
   {
     await using var device = await MCP2221.OpenAsync(CreatePreudoDevice);
 
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.HidDevice));
+    Assert.That(() => Assert.That(device.HidDevice, Is.Not.Null), Throws.Nothing);
 
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.HardwareRevision));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.FirmwareRevision));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.ManufacturerDescriptor));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.ProductDescriptor));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.SerialNumberDescriptor));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.ChipFactorySerialNumber));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GPs));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP0));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP1));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP2));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP3));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.I2C));
+    Assert.That(() => Assert.That(device.HardwareRevision, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.FirmwareRevision, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.ManufacturerDescriptor, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.ProductDescriptor, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.SerialNumberDescriptor, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.ChipFactorySerialNumber, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GPs, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP0, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP1, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP2, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP3, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.I2C, Is.Not.Null), Throws.Nothing);
 
     await disposeAction(device);
 
-    Assert.Throws<ObjectDisposedException>(() => Assert.IsNotNull(device.HidDevice));
-    Assert.ThrowsAsync<ObjectDisposedException>(async () => await device.GP0.SetValueAsync(default));
-    Assert.ThrowsAsync<ObjectDisposedException>(async () => await device.GP0.GetValueAsync());
-    Assert.ThrowsAsync<ObjectDisposedException>(async () => await device.I2C.WriteAsync(default, default));
-    Assert.ThrowsAsync<ObjectDisposedException>(async () => await device.I2C.ReadAsync(default, default));
+    Assert.That(() => Assert.That(device.HidDevice, Is.Not.Null), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.GP0.SetValueAsync(default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.GP0.GetValueAsync(), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.I2C.WriteAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.I2C.ReadAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
 
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.HardwareRevision));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.FirmwareRevision));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.ManufacturerDescriptor));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.ProductDescriptor));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.SerialNumberDescriptor));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.ChipFactorySerialNumber));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GPs));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP0));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP1));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP2));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.GP3));
-    Assert.DoesNotThrow(() => Assert.IsNotNull(device.I2C));
+    Assert.That(() => Assert.That(device.HardwareRevision, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.FirmwareRevision, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.ManufacturerDescriptor, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.ProductDescriptor, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.SerialNumberDescriptor, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.ChipFactorySerialNumber, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GPs, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP0, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP1, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP2, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.GP3, Is.Not.Null), Throws.Nothing);
+    Assert.That(() => Assert.That(device.I2C, Is.Not.Null), Throws.Nothing);
 
-    Assert.DoesNotThrowAsync(async () => await disposeAction(device), "dispose again");
+    Assert.That(async () => await disposeAction(device), Throws.Nothing, "dispose again");
   }
 }

@@ -76,7 +76,18 @@ Haven't tested with the actual MCP2221, but it is expected that works as same as
   - Provides an adapter for [System.Device.Gpio](https://www.nuget.org/packages/System.Device.Gpio/)
   - Can handle I2C devices using with [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/) ([examples](examples/Smdn.Devices.MCP2221.GpioAdapter/))
 
-# Getting started and examples
+# Getting started and usage examples
+
+## Linux setup
+To use the MCP2221 with this library, two configuration steps may be required depending on your Linux distribution.
+
+### Device permissions (udev) <a name="mcp2221_udev_device_permissions">§</a>
+To access the MCP2221 via this library, some system configuration may be required. Generally, a **udev rule** is necessary on most distributions to grant non-root users access to the device (see [udev rule files](misc/udev/) for setup instructions).
+
+### Driver conflict (Ubuntu 24.04 / Kernel 6.8+) <a name="mcp2221_modprobe_blacklist">§</a>
+On Ubuntu 24.04 (Kernel 6.8+) and newer systems, you may also encounter a driver conflict where the native `hid_mcp2221` driver claims the device, preventing the `/dev/hidraw*` node from being created. In this case, you must **blacklist** the dedicated driver to force the system to use the generic `usbhid` driver. Detailed steps for this process can be found in [modprobe blacklist file](misc/modprobe/blacklist-MCP2221.conf).
+
+## Write code
 Firstly, add package [Smdn.Devices.MCP2221](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) to your project.
 
 ```
@@ -118,6 +129,81 @@ More examples can be found in following examples directory.
 
 # Troubleshooting
 ## Linux
+### MCP2221 Detection and Access Permissions
+If your application cannot detect the MCP2221, follow these steps to diagnose driver conflicts or permission issues.
+
+First, check if the system has created the character device file for HIDRAW:
+
+```bash
+ls -l /dev/hidraw*
+```
+
+If no devices are listed, or if a device corresponding to the target MCP2221 is not listed, the kernel driver conflict is likely the cause. If the file exists but you cannot open it due to unprivileged access, [check the permissions](#mcp2221_udev_device_permissions).
+
+Next, inspect the kernel logs. Monitor the kernel logs while reconnecting the device to identify which driver is claiming it. Use `dmesg -w` or `journalctl -k -f`.
+
+**Expected Output**: You should see `hid-generic` or `usbhid` associated with the device, followed by a `hidraw` assignment.
+
+```
+kernel: usb 3-1.1: New USB device found, idVendor=04d8, idProduct=00dd, bcdDevice= 1.00
+kernel: usb 3-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+kernel: usb 3-1.1: Product: MCP2221 USB-I2C/UART Combo
+kernel: usb 3-1.1: Manufacturer: Microchip Technology Inc.
+kernel: hid-generic 0003:04D8:00DD.0008: hiddev0,hidraw0: USB HID v1.11 Device [Microchip Technology Inc. MCP2221 USB-I2C/UART Combo] on usb-0000:00:14.0-1.1/input2
+```
+
+*In this example, `/dev/hidraw0` is successfully assigned.*
+
+**Conflict Indicator**: If you see `mcp2221` mentioned instead of `hid-generic`, or logs indicating the I2C/GPIO features are being initialized, the dedicated `mcp2221` kernel driver is active and suppressing the HIDRAW interface.
+
+```
+kernel: mcp2221 0003:04D8:00DD.000A: USB HID v1.11 Device [Microchip Technology Inc. MCP2221 USB-I2C/UART Combo] on usb-0000:00:14.0-1.1/input2
+```
+
+If this occurs, you must [blacklist the mcp2221 driver](#mcp2221_modprobe_blacklist).
+
+To verify which driver is currently controlling the interface, run:
+
+```bash
+lsusb -t
+```
+
+Look for the MCP2221 interface (typically `Class=Human Interface Device`).
+
+If the target interface is displayed as `Driver=usbhid`, it can be controlled as HIDRAW. However, if it is displayed as `Driver=mcp2221`, it is controlled by the kernel driver, and the HIDRAW node is suppressed.
+
+If the `/dev/hidrawX` file exists but remains inaccessible, verify the ACL (Access Control List) permissions using the `getfacl` command and check that your user is part of the `plugdev` group or that the `uaccess` tag is correctly applied:
+
+```bash
+getfacl /dev/hidrawX  # Replace X with your device number
+```
+
+```
+# file: dev/hidrawX
+# owner: root
+# group: plugdev
+user::rw-
+user:[your-username]:rw-  # This line may be added by 'uaccess'
+group::rw-
+mask::rw-
+other::---
+```
+
+If you do not have sufficient permissions, check if the `udev` properties were applied correctly:
+
+```bash
+udevadm info -n /dev/hidrawX
+```
+
+Confirm that `E: GROUP=plugdev` and/or `E: TAGS=:uaccess:` are present in the output. If these properties are missing, ensure your `udev` rules are correctly installed and reloaded.
+
+If `uaccess` does not apply as expected, manually add your user to the `plugdev` group:
+
+```bash
+sudo usermod -aG plugdev $USER   # A re-login is required for group changes to take effect
+```
+
+
 ### DllImport resolving
 LibUsbDotNet do DllImport-ing a shared library with the filename `libusb-1.0.so.0`.
 
@@ -193,6 +279,6 @@ Unhandled exception. Smdn.Devices.MCP2221.DeviceUnavailableException: MCP2221/MC
    at HidSharp.HidDevice.Open()
 ```
 
-If you want to give access privileges to a non-root user instead, you can use udev rule file. See [90-MCP2221-HIDSharp.rules](misc/udev/90-MCP2221-HIDSharp.rules) or [90-MCP2221-LibUsbDotNet.rules](misc/udev/90-MCP2221-LibUsbDotNet.rules)
+If you want to give access privileges to a non-root user instead, you can use udev rule file. See [udev rule files](misc/udev/).
 
 

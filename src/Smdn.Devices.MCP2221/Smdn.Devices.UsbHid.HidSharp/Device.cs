@@ -63,8 +63,10 @@ internal class Device : IUsbHidDevice {
       try {
         return HidDevice.GetSerialNumber();
       }
-      // HidSharp.Exceptions.DeviceIOException is internal class
-      catch (Exception ex) when ("HidSharp.Exceptions.DeviceIOException".Equals(ex.GetType().FullName, StringComparison.Ordinal)) {
+      catch (Exception ex) when (
+        // HidSharp.Exceptions.DeviceIOException is internal class
+        "HidSharp.Exceptions.DeviceIOException".Equals(ex.GetType().FullName, StringComparison.Ordinal)
+      ) {
         return string.Empty;
       }
     }

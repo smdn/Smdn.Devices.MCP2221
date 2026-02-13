@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 
 using LibUsbDotNet;
 using LibUsbDotNet.Info;
-using LibUsbDotNet.Main;
 using LibUsbDotNet.LibUsb;
+using LibUsbDotNet.Main;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -58,8 +58,8 @@ internal class Device : IUsbHidDevice {
   /*
    * instance members
    */
-  private UsbDevice? _usbDevice;
-  private UsbDevice UsbDevice => _usbDevice ?? throw new ObjectDisposedException(GetType().Name);
+  private UsbDevice? usbDevice;
+  private UsbDevice UsbDevice => usbDevice ?? throw new ObjectDisposedException(GetType().Name);
 
   private readonly ILogger? logger;
 
@@ -74,7 +74,7 @@ internal class Device : IUsbHidDevice {
 
   internal Device(UsbDevice usbDevice, ILogger? logger)
   {
-    this._usbDevice = usbDevice;
+    this.usbDevice = usbDevice;
     this.logger = logger;
   }
 
@@ -88,7 +88,7 @@ internal class Device : IUsbHidDevice {
     const byte endpointAddressInOutBitMask  = 0b_1000_0000;
     const byte endpointAddressIn            = 0b_1000_0000;
     const byte endpointAddressOut           = 0b_0000_0000;
-    //const byte endpointAddressNumberMask    = 0b_0000_0111;
+    // const byte endpointAddressNumberMask    = 0b_0000_0111;
     const byte attributesTransferTypeMask   = 0b_0000_0011;
 
     foreach (var cfg in UsbDevice.Configs) {
@@ -122,7 +122,7 @@ internal class Device : IUsbHidDevice {
       UsbDevice.Open();
 
     // try set configuration
-    foreach (var cfg in new[] {config.ConfigurationValue, 0 /* fallback */}) {
+    foreach (var cfg in new[] { config.ConfigurationValue, 0 /* fallback */ }) {
       try {
         UsbDevice.SetConfiguration(cfg);
       }
@@ -163,29 +163,29 @@ internal class Device : IUsbHidDevice {
   }
 
   public ValueTask<IUsbHidStream> OpenStreamAsync()
-  {
-    return
+#pragma warning disable SA1114
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
-    ValueTask.FromResult<IUsbHidStream>
+    => ValueTask.FromResult<IUsbHidStream>(
 #else
-    new ValueTask<IUsbHidStream>
+    => new ValueTask<IUsbHidStream>(
 #endif
-    (OpenEndpointStream());
-  }
+      OpenEndpointStream()
+    );
+#pragma warning restore SA1114
 
   public IUsbHidStream OpenStream()
     => OpenEndpointStream();
 
   public void Dispose()
   {
-    _usbDevice?.Dispose();
-    _usbDevice = null;
+    usbDevice?.Dispose();
+    usbDevice = null;
   }
 
   public ValueTask DisposeAsync()
   {
-    _usbDevice?.Dispose();
-    _usbDevice = null;
+    usbDevice?.Dispose();
+    usbDevice = null;
 
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
     return ValueTask.CompletedTask;

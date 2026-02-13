@@ -19,11 +19,11 @@ internal class Stream : IUsbHidStream {
   internal const int DefaultReadBufferSize = 0x100; // XXX
   private static readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(10);
 
-  private UsbEndpointWriter? _writer;
-  private UsbEndpointWriter Writer => _writer ?? throw new ObjectDisposedException(GetType().Name);
+  private UsbEndpointWriter? writer;
+  private UsbEndpointWriter Writer => writer ?? throw new ObjectDisposedException(GetType().Name);
 
-  private UsbEndpointReader? _reader;
-  private UsbEndpointReader Reader => _reader ?? throw new ObjectDisposedException(GetType().Name);
+  private UsbEndpointReader? reader;
+  private UsbEndpointReader Reader => reader ?? throw new ObjectDisposedException(GetType().Name);
 
   private readonly int maxOutPacketSize;
   private readonly int maxInPacketSize;
@@ -37,8 +37,8 @@ internal class Stream : IUsbHidStream {
     int maxInPacketSize
   )
   {
-    this._writer = writer;
-    this._reader = reader;
+    this.writer = writer;
+    this.reader = reader;
     this.maxOutPacketSize = maxOutPacketSize;
     this.maxInPacketSize = maxInPacketSize;
   }
@@ -46,14 +46,14 @@ internal class Stream : IUsbHidStream {
   public void Dispose()
   {
     // UsbEndpointWriter/UsbEndpointReader does not implement IDisposable
-    _writer = null;
-    _reader = null;
+    writer = null;
+    reader = null;
   }
 
   public ValueTask DisposeAsync()
   {
-    _writer = null;
-    _reader = null;
+    writer = null;
+    reader = null;
 
 #if SYSTEM_THREADING_TASKS_VALUETASK_COMPLETEDTASK
     return ValueTask.CompletedTask;
@@ -135,13 +135,16 @@ internal class Stream : IUsbHidStream {
       out var transferLength
     );
 
+#pragma warning disable SA1114
     return
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
-    ValueTask.FromResult<int>
+    ValueTask.FromResult<int>(
 #else
-    new ValueTask<int>
+    new ValueTask<int>(
 #endif
-    (transferLength);
+      transferLength
+    );
+#pragma warning restore SA1114
   }
 }
 

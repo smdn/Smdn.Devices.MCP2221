@@ -2,8 +2,9 @@
 //   Name: Smdn.Devices.MCP2221
 //   AssemblyVersion: 0.9.4.0
 //   InformationalVersion: 0.9.4+bcf0f60c80f47181419bd376632a2c0be172ac98
-//   TargetFramework: .NETStandard,Version=v2.1
+//   TargetFramework: .NETCoreApp,Version=v8.0
 //   Configuration: Release
+//   Metadata: IsTrimmable=True
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.Devices.MCP2221
 //   Metadata: RepositoryBranch=main
 //   Metadata: RepositoryCommit=bcf0f60c80f47181419bd376632a2c0be172ac98
@@ -11,8 +12,13 @@
 //     HidSharp, Version=2.1.0.0, Culture=neutral
 //     Microsoft.Extensions.DependencyInjection.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
 //     Microsoft.Extensions.Logging.Abstractions, Version=5.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60
+//     System.Collections, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.ComponentModel, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 //     System.Device.Gpio, Version=1.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35
-//     netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Linq, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Memory, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Runtime, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+//     System.Threading.Thread, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 
 using System;
 using System.Collections.Generic;
@@ -134,8 +140,8 @@ namespace Smdn.Devices.MCP2221 {
       public async ValueTask<int> ReadAsync(I2CAddress address, Memory<byte> buffer, CancellationToken cancellationToken = default) {}
       public int ReadByte(I2CAddress address, CancellationToken cancellationToken = default) {}
       public async ValueTask<int> ReadByteAsync(I2CAddress address, CancellationToken cancellationToken = default) {}
-      public (IReadOnlyCollection<I2CAddress> WriteAddressSet, IReadOnlyCollection<I2CAddress> ReadAddressSet) ScanBus(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
-      public async ValueTask<(IReadOnlyCollection<I2CAddress> WriteAddressSet, IReadOnlyCollection<I2CAddress> ReadAddressSet)> ScanBusAsync(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
+      public (IReadOnlySet<I2CAddress> WriteAddressSet, IReadOnlySet<I2CAddress> ReadAddressSet) ScanBus(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
+      public async ValueTask<(IReadOnlySet<I2CAddress> WriteAddressSet, IReadOnlySet<I2CAddress> ReadAddressSet)> ScanBusAsync(I2CAddress addressRangeMin = default, I2CAddress addressRangeMax = default, IProgress<I2CScanBusProgress> progress = null, CancellationToken cancellationToken = default) {}
       public void Write(I2CAddress address, ReadOnlySpan<byte> buffer, CancellationToken cancellationToken = default) {}
       public void Write(I2CAddress address, byte[] buffer, int offset, int count, CancellationToken cancellationToken = default) {}
       public ValueTask WriteAsync(I2CAddress address, byte[] buffer, int offset, int count, CancellationToken cancellationToken = default) {}

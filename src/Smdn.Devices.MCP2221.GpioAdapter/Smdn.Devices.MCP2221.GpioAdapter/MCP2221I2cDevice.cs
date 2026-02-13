@@ -24,7 +24,7 @@ public class MCP2221I2cDevice : I2cDevice {
     this.ConnectionSettings = new I2cConnectionSettings(busId: 0, deviceAddress: (int)address);
   }
 
-  public unsafe override byte ReadByte()
+  public override byte ReadByte()
   {
     Span<byte> buffer = stackalloc byte[1];
 
@@ -36,12 +36,8 @@ public class MCP2221I2cDevice : I2cDevice {
   public override void Read(Span<byte> buffer)
     => bus.Read(address, buffer);
 
-  public unsafe override void WriteByte(byte value)
-  {
-    Span<byte> buffer = stackalloc byte[1] { value };
-
-    Write(buffer);
-  }
+  public override void WriteByte(byte value)
+    => Write([value]);
 
   public override void Write(ReadOnlySpan<byte> buffer)
     => bus.Write(address, buffer);

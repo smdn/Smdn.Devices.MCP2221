@@ -372,12 +372,12 @@ partial class MCP2221 {
       }
     }
 
-    public unsafe void WriteByte(
+    public void WriteByte(
       I2CAddress address,
       byte value,
       CancellationToken cancellationToken = default
     )
-      => Write(address, stackalloc byte[1] { value }, cancellationToken);
+      => Write(address, [value], cancellationToken);
 
     public async ValueTask<int> ReadByteAsync(
       I2CAddress address,
@@ -397,7 +397,7 @@ partial class MCP2221 {
       }
     }
 
-    public unsafe int ReadByte(
+    public int ReadByte(
       I2CAddress address,
       CancellationToken cancellationToken = default
     )

@@ -113,7 +113,7 @@ partial class MCP2221 {
   }
 
 #pragma warning disable CA1068 // CA1068: CancellationToken parameters must come last
-  internal unsafe TResponse Command<TArg, TResponse>(
+  internal TResponse Command<TArg, TResponse>(
     ReadOnlySpan<byte> userData,
     TArg arg,
     CancellationToken cancellationToken,
@@ -233,7 +233,7 @@ partial class MCP2221 {
       comm[1] = (byte)subCode;
     }
 
-    public static unsafe string ParseResponse(ReadOnlySpan<byte> resp, ReadFlashDataSubCode subCode)
+    public static string ParseResponse(ReadOnlySpan<byte> resp, ReadFlashDataSubCode subCode)
     {
       if (subCode == ReadFlashDataSubCode.ChipFactorySerialNumber) {
 #if false // XXX: string.Create does not accept ReadOnlySpan<T>, dotnet/runtime#30175

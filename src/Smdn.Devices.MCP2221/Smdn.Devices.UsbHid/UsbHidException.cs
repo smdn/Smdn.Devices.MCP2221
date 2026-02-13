@@ -8,4 +8,5 @@ namespace Smdn.Devices.UsbHid;
 public class UsbHidException : InvalidOperationException {
   public UsbHidException() : base() { }
   public UsbHidException(string message) : base(message) { }
+  public UsbHidException(string message, Exception innerException) : base(message, innerException) { }
 }

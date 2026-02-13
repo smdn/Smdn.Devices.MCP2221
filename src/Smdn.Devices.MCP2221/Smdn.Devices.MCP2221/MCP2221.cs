@@ -229,28 +229,42 @@ public partial class MCP2221 :
 
   public void Dispose()
   {
-    hidStream?.Dispose();
-    hidStream = null;
-
-    hidDevice?.Dispose();
-    hidDevice = null;
+    Dispose(disposing: true);
 
     GC.SuppressFinalize(this);
   }
 
   public async ValueTask DisposeAsync()
   {
-    if (hidStream != null) {
+    await DisposeAsyncCore().ConfigureAwait(false);
+
+    Dispose(disposing: false);
+
+    GC.SuppressFinalize(this);
+  }
+
+  protected virtual void Dispose(bool disposing)
+  {
+    if (disposing) {
+      hidStream?.Dispose();
+      hidStream = null;
+
+      hidDevice?.Dispose();
+      hidDevice = null;
+    }
+  }
+
+  protected virtual async ValueTask DisposeAsyncCore()
+  {
+    if (hidStream is not null) {
       await hidStream.DisposeAsync().ConfigureAwait(false);
       hidStream = null;
     }
 
-    if (hidDevice != null) {
+    if (hidDevice is not null) {
       await hidDevice.DisposeAsync().ConfigureAwait(false);
       hidDevice = null;
     }
-
-    GC.SuppressFinalize(this);
   }
 
   private void ThrowIfDisposed() => _ = hidStream ?? throw new ObjectDisposedException(GetType().Name);

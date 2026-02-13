@@ -6,6 +6,7 @@ using System;
 namespace Smdn.Devices.MCP2221;
 
 public class I2CReadException : I2CCommandException {
+  public I2CReadException() : base("The requested I2C read operation failed.") { }
   public I2CReadException(string message) : base(message) { }
   public I2CReadException(string message, Exception innerException) : base(message, innerException) { }
   public I2CReadException(I2CAddress address, string message) : base(address, message) { }

@@ -22,26 +22,26 @@ public readonly struct I2CAddress :
 
   private static byte ValidateDeviceAddressBits(uint address, string paramName)
   {
-    const uint addressRangeLower = 0b_0_0001_000u;
-    const uint addressRangeUpper = 0b_0_1110_000u;
+    const uint AddressRangeLower = 0b_0_0001_000u;
+    const uint AddressRangeUpper = 0b_0_1110_000u;
 
     var actualValue = address;
 
     address &= 0b_0_1111_000u;
 
-    if (address is not (>= addressRangeLower and <= addressRangeUpper))
-      throw new ArgumentOutOfRangeException(paramName, actualValue, $"must be in range between {addressRangeLower}(0x{addressRangeLower:X2}) and {addressRangeUpper}(0x{addressRangeUpper:X2})");
+    if (address is not (>= AddressRangeLower and <= AddressRangeUpper))
+      throw new ArgumentOutOfRangeException(paramName, actualValue, $"must be in range between {AddressRangeLower}(0x{AddressRangeLower:X2}) and {AddressRangeUpper}(0x{AddressRangeUpper:X2})");
 
     return (byte)address;
   }
 
   private static byte ValidateHardwareAddressBits(uint address, string paramName)
   {
-    const uint addressRangeLower = 0b_0_0000_000u;
-    const uint addressRangeUpper = 0b_0_0000_111u;
+    const uint AddressRangeLower = 0b_0_0000_000u;
+    const uint AddressRangeUpper = 0b_0_0000_111u;
 
-    if (address is not (>= addressRangeLower and <= addressRangeUpper))
-      throw new ArgumentOutOfRangeException(paramName, address, $"must be in range between {addressRangeLower}(0x{addressRangeLower:X2}) and {addressRangeUpper}(0x{addressRangeUpper:X2})");
+    if (address is not (>= AddressRangeLower and <= AddressRangeUpper))
+      throw new ArgumentOutOfRangeException(paramName, address, $"must be in range between {AddressRangeLower}(0x{AddressRangeLower:X2}) and {AddressRangeUpper}(0x{AddressRangeUpper:X2})");
 
     return (byte)(address & 0b0_0000_111u);
   }

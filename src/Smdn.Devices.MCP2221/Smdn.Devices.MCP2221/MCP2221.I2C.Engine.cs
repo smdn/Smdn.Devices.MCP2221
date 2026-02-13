@@ -19,10 +19,10 @@ partial class MCP2221 {
       => address == null
         ? new CommandException($"unexpected response (0x{response:X2})")
         : new I2CCommandException(address.Value, $"unexpected response (0x{response:X2})");
-    private static Exception CreateI2CErrorException(I2CAddress address, byte? stateValue, string message, string? i2cEngineState = null)
-      => new I2CCommandException(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
-    private static Exception CreateUnknownEngineStateException(I2CAddress address, byte? stateValue, string? i2cEngineState = null)
-      => new I2CCommandException(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
+    private static I2CCommandException CreateI2CErrorException(I2CAddress address, byte? stateValue, string message, string? i2cEngineState = null)
+      => new(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
+    private static I2CCommandException CreateUnknownEngineStateException(I2CAddress address, byte? stateValue, string? i2cEngineState = null)
+      => new(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
 
     private enum OperationState {
       Initial,
@@ -56,18 +56,22 @@ partial class MCP2221 {
         operationState = OperationState.Initial;
 
       WRITE_INIT:
-        logger?.LogDebug(eventIdI2CCommand, "WRITE_INIT");
+        logger?.LogDebug(EventIdI2CCommand, "WRITE_INIT");
 
         yield return (
           StatusConstructCommand,
           StatusParseResponse
         );
 
+#pragma warning disable CA1508
         if (operationState == OperationState.CancelAndRetry)
           goto WRITE_INIT;
+#pragma warning restore CA1508
 
+#pragma warning disable IDE0055
       WRITE_DO:
-        logger?.LogDebug(eventIdI2CCommand, "WRITE_DO");
+        logger?.LogDebug(EventIdI2CCommand, "WRITE_DO");
+#pragma warning restore IDE0055
 
         yield return (
           WriteConstructCommand,
@@ -75,15 +79,17 @@ partial class MCP2221 {
         );
 
       WRITE_STATUS:
-        logger?.LogDebug(eventIdI2CCommand, "WRITE_STATUS");
+        logger?.LogDebug(EventIdI2CCommand, "WRITE_STATUS");
 
         yield return (
           StatusConstructCommand,
           StatusParseResponse
         );
 
+#pragma warning disable CA1508
         if (operationState == OperationState.Continue)
           goto WRITE_STATUS;
+#pragma warning restore CA1508
         if (lastEngineState.RequestedTransferLength == 0)
           yield break;
       }
@@ -100,18 +106,22 @@ partial class MCP2221 {
         ReadLength = -1;
 
       READ_INIT:
-        logger?.LogDebug(eventIdI2CCommand, "READ_INIT");
+        logger?.LogDebug(EventIdI2CCommand, "READ_INIT");
 
         yield return (
           StatusConstructCommand,
           StatusParseResponse
         );
 
+#pragma warning disable CA1508
         if (operationState == OperationState.CancelAndRetry)
           goto READ_INIT;
+#pragma warning restore CA1508
 
+#pragma warning disable IDE0055
       READ_DO:
-        logger?.LogDebug(eventIdI2CCommand, "READ_DO");
+        logger?.LogDebug(EventIdI2CCommand, "READ_DO");
+#pragma warning restore IDE0055
 
         yield return (
           ReadConstructCommand,
@@ -131,8 +141,10 @@ partial class MCP2221 {
           GetParseResponse
         );
 
+#pragma warning disable CA1508
         if (operationState == OperationState.Continue)
           goto READ_GET;
+#pragma warning restore CA1508
 
         yield break;
       }
@@ -210,7 +222,7 @@ partial class MCP2221 {
 
         lastEngineState = I2CEngineState.Parse(resp);
 
-        logger?.LogInformation(eventIdI2CEngineState, $"STATUS/SET PARAMETERS: {lastEngineState}");
+        logger?.LogInformation(EventIdI2CEngineState, $"STATUS/SET PARAMETERS: {lastEngineState}");
 
         if (operationState == OperationState.Initial) {
           var isSpeedConsidered = resp[3] switch {
@@ -221,7 +233,7 @@ partial class MCP2221 {
           };
 
           if (!isSpeedConsidered)
-            logger?.LogWarning(eventIdI2CEngineState, $"STATUS/SET PARAMETERS: new I2C/SMBus communication speed is not considered");
+            logger?.LogWarning(EventIdI2CEngineState, $"STATUS/SET PARAMETERS: new I2C/SMBus communication speed is not considered");
         }
 
         operationState = TransitStateOrThrowIfEngineStateInvalid(

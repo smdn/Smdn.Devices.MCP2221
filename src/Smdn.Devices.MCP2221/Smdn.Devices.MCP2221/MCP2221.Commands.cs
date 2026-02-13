@@ -24,8 +24,8 @@ partial class MCP2221 {
   private const int CommandReportLength = 1 + CommandLength;
   private const int ResponseReportLength = 1 + ResponseLength;
 
-  private static readonly EventId eventIdCommand = new(1, "sent command");
-  private static readonly EventId eventIdResponse = new(2, "received response");
+  private static readonly EventId EventIdCommand = new(1, "sent command");
+  private static readonly EventId EventIdResponse = new(2, "received response");
 
   private static string ConvertByteSequenceToString(ReadOnlySpan<byte> sequence)
   {
@@ -76,7 +76,7 @@ partial class MCP2221 {
         arg
       );
 
-      logger?.LogTrace(eventIdCommand, "> " + ConvertByteSequenceToString(commandReportMemory.Span.Slice(1, CommandLength)));
+      logger?.LogTrace(EventIdCommand, "> " + ConvertByteSequenceToString(commandReportMemory.Span.Slice(1, CommandLength)));
 
       try {
         await HidStream.WriteAsync(
@@ -96,7 +96,7 @@ partial class MCP2221 {
         throw new CommandException("reading response report failed", ex);
       }
 
-      logger?.LogTrace(eventIdResponse, "< " + ConvertByteSequenceToString(responseReportMemory.Span.Slice(1, ResponseLength)));
+      logger?.LogTrace(EventIdResponse, "< " + ConvertByteSequenceToString(responseReportMemory.Span.Slice(1, ResponseLength)));
 
       if (commandReportMemory.Span[0] != responseReportMemory.Span[0])
         throw new CommandException($"unexpected command echo (command code: {commandReportMemory.Span[0]:X2}, command code echo: {responseReportMemory.Span[0]:X2})");
@@ -143,7 +143,7 @@ partial class MCP2221 {
       arg
     );
 
-    logger?.LogTrace(eventIdCommand, "> " + ConvertByteSequenceToString(commandReport.Slice(1)));
+    logger?.LogTrace(EventIdCommand, "> " + ConvertByteSequenceToString(commandReport.Slice(1)));
 
     try {
       HidStream.Write(commandReport.Slice(HidStream.RequiresPacketOnly ? 1 : 0));
@@ -159,7 +159,7 @@ partial class MCP2221 {
       throw new CommandException("reading response report failed", ex);
     }
 
-    logger?.LogTrace(eventIdResponse, "< " + ConvertByteSequenceToString(responseReport.Slice(1)));
+    logger?.LogTrace(EventIdResponse, "< " + ConvertByteSequenceToString(responseReport.Slice(1)));
 
     if (commandReport[0] != responseReport[0])
       throw new CommandException($"unexpected command echo (command code: {commandReport[0]:X2}, command code echo: {responseReport[0]:X2})");

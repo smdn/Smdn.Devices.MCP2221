@@ -31,8 +31,8 @@ partial class MCP2221 {
       this.device = device;
     }
 
-    private static readonly EventId eventIdI2CCommand = new(10, "I2C command");
-    private static readonly EventId eventIdI2CEngineState = new(11, "I2C engine state");
+    private static readonly EventId EventIdI2CCommand = new(10, "I2C command");
+    private static readonly EventId EventIdI2CEngineState = new(11, "I2C engine state");
 
     private static class CancelTransferCommand {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
@@ -82,7 +82,7 @@ partial class MCP2221 {
         parseResponse: CancelTransferCommand.ParseResponse
       ).ConfigureAwait(false);
 
-      device.logger?.LogWarning(eventIdI2CEngineState, $"CANCEL TRANSFER: {engineState}");
+      device.logger?.LogWarning(EventIdI2CEngineState, $"CANCEL TRANSFER: {engineState}");
     }
 
     private static void Cancel(MCP2221 device, I2CAddress address, Exception exceptionCauseOfCancellation)
@@ -95,7 +95,7 @@ partial class MCP2221 {
         parseResponse: CancelTransferCommand.ParseResponse
       );
 
-      device.logger?.LogWarning(eventIdI2CEngineState, $"CANCEL TRANSFER: {engineState}");
+      device.logger?.LogWarning(EventIdI2CEngineState, $"CANCEL TRANSFER: {engineState}");
     }
 
     public ValueTask WriteAsync(
@@ -122,7 +122,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(eventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
 
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
@@ -144,7 +144,7 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(eventIdI2CCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
+        device.logger?.LogError(EventIdI2CCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
         if (ex is not I2CNAckException)
           await CancelAsync(device, address, ex).ConfigureAwait(false);
         throw;
@@ -175,7 +175,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(eventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
 
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
@@ -197,7 +197,7 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(eventIdI2CCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
+        device.logger?.LogError(EventIdI2CCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
         if (ex is not I2CNAckException)
           Cancel(device, address, ex);
         throw;
@@ -228,7 +228,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(eventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
+        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
 
         var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
@@ -271,7 +271,7 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(eventIdI2CCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
+        device.logger?.LogError(EventIdI2CCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
         if (ex is not I2CReadException)
           await CancelAsync(device, address, ex).ConfigureAwait(false);
         throw;
@@ -302,7 +302,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(eventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
+        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
 
         var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
@@ -345,7 +345,7 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(eventIdI2CCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
+        device.logger?.LogError(EventIdI2CCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
         if (ex is not I2CReadException)
           Cancel(device, address, ex);
         throw;

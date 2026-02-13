@@ -4,20 +4,16 @@
 #if USBHIDDRIVER_LIBUSBDOTNET
 
 using System;
-using System.Buffers;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using LibUsbDotNet.LibUsb;
-
-using Smdn.Devices.UsbHid;
 
 namespace Smdn.Devices.UsbHid.LibUsbDotNet;
 
 internal class Stream : IUsbHidStream {
   internal const int DefaultReadBufferSize = 0x100; // XXX
-  private static readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(10);
+  private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(10);
 
   private UsbEndpointWriter? writer;
   private UsbEndpointWriter Writer => writer ?? throw new ObjectDisposedException(GetType().Name);
@@ -75,7 +71,7 @@ internal class Stream : IUsbHidStream {
       pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
       offset: 0,
       count: buf.Length,
-      timeout: (int)defaultTimeout.TotalMilliseconds,
+      timeout: (int)DefaultTimeout.TotalMilliseconds,
       out var transferLength
     );
   }
@@ -94,7 +90,7 @@ internal class Stream : IUsbHidStream {
       pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
       offset: 0,
       count: buf.Length,
-      timeout: (int)defaultTimeout.TotalMilliseconds,
+      timeout: (int)DefaultTimeout.TotalMilliseconds,
       out var transferLength
     );
 
@@ -110,11 +106,11 @@ internal class Stream : IUsbHidStream {
     if (maxInPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
 
-    var err = Reader.Read(
+    _ = Reader.Read(
       buffer: (IntPtr)Unsafe.AsPointer(ref buffer.GetPinnableReference()),
       offset: 0,
       count: buffer.Length,
-      timeout: (int)defaultTimeout.TotalMilliseconds,
+      timeout: (int)DefaultTimeout.TotalMilliseconds,
       out var transferLength
     );
 
@@ -131,7 +127,7 @@ internal class Stream : IUsbHidStream {
       buffer: (IntPtr)Unsafe.AsPointer(ref buffer.Span.GetPinnableReference()),
       offset: 0,
       count: buffer.Length,
-      timeout: (int)defaultTimeout.TotalMilliseconds,
+      timeout: (int)DefaultTimeout.TotalMilliseconds,
       out var transferLength
     );
 

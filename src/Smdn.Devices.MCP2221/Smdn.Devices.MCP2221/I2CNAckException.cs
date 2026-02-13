@@ -6,6 +6,7 @@ using System;
 namespace Smdn.Devices.MCP2221;
 
 public class I2CNAckException : I2CCommandException {
+  public I2CNAckException() : base("A NACK response was returned for the requested I2C command.") { }
   public I2CNAckException(string message) : base(message) { }
   public I2CNAckException(string message, Exception innerException) : base(message, innerException) { }
   public I2CNAckException(I2CAddress address) : base(address, CreateDefaultMessage(address)) { }

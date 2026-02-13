@@ -306,10 +306,10 @@ partial class MCP2221 {
 #endif
         comm[7] = 0b10000000; // Alter GPIO configuration = Alter the GP designation (1)
 
-        const int firstIndexOfGPSettings = 8; // GP0 Settings
+        const int FirstIndexOfGPSettings = 8; // GP0 Settings
 
         // copy current GP0-GP3 settings
-        args.gpSettings.Span.CopyTo(comm.Slice(firstIndexOfGPSettings, NumberOfGPs));
+        args.gpSettings.Span.CopyTo(comm.Slice(FirstIndexOfGPSettings, NumberOfGPs));
 
         // construct new GP<n> settings
         var bitsGpioOutputValue = (bool)args.gpioValue
@@ -318,11 +318,16 @@ partial class MCP2221 {
         var bitsGpioDirection = args.gpioDirection switch {
           PinMode.Input => 0b_000_0_1_000,
           PinMode.Output => 0b_000_0_0_000,
-          _ => throw new ArgumentOutOfRangeException(nameof(args.gpioDirection), args.gpioDirection, $"must be {nameof(PinMode.Input)} or {nameof(PinMode.Output)}"),
+
+          _ => throw new ArgumentOutOfRangeException(
+            paramName: nameof(args),
+            actualValue: args.gpioDirection,
+            message: $"must be {nameof(PinMode.Input)} or {nameof(PinMode.Output)}"
+          ),
         };
         var bitsGPnDesignation = (byte)args.gpDesignation & 0b_000_0_0_111;
 
-        comm[firstIndexOfGPSettings + args.gpIndex] = (byte)(
+        comm[FirstIndexOfGPSettings + args.gpIndex] = (byte)(
           // Byte Index 8-11 GP0-3 Settings
           0b_000_0_0_000 | // Bit 7-5: Don't care
           bitsGpioOutputValue | // Bit 4: GPIO Output value

@@ -15,4 +15,9 @@ public class DeviceNotFoundException : InvalidOperationException {
     : base(message)
   {
   }
+
+  public DeviceNotFoundException(string message, Exception innerException)
+    : base(message, innerException)
+  {
+  }
 }

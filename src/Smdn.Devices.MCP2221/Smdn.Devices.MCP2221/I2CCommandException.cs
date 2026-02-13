@@ -8,6 +8,7 @@ namespace Smdn.Devices.MCP2221;
 public class I2CCommandException : CommandException {
   public I2CAddress Address { get; }
 
+  public I2CCommandException() : this(I2CAddress.Zero, "The requested I2C command failed.") { }
   public I2CCommandException(string message) : this(I2CAddress.Zero, message) { }
   public I2CCommandException(string message, Exception innerException) : this(I2CAddress.Zero, message, innerException) { }
 

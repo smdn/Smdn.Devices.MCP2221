@@ -5,7 +5,6 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 using LibUsbDotNet;
@@ -15,8 +14,6 @@ using LibUsbDotNet.Main;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
-using Smdn.Devices.UsbHid;
 
 namespace Smdn.Devices.UsbHid.LibUsbDotNet;
 
@@ -65,8 +62,8 @@ internal class Device : IUsbHidDevice {
 
   public string ProductName => UsbDevice.Descriptor.Product;
   public string Manufacturer => UsbDevice.Descriptor.Manufacturer;
-  public int VendorID => (int)UsbDevice.VendorId;
-  public int ProductID => (int)UsbDevice.ProductId;
+  public int VendorID => UsbDevice.VendorId;
+  public int ProductID => UsbDevice.ProductId;
   public string SerialNumber => UsbDevice.Descriptor.SerialNumber;
   public System.Version? ReleaseNumber => null;
   public string? DevicePath => null;
@@ -85,19 +82,19 @@ internal class Device : IUsbHidDevice {
     UsbEndpointInfo? outEndpoint = null;
     UsbEndpointInfo? inEndpoint = null;
 
-    const byte endpointAddressInOutBitMask  = 0b_1000_0000;
-    const byte endpointAddressIn            = 0b_1000_0000;
-    const byte endpointAddressOut           = 0b_0000_0000;
-    // const byte endpointAddressNumberMask    = 0b_0000_0111;
-    const byte attributesTransferTypeMask   = 0b_0000_0011;
+    const byte EndpointAddressInOutBitMask  = 0b_1000_0000;
+    const byte EndpointAddressIn            = 0b_1000_0000;
+    const byte EndpointAddressOut           = 0b_0000_0000;
+    // const byte EndpointAddressNumberMask    = 0b_0000_0111;
+    const byte AttributesTransferTypeMask   = 0b_0000_0011;
 
     foreach (var cfg in UsbDevice.Configs) {
       foreach (var iface in cfg.Interfaces) {
         if (iface.Class == ClassCode.Hid) {
           config = cfg;
           hidInterface = iface;
-          outEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & endpointAddressInOutBitMask) == endpointAddressOut);
-          inEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & endpointAddressInOutBitMask) == endpointAddressIn);
+          outEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressOut);
+          inEndpoint = iface.Endpoints.FirstOrDefault(ep => (ep.EndpointAddress & EndpointAddressInOutBitMask) == EndpointAddressIn);
 
           break;
         }
@@ -152,12 +149,12 @@ internal class Device : IUsbHidDevice {
       maxInPacketSize: inEndpoint.MaxPacketSize,
       writer: UsbDevice.OpenEndpointWriter(
         writeEndpointID: (WriteEndpointID)outEndpoint.EndpointAddress,
-        endpointType: (EndpointType)(outEndpoint.Attributes & attributesTransferTypeMask)
+        endpointType: (EndpointType)(outEndpoint.Attributes & AttributesTransferTypeMask)
       ),
       reader: UsbDevice.OpenEndpointReader(
         readBufferSize: Stream.DefaultReadBufferSize,
         readEndpointID: (ReadEndpointID)inEndpoint.EndpointAddress,
-        endpointType: (EndpointType)(inEndpoint.Attributes & attributesTransferTypeMask)
+        endpointType: (EndpointType)(inEndpoint.Attributes & AttributesTransferTypeMask)
       )
     );
   }
@@ -167,9 +164,11 @@ internal class Device : IUsbHidDevice {
 #if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
     => ValueTask.FromResult<IUsbHidStream>(
 #else
-    => new ValueTask<IUsbHidStream>(
+    => new(
 #endif
+#pragma warning disable CA2000
       OpenEndpointStream()
+#pragma warning restore CA2000
     );
 #pragma warning restore SA1114
 

@@ -11,12 +11,12 @@ public static class Log {
 
 #if USBHIDDRIVER_LIBUSBDOTNET
   internal static global::LibUsbDotNet.LogLevel LibUsbDotNetLogLevel => NativeLibraryLogLevel switch {
-    LogLevel.Trace or LogLevel.Debug  => global::LibUsbDotNet.LogLevel.Debug,
-    LogLevel.Information              => global::LibUsbDotNet.LogLevel.Info,
-    LogLevel.Warning                  => global::LibUsbDotNet.LogLevel.Warning,
-    LogLevel.Error                    => global::LibUsbDotNet.LogLevel.Error,
-    LogLevel.Critical                 => global::LibUsbDotNet.LogLevel.Error,
-    LogLevel.None or _                => global::LibUsbDotNet.LogLevel.None,
+    LogLevel.Trace or LogLevel.Debug => global::LibUsbDotNet.LogLevel.Debug,
+    LogLevel.Information => global::LibUsbDotNet.LogLevel.Info,
+    LogLevel.Warning => global::LibUsbDotNet.LogLevel.Warning,
+    LogLevel.Error => global::LibUsbDotNet.LogLevel.Error,
+    LogLevel.Critical => global::LibUsbDotNet.LogLevel.Error,
+    LogLevel.None or _ => global::LibUsbDotNet.LogLevel.None,
   };
 #endif
 }

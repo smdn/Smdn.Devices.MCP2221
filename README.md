@@ -5,9 +5,9 @@
 # Smdn.Devices.MCP2221
 [![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/)
 
-[Smdn.Devices.MCP2221](src/Smdn.Devices.MCP2221/) is a .NET library for controlling [MCP2221](https://www.microchip.com/wwwproducts/en/MCP2221)/[MCP2221A USB2.0 to I<sup>2</sup>C/UART Protocol Converter with GPIO](https://www.microchip.com/wwwproducts/en/MCP2221A). This library enables you to control MCP2221/MCP2221A's GPIO, I<sup>2</sup>C interface, and other functionalities via USB-HID interface.
+[Smdn.Devices.MCP2221](src/Smdn.Devices.MCP2221/) is a .NET library for the **Microchip Technology [MCP2221](https://www.microchip.com/wwwproducts/en/MCP2221) and [MCP2221A](https://www.microchip.com/wwwproducts/en/MCP2221A), a USB2.0 to I<sup>2</sup>C/UART Protocol Converter with GPIO**. This library provides APIs that enable .NET applications to access the functions of the MCP2221/MCP2221A via the USB-HID interface.
 
-With this library, you can control I<sup>2</sup>C devices and others devices on any PCs with USB ports. It is not needed the board like the Raspberry Pi or Arduino. Also it is not required to install native device drivers on your system.
+With this library, you can interface with I<sup>2</sup>C devices and control GPIO pins from any PC that has a USB port. It can be used without intermediate microcontrollers like Raspberry Pi or Arduino and does not require any special kernel drivers, offering an alternative for hardware control and prototyping.
 
 See [Smdn.Devices.MCP2221 examples](examples/Smdn.Devices.MCP2221/).
 

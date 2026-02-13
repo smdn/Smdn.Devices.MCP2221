@@ -18,7 +18,7 @@ public class I2CAddressTests {
   [TestCase(0x77)]
   public void Construct_FromAddress(int address)
   {
-    Assert.That(() => new I2CAddress(address), Throws.Nothing);
+    Assert.That(() => _ = new I2CAddress(address), Throws.Nothing);
     Assert.That((byte)new I2CAddress(address), Is.EqualTo(address));
   }
 

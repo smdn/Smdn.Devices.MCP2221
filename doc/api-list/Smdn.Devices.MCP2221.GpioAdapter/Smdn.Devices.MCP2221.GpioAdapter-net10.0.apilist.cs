@@ -2,15 +2,16 @@
 //   Name: Smdn.Devices.MCP2221.GpioAdapter
 //   AssemblyVersion: 0.9.2.0
 //   InformationalVersion: 0.9.2+bcf0f60c80f47181419bd376632a2c0be172ac98
-//   TargetFramework: .NETStandard,Version=v2.1
+//   TargetFramework: .NETCoreApp,Version=v10.0
 //   Configuration: Release
+//   Metadata: IsTrimmable=True
 //   Metadata: RepositoryUrl=https://github.com/smdn/Smdn.Devices.MCP2221
 //   Metadata: RepositoryBranch=main
 //   Metadata: RepositoryCommit=bcf0f60c80f47181419bd376632a2c0be172ac98
 //   Referenced assemblies:
 //     Smdn.Devices.MCP2221, Version=0.9.4.0, Culture=neutral
 //     System.Device.Gpio, Version=1.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35
-//     netstandard, Version=2.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51
+//     System.Runtime, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 
 using System;
 using System.Device.I2c;

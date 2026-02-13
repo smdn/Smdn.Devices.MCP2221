@@ -13,7 +13,7 @@ using HidStream = HidSharp.HidStream;
 namespace Smdn.Devices.UsbHid.HidSharp;
 
 internal class Stream : IUsbHidStream {
-  private HidStream hidStream;
+  private HidStream? hidStream;
   private HidStream HidStream => hidStream ?? throw new ObjectDisposedException(GetType().Name);
 
   private int MaxOutputReportLength => HidStream.Device.GetMaxOutputReportLength();
@@ -108,7 +108,7 @@ internal class Stream : IUsbHidStream {
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input report length ({MaxInputReportLength})", nameof(buffer));
 
     var len = buffer.Length;
-    byte[] rentBuffer = null;
+    byte[]? rentBuffer = null;
 
     if (!MemoryMarshal.TryGetArray<byte>(buffer, out var buf)) {
       rentBuffer = ArrayPool<byte>.Shared.Rent(MaxInputReportLength);
@@ -124,7 +124,7 @@ internal class Stream : IUsbHidStream {
       return new ValueTask<int>(
 #endif
 #pragma warning restore SA1114
-        HidStream.Read(buf.Array, buf.Offset, buf.Count)
+        HidStream.Read(buf.Array ?? throw new InvalidOperationException("destination array is null"), buf.Offset, buf.Count)
       );
     }
     finally {

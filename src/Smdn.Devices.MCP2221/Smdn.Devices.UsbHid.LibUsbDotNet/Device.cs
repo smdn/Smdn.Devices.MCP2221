@@ -24,7 +24,7 @@ internal class Device : IUsbHidDevice {
   /*
    * static members
    */
-  public static Device Find(Predicate<Device> predicate, IServiceProvider serviceProvider = null)
+  public static Device? Find(Predicate<Device> predicate, IServiceProvider? serviceProvider = null)
   {
     if (predicate is null)
       throw new ArgumentNullException(nameof(predicate));
@@ -58,21 +58,21 @@ internal class Device : IUsbHidDevice {
   /*
    * instance members
    */
-  private UsbDevice _usbDevice;
+  private UsbDevice? _usbDevice;
   private UsbDevice UsbDevice => _usbDevice ?? throw new ObjectDisposedException(GetType().Name);
 
-  private readonly ILogger logger;
+  private readonly ILogger? logger;
 
   public string ProductName => UsbDevice.Descriptor.Product;
   public string Manufacturer => UsbDevice.Descriptor.Manufacturer;
   public int VendorID => (int)UsbDevice.VendorId;
   public int ProductID => (int)UsbDevice.ProductId;
   public string SerialNumber => UsbDevice.Descriptor.SerialNumber;
-  public System.Version ReleaseNumber => null;
-  public string DevicePath => null;
-  public string FileSystemName => null;
+  public System.Version? ReleaseNumber => null;
+  public string? DevicePath => null;
+  public string? FileSystemName => null;
 
-  internal Device(UsbDevice usbDevice, ILogger logger)
+  internal Device(UsbDevice usbDevice, ILogger? logger)
   {
     this._usbDevice = usbDevice;
     this.logger = logger;
@@ -80,10 +80,10 @@ internal class Device : IUsbHidDevice {
 
   private Stream OpenEndpointStream()
   {
-    UsbConfigInfo config = null;
-    UsbInterfaceInfo hidInterface = null;
-    UsbEndpointInfo outEndpoint = null;
-    UsbEndpointInfo inEndpoint = null;
+    UsbConfigInfo? config = null;
+    UsbInterfaceInfo? hidInterface = null;
+    UsbEndpointInfo? outEndpoint = null;
+    UsbEndpointInfo? inEndpoint = null;
 
     const byte endpointAddressInOutBitMask  = 0b_1000_0000;
     const byte endpointAddressIn            = 0b_1000_0000;

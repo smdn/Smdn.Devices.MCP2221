@@ -19,9 +19,9 @@ partial class MCP2221 {
       => address == null
         ? new CommandException($"unexpected response (0x{response:X2})")
         : new I2CCommandException(address.Value, $"unexpected response (0x{response:X2})");
-    private static Exception CreateI2CErrorException(I2CAddress address, byte? stateValue, string message, string i2cEngineState = null)
+    private static Exception CreateI2CErrorException(I2CAddress address, byte? stateValue, string message, string? i2cEngineState = null)
       => new I2CCommandException(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
-    private static Exception CreateUnknownEngineStateException(I2CAddress address, byte? stateValue, string i2cEngineState = null)
+    private static Exception CreateUnknownEngineStateException(I2CAddress address, byte? stateValue, string? i2cEngineState = null)
       => new I2CCommandException(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
 
     private enum OperationState {
@@ -32,13 +32,13 @@ partial class MCP2221 {
     }
 
     private class OperationContext {
-      public OperationContext(ILogger logger, I2CBusSpeed busSpeed)
+      public OperationContext(ILogger? logger, I2CBusSpeed busSpeed)
       {
         this.logger = logger;
         this.busSpeed = busSpeed;
       }
 
-      private readonly ILogger logger;
+      private readonly ILogger? logger;
       private readonly I2CBusSpeed busSpeed;
       private OperationState operationState;
       private I2CEngineState lastEngineState;

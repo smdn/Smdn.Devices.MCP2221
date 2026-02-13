@@ -17,9 +17,9 @@ public interface IUsbHidDevice :
   int VendorID { get; }
   int ProductID { get; }
   string SerialNumber { get; }
-  Version ReleaseNumber { get; }
-  string DevicePath { get; }
-  string FileSystemName { get; }
+  Version? ReleaseNumber { get; }
+  string? DevicePath { get; }
+  string? FileSystemName { get; }
 
   ValueTask<IUsbHidStream> OpenStreamAsync();
   IUsbHidStream OpenStream();

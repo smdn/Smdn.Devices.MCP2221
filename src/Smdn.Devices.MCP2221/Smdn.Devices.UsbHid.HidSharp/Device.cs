@@ -22,7 +22,7 @@ internal class Device : IUsbHidDevice {
   /*
    * static members
    */
-  public static Device Find(Predicate<Device> predicate, IServiceProvider serviceProvider = null)
+  public static Device? Find(Predicate<Device> predicate, IServiceProvider? serviceProvider = null)
   {
     if (predicate is null)
       throw new ArgumentNullException(nameof(predicate));
@@ -49,10 +49,10 @@ internal class Device : IUsbHidDevice {
   /*
    * instance members
    */
-  private HidDevice hidDevice;
+  private HidDevice? hidDevice;
   private HidDevice HidDevice => hidDevice ?? throw new ObjectDisposedException(GetType().Name);
 
-  private readonly ILogger logger;
+  private readonly ILogger? logger;
 
   public string ProductName => HidDevice.GetProductName();
   public string Manufacturer => HidDevice.GetManufacturer();
@@ -63,10 +63,9 @@ internal class Device : IUsbHidDevice {
       try {
         return HidDevice.GetSerialNumber();
       }
-
       // HidSharp.Exceptions.DeviceIOException is internal class
-      catch (Exception ex) when (ex.GetType().FullName.Equals("HidSharp.Exceptions.DeviceIOException", StringComparison.Ordinal)) {
-        return null;
+      catch (Exception ex) when ("HidSharp.Exceptions.DeviceIOException".Equals(ex.GetType().FullName, StringComparison.Ordinal)) {
+        return string.Empty;
       }
     }
   }
@@ -75,7 +74,7 @@ internal class Device : IUsbHidDevice {
   public string DevicePath => HidDevice.DevicePath;
   public string FileSystemName => HidDevice.GetFileSystemName();
 
-  internal Device(HidDevice hidDevice, ILogger logger)
+  internal Device(HidDevice hidDevice, ILogger? logger)
   {
     this.hidDevice = hidDevice;
     this.logger = logger;

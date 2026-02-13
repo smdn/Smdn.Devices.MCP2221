@@ -1,8 +1,5 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-
-#nullable enable annotations
-
 using System;
 using System.Threading.Tasks;
 
@@ -37,9 +34,9 @@ public partial class MCP2221 :
     => Open(findDevicePredicate: null, serviceProvider);
 
   private class MCP2221DeviceFinder {
-    private readonly Predicate<IUsbHidDevice> findDevicePredicate;
+    private readonly Predicate<IUsbHidDevice>? findDevicePredicate;
 
-    public MCP2221DeviceFinder(Predicate<IUsbHidDevice> findDevicePredicate)
+    public MCP2221DeviceFinder(Predicate<IUsbHidDevice>? findDevicePredicate)
     {
       this.findDevicePredicate = findDevicePredicate;
     }
@@ -57,7 +54,7 @@ public partial class MCP2221 :
     }
   }
 
-  private static Func<IUsbHidDevice> Create(Predicate<IUsbHidDevice> findDevicePredicate, IServiceProvider serviceProvider)
+  private static Func<IUsbHidDevice?> Create(Predicate<IUsbHidDevice>? findDevicePredicate, IServiceProvider? serviceProvider)
   {
     Predicate<IUsbHidDevice> predicate = new MCP2221DeviceFinder(findDevicePredicate).Find;
 
@@ -113,15 +110,15 @@ public partial class MCP2221 :
     }
   }
 
-  public static async ValueTask<MCP2221> OpenAsync(Func<IUsbHidDevice> createHidDevice, IServiceProvider? serviceProvider = null)
+  public static async ValueTask<MCP2221> OpenAsync(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
   {
     if (createHidDevice is null)
       throw new ArgumentNullException(nameof(createHidDevice));
 
-    MCP2221 device = null;
+    MCP2221? device = null;
 
     try {
-      IUsbHidDevice baseDevice = null;
+      IUsbHidDevice? baseDevice = null;
 
       try {
         baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
@@ -151,15 +148,15 @@ public partial class MCP2221 :
     }
   }
 
-  public static MCP2221 Open(Func<IUsbHidDevice> createHidDevice, IServiceProvider? serviceProvider = null)
+  public static MCP2221 Open(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
   {
     if (createHidDevice is null)
       throw new ArgumentNullException(nameof(createHidDevice));
 
-    MCP2221 device = null;
+    MCP2221? device = null;
 
     try {
-      IUsbHidDevice baseDevice = null;
+      IUsbHidDevice? baseDevice = null;
 
       try {
         baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
@@ -192,22 +189,22 @@ public partial class MCP2221 :
   /*
    * instance members
    */
-  private IUsbHidDevice hidDevice;
+  private IUsbHidDevice? hidDevice;
   public IUsbHidDevice HidDevice => hidDevice ?? throw new ObjectDisposedException(GetType().Name);
 
-  private IUsbHidStream hidStream;
+  private IUsbHidStream? hidStream;
   private IUsbHidStream HidStream => hidStream ?? throw new ObjectDisposedException(GetType().Name);
 
-  private readonly ILogger logger;
+  private readonly ILogger? logger;
 
-  public string HardwareRevision { get; private set; } = null;
-  public string FirmwareRevision { get; private set; } = null;
-  public string ManufacturerDescriptor { get; private set; } = null;
-  public string ProductDescriptor { get; private set; } = null;
-  public string SerialNumberDescriptor { get; private set; } = null;
+  public string? HardwareRevision { get; private set; } = null;
+  public string? FirmwareRevision { get; private set; } = null;
+  public string? ManufacturerDescriptor { get; private set; } = null;
+  public string? ProductDescriptor { get; private set; } = null;
+  public string? SerialNumberDescriptor { get; private set; } = null;
 
   /// <remarks>Always returns <c>01234567</c>.</remarks>
-  public string ChipFactorySerialNumber { get; private set; } = null;
+  public string? ChipFactorySerialNumber { get; private set; } = null;
 
   private MCP2221(IUsbHidDevice hidDevice, IUsbHidStream hidStream, IServiceProvider? serviceProvider)
   {

@@ -23,7 +23,7 @@ partial class MCP2221 {
     public async ValueTask<(IReadOnlyI2CAddressSet WriteAddressSet, IReadOnlyI2CAddressSet ReadAddressSet)> ScanBusAsync(
       I2CAddress addressRangeMin = default,
       I2CAddress addressRangeMax = default,
-      IProgress<I2CScanBusProgress> progress = null,
+      IProgress<I2CScanBusProgress>? progress = null,
       CancellationToken cancellationToken = default
     )
     {
@@ -68,7 +68,7 @@ partial class MCP2221 {
     public (IReadOnlyI2CAddressSet WriteAddressSet, IReadOnlyI2CAddressSet ReadAddressSet) ScanBus(
       I2CAddress addressRangeMin = default,
       I2CAddress addressRangeMax = default,
-      IProgress<I2CScanBusProgress> progress = null,
+      IProgress<I2CScanBusProgress>? progress = null,
       CancellationToken cancellationToken = default
     )
     {

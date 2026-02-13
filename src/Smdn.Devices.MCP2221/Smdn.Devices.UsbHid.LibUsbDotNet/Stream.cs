@@ -19,10 +19,10 @@ internal class Stream : IUsbHidStream {
   internal const int DefaultReadBufferSize = 0x100; // XXX
   private static readonly TimeSpan defaultTimeout = TimeSpan.FromSeconds(10);
 
-  private UsbEndpointWriter _writer;
+  private UsbEndpointWriter? _writer;
   private UsbEndpointWriter Writer => _writer ?? throw new ObjectDisposedException(GetType().Name);
 
-  private UsbEndpointReader _reader;
+  private UsbEndpointReader? _reader;
   private UsbEndpointReader Reader => _reader ?? throw new ObjectDisposedException(GetType().Name);
 
   private readonly int maxOutPacketSize;

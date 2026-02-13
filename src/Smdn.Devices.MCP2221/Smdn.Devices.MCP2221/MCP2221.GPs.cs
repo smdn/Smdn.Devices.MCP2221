@@ -256,7 +256,7 @@ partial class MCP2221 {
     private readonly MCP2221 device;
     private protected abstract int GPIndex { get; }
     public string PinName => $"GP{GPIndex}";
-    public string PinDesignation { get; private set; }
+    public string? PinDesignation { get; private set; }
 
     private protected GPFunctionality(MCP2221 device)
     {

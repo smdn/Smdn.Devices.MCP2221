@@ -77,7 +77,7 @@ public readonly struct I2CAddress :
   public bool Equals(I2CAddress other) => this.address == other.address;
   public bool Equals(int other) => this.address == other;
   public bool Equals(byte other) => this.address == other;
-  public override bool Equals(object obj) => obj switch {
+  public override bool Equals(object? obj) => obj switch {
     null => false,
     I2CAddress other => this.Equals(other),
     int other => this.Equals(other),

@@ -13,17 +13,17 @@ name: "CodeQL"
 
 # ref: https://docs.microsoft.com/en-us/dotnet/devops/dotnet-secure-github-action
 on:
-  push:
-    branches: [ main ]
-    paths:
-    - 'src/**/*.cs'
-    - 'src/**/*.csproj'
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ main ]
-    paths:
-    - 'src/**/*.cs'
-    - 'src/**/*.csproj'
+  # push:
+  #   branches: [ main ]
+  #   paths:
+  #   - 'src/**/*.cs'
+  #   - 'src/**/*.csproj'
+  # pull_request:
+  #   # The branches below must be a subset of the branches above
+  #   branches: [ main ]
+  #   paths:
+  #   - 'src/**/*.cs'
+  #   - 'src/**/*.csproj'
   schedule:
     - cron: '23 20 03,16 * *'
   workflow_dispatch:

@@ -98,6 +98,11 @@ public readonly struct I2CAddress :
   public static explicit operator int(I2CAddress address) => address.address;
   public static implicit operator I2CAddress(byte address) => new(address);
 
+  public byte ToByte() => address;
+  public int ToInt32() => address;
+
+  public static I2CAddress FromByte(byte address) => new(address);
+
   internal byte GetReadAddress() => (byte)((address << 1) | 0b_0000_0001);
   internal byte GetWriteAddress() => (byte)(address << 1);
 

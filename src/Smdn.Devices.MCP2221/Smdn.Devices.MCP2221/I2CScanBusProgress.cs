@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
+#pragma warning disable CA1815
 
 namespace Smdn.Devices.MCP2221;
 

@@ -18,7 +18,9 @@ partial class MCP2221 {
 #pragma warning restore IDE0040
   public I2CFunctionality I2C { get; }
 
+#pragma warning disable CA1034
   public sealed partial class I2CFunctionality {
+#pragma warning restore CA1034
     public const int MaxBlockLength = 0xFFFF;
     private const int MaxTransferLengthPerCommand = 64 - 4;
 

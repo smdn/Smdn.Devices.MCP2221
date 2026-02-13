@@ -150,7 +150,12 @@ public class I2CAddressTests {
   public void CompareTo_I2CAddress(int address, int addressOther, int expectedValue)
     => Assert.That((new I2CAddress(address)).CompareTo(new I2CAddress(addressOther)), Is.EqualTo(expectedValue));
 
-
+  [TestCase(0x08, 0x08)]
+  [TestCase(0x10, 0x10)]
+  [TestCase(0x70, 0x70)]
+  [TestCase(0x77, 0x77)]
+  public void ToByte(int address, byte expectedValue)
+    => Assert.That(new I2CAddress(address).ToByte(), Is.EqualTo(expectedValue));
 
   [TestCase(0x08, 0x08)]
   [TestCase(0x10, 0x10)]
@@ -163,8 +168,22 @@ public class I2CAddressTests {
   [TestCase(0x10, 0x10)]
   [TestCase(0x70, 0x70)]
   [TestCase(0x77, 0x77)]
-  public void ExplicitTypeConversion_ToByte(int address, int expectedValue)
+  public void ToInt32(int address, int expectedValue)
+    => Assert.That(new I2CAddress(address).ToInt32(), Is.EqualTo(expectedValue));
+
+  [TestCase(0x08, 0x08)]
+  [TestCase(0x10, 0x10)]
+  [TestCase(0x70, 0x70)]
+  [TestCase(0x77, 0x77)]
+  public void ExplicitTypeConversion_ToInt32(int address, int expectedValue)
     => Assert.That((int)new I2CAddress(address), Is.EqualTo(expectedValue));
+
+  [TestCase(0x08)]
+  [TestCase(0x10)]
+  [TestCase(0x70)]
+  [TestCase(0x77)]
+  public void FromByte(byte address)
+    => Assert.That((byte)I2CAddress.FromByte(address), Is.EqualTo(address));
 
   [TestCase(0x08)]
   [TestCase(0x10)]

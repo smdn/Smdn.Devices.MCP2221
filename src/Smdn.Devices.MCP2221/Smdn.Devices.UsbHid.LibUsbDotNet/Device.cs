@@ -3,6 +3,9 @@
 
 #if USBHIDDRIVER_LIBUSBDOTNET
 
+#pragma warning disable CA1848 // CA1848: For improved performance, use the LoggerMessage delegates instead of calling 'LoggerExtensions.LogXXX'
+#pragma warning disable CA2254 // CA2254: Template should be a static expression
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;

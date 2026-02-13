@@ -70,7 +70,9 @@ partial class MCP2221 {
     GPIOOperation               = 0b_000_0_0_000,
   }
 
+#pragma warning disable CA1034
   public sealed class GP0Functionality : GPFunctionality {
+#pragma warning restore CA1034
     private protected override int GPIndex => 0;
 
     internal GP0Functionality(MCP2221 device) : base(device) { }
@@ -102,7 +104,9 @@ partial class MCP2221 {
       );
   }
 
+#pragma warning disable CA1034
   public sealed class GP1Functionality : GPFunctionality, IInterruptDetectionFunctionality, IADCFunctionality, IClockOutputFunctionality {
+#pragma warning restore CA1034
     private protected override int GPIndex => 1;
 
     internal GP1Functionality(MCP2221 device) : base(device) { }
@@ -160,7 +164,9 @@ partial class MCP2221 {
       );
   }
 
+#pragma warning disable CA1034
   public sealed class GP2Functionality : GPFunctionality, IADCFunctionality, IDACFunctionality {
+#pragma warning restore CA1034
     private protected override int GPIndex => 2;
 
     internal GP2Functionality(MCP2221 device) : base(device) { }
@@ -205,7 +211,9 @@ partial class MCP2221 {
       );
   }
 
+#pragma warning disable CA1034
   public sealed class GP3Functionality : GPFunctionality, IADCFunctionality, IDACFunctionality {
+#pragma warning restore CA1034
     private protected override int GPIndex => 3;
 
     internal GP3Functionality(MCP2221 device) : base(device) { }
@@ -250,7 +258,9 @@ partial class MCP2221 {
       );
   }
 
+#pragma warning disable CA1034
   public abstract partial class GPFunctionality {
+#pragma warning restore CA1034
     private const int NumberOfGPs = 4;
 
     private readonly MCP2221 device;

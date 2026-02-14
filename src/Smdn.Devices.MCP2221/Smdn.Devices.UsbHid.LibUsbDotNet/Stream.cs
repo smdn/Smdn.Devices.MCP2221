@@ -67,13 +67,15 @@ internal class Stream : IUsbHidStream {
 
     buffer.CopyTo(buf);
 
-    var err = Writer.Write(
-      pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
-      offset: 0,
-      count: buf.Length,
-      timeout: (int)DefaultTimeout.TotalMilliseconds,
-      out var transferLength
-    );
+    fixed (void* ptr = buf) {
+      _ = Writer.Write(
+        pBuffer: (IntPtr)ptr,
+        offset: 0,
+        count: buf.Length,
+        timeout: (int)DefaultTimeout.TotalMilliseconds,
+        out var transferLength
+      );
+    }
   }
 
   public unsafe ValueTask WriteAsync(ReadOnlyMemory<byte> buffer)
@@ -86,13 +88,15 @@ internal class Stream : IUsbHidStream {
     buffer.Span.CopyTo(buf);
 
     // TODO: SubmitAsyncTransfer
-    var err = Writer.Write(
-      pBuffer: (IntPtr)Unsafe.AsPointer(ref buf.GetPinnableReference()),
-      offset: 0,
-      count: buf.Length,
-      timeout: (int)DefaultTimeout.TotalMilliseconds,
-      out var transferLength
-    );
+    fixed (void* ptr = buf) {
+      _ = Writer.Write(
+        pBuffer: (IntPtr)ptr,
+        offset: 0,
+        count: buf.Length,
+        timeout: (int)DefaultTimeout.TotalMilliseconds,
+        out var transferLength
+      );
+    }
 
 #if SYSTEM_THREADING_TASKS_VALUETASK_COMPLETEDTASK
     return ValueTask.CompletedTask;
@@ -106,15 +110,17 @@ internal class Stream : IUsbHidStream {
     if (maxInPacketSize < buffer.Length)
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
 
-    _ = Reader.Read(
-      buffer: (IntPtr)Unsafe.AsPointer(ref buffer.GetPinnableReference()),
-      offset: 0,
-      count: buffer.Length,
-      timeout: (int)DefaultTimeout.TotalMilliseconds,
-      out var transferLength
-    );
+    fixed (void* ptr = buffer) {
+      _ = Reader.Read(
+        buffer: (IntPtr)ptr,
+        offset: 0,
+        count: buffer.Length,
+        timeout: (int)DefaultTimeout.TotalMilliseconds,
+        out var transferLength
+      );
 
-    return transferLength;
+      return transferLength;
+    }
   }
 
   public unsafe ValueTask<int> ReadAsync(Memory<byte> buffer)
@@ -123,13 +129,17 @@ internal class Stream : IUsbHidStream {
       throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
 
     // TODO: SubmitAsyncTransfer
-    var err = Reader.Read(
-      buffer: (IntPtr)Unsafe.AsPointer(ref buffer.Span.GetPinnableReference()),
-      offset: 0,
-      count: buffer.Length,
-      timeout: (int)DefaultTimeout.TotalMilliseconds,
-      out var transferLength
-    );
+    int transferLength = default;
+
+    using (var handle = buffer.Pin()) {
+      _ = Reader.Read(
+        buffer: (IntPtr)Unsafe.AsPointer(ref buffer.Span.GetPinnableReference()),
+        offset: 0,
+        count: buffer.Length,
+        timeout: (int)DefaultTimeout.TotalMilliseconds,
+        out transferLength
+      );
+    }
 
 #pragma warning disable SA1114
     return

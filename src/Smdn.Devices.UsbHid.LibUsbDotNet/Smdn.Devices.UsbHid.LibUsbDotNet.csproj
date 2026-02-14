@@ -1,0 +1,65 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0;net462;netstandard2.1;netstandard2.0</TargetFrameworks>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>preview1</VersionSuffix>
+    <!-- <PackageValidationBaselineVersion>1.0.0</PackageValidationBaselineVersion> -->
+    <IsAotCompatible>false</IsAotCompatible>
+    <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
+  </PropertyGroup>
+
+  <PropertyGroup Label="package properties">
+    <Description>
+<![CDATA[`$(AssemblyName)` provides a mechanism for utilizing USB-HID implementations using `LibUsbDotNet` through dependency injection.
+]]>
+    </Description>
+    <PackageTags>USB,USB-HID</PackageTags>
+    <CopyrightYear>2026</CopyrightYear>
+    <GenerateNupkgReadmeFileDependsOnTargets>$(GenerateNupkgReadmeFileDependsOnTargets);GenerateReadmeFileContent</GenerateNupkgReadmeFileDependsOnTargets>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectOrPackageReference ReferencePackageVersion="1.0.0-preview1" Include="..\Smdn.Devices.UsbHid.Abstractions\Smdn.Devices.UsbHid.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" /> <!-- 'keyed services' are available in 8.0.0+ -->
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
+    <PackageReference Include="LibUsbDotNet" Version="3.0.167-alpha" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Third party notice -->
+    <None
+      Include="$(MSBuildThisFileDirectory)ThirdPartyNotices.md"
+      Pack="true"
+      PackagePath="ThirdPartyNotices.md"
+      CopyToOutputDirectory="None"
+    />
+  </ItemGroup>
+
+  <Target Name="GenerateReadmeFileContent">
+    <PropertyGroup>
+      <PackageReadmeFileContent><![CDATA[# $(PackageId) $(PackageVersion)
+$(Description)
+
+## Contributing
+This project welcomes contributions, feedbacks and suggestions. You can contribute to this project by submitting [Issues]($(RepositoryUrl)/issues/new/choose) or [Pull Requests]($(RepositoryUrl)/pulls/) on the [GitHub repository]($(RepositoryUrl)).
+
+## Credits
+This library uses the following third-party components:
+
+- [LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet) - Licensed under the [LGPL-3.0](https://github.com/LibUsbDotNet/LibUsbDotNet/blob/master/LICENSE)
+
+**Important notice**: This software is released under the MIT License. However, it links to `LibUsbDotNet` as a shared library. In accordance with the LGPL-3.0, users are permitted to replace the `LibUsbDotNet` library file with modified versions for their own use.
+
+For full license texts, see [ThirdPartyNotices.md]($(RepositoryUrl)/tree/main/src/$(PackageId)/ThirdPartyNotices.md).
+]]></PackageReadmeFileContent>
+    </PropertyGroup>
+  </Target>
+</Project>

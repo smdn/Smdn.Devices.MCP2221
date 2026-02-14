@@ -8,11 +8,8 @@ namespace Smdn.Devices.UsbHid.Logging;
 
 public static class EventIds {
   [CLSCompliant(false)]
-  public static EventId UsbHidListDevice { get; } = new(10, "USB HID List device");
+  public static EventId UsbHidOpenEndPoint { get; } = new(10, "USB HID Open end point");
 
   [CLSCompliant(false)]
-  public static EventId UsbHidSelectDevice { get; } = new(11, "USB HID Select device");
-
-  [CLSCompliant(false)]
-  public static EventId UsbHidOpenEndPoint { get; } = new(12, "USB HID Open end point");
+  public static EventId UsbHidGetDeviceInfo { get; } = new(11, "USB HID Get device information");
 }

@@ -7,6 +7,8 @@ SPDX-License-Identifier: MIT
     <Project Path="src/Smdn.Devices.MCP2221.GpioAdapter/Smdn.Devices.MCP2221.GpioAdapter.csproj" />
     <Project Path="src/Smdn.Devices.MCP2221/Smdn.Devices.MCP2221.csproj" />
     <Project Path="src/Smdn.Devices.UsbHid.Abstractions/Smdn.Devices.UsbHid.Abstractions.csproj" />
+    <Project Path="src/Smdn.Devices.UsbHid.HidSharp/Smdn.Devices.UsbHid.HidSharp.csproj" />
+    <Project Path="src/Smdn.Devices.UsbHid.LibUsbDotNet/Smdn.Devices.UsbHid.LibUsbDotNet.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Smdn.Devices.MCP2221/Smdn.Devices.MCP2221.Tests.csproj" />

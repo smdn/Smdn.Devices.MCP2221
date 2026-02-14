@@ -15,6 +15,10 @@ SPDX-License-Identifier: MIT
   <PropertyGroup Label="package properties">
     <Description>
 <![CDATA[`$(AssemblyName)` provides interfaces and common types that abstract various USB-HID implementations.
+The following packages are available for USB-HID implementations:
+
+- [Smdn.Devices.UsbHid.HidSharp](https://www.nuget.org/packages/Smdn.Devices.UsbHid.HidSharp)
+- [Smdn.Devices.UsbHid.LibUsbDotNet](https://www.nuget.org/packages/Smdn.Devices.UsbHid.LibUsbDotNet)
 ]]>
     </Description>
     <PackageTags>USB,USB-HID</PackageTags>

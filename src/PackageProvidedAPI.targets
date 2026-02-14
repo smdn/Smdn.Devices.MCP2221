@@ -19,6 +19,18 @@ SPDX-License-Identifier: MIT
   <Choose>
     <When Condition="
       ($(TargetFramework.StartsWith('net46')) and '$(TargetFramework)' != 'net46') or
+      $(TargetFramework.StartsWith('netstandard2'))
+    ">
+      <ItemGroup><PackageReference Update="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" /></ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup><PackageReference Remove="System.Runtime.CompilerServices.Unsafe" /></ItemGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
+    <When Condition="
+      ($(TargetFramework.StartsWith('net46')) and '$(TargetFramework)' != 'net46') or
       $(TargetFramework.StartsWith('net47')) or
       $(TargetFramework.StartsWith('net48')) or
       $(TargetFramework.StartsWith('netcoreapp2')) or

@@ -315,4 +315,5 @@ This project uses the following components. See [ThirdPartyNotices.md](./ThirdPa
 
 - [LibUsbDotNet/LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet)
 - [SeekHisKingdom/HIDSharp](https://github.com/SeekHisKingdom/HIDSharp)
+- [App-vNext/Polly](https://github.com/App-vNext/Polly)
 <!-- #pragma section-end NupkgReadmeFile_Notice -->

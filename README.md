@@ -310,7 +310,7 @@ This project is licensed under the terms of the [MIT License](./LICENSE.txt).
 
 This is an unofficial project that has no affiliation with the manufacturers/vendors/suppliers of `MCP2221`/`MCP2221A`.
 
-## Credit
+## Credits
 This project uses the following components. See [ThirdPartyNotices.md](./ThirdPartyNotices.md) for detail.
 
 - [LibUsbDotNet/LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet)

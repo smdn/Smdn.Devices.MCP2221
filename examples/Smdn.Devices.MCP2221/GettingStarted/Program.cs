@@ -1,9 +1,30 @@
 using System.Device.Gpio;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
 using Smdn.Devices.MCP2221;
+using Smdn.Devices.UsbHid.DependencyInjection;
+
+var services = new ServiceCollection();
+
+
+// Use 'HidSharp' (Apache License 2.0) as the USB-HID implementation.
+services.AddHidSharpUsbHid();
+
+// 'LibUsbDotNet' (LGPL-3.0) can also be used.
+#if false
+services.AddLibUsbDotNetUsbHid(
+  configure: static (builder, options) => {
+    options.DebugLevel = LogLevel.Information;
+  }
+);
+#endif
+
+var serviceProvider = services.BuildServiceProvider();
 
 // Find and open the first MCP2221 device connected to the USB port.
-using var device = MCP2221.Open();
+using var device = MCP2221.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
 device.GP0.ConfigureAsGPIO(PinMode.Output);

@@ -13,6 +13,14 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="Smdn.Devices.MCP2221" Version="*" />
+
+    <!-- In this example, HidSharp (Apache License 2.0) is used as the USB-HID implementation. -->
+    <PackageReference Include="Smdn.Devices.UsbHid.HidSharp" Version="*" />
+
+    <!-- As an implementation of USB-HID, LibUsbDotNet (LGPL-3.0) can also be used. -->
+    <PackageReference Include="Smdn.Devices.UsbHid.LibUsbDotNet" Version="*" />
+
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
   </ItemGroup>
 
 </Project>

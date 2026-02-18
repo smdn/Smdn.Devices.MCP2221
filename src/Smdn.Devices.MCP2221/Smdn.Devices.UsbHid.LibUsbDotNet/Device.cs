@@ -18,6 +18,8 @@ using LibUsbDotNet.Main;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using Smdn.Devices.UsbHid.Logging;
+
 namespace Smdn.Devices.UsbHid.LibUsbDotNet;
 
 internal class Device : IUsbHidDevice {

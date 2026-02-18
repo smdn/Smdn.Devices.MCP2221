@@ -4,6 +4,7 @@ SPDX-License-Identifier: MIT
 -->
 <Project>
   <Import Project="$(MSBuildThisFileDirectory)ReadReadmeFileNoticeSectionContent.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)PackageProvidedAPI.targets" />
 
   <Import Project="Sdk.targets" Sdk="Smdn.MSBuild.ProjectAssets.Library" />
 </Project>

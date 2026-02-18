@@ -16,6 +16,8 @@ using Microsoft.Extensions.Logging;
 
 using HidDevice = HidSharp.HidDevice;
 
+using Smdn.Devices.UsbHid.Logging;
+
 namespace Smdn.Devices.UsbHid.HidSharp;
 
 internal class Device : IUsbHidDevice {

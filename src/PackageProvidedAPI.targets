@@ -1,0 +1,33 @@
+﻿<!--
+SPDX-FileCopyrightText: 2022 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Project>
+  <!-- updates version and condition of package references -->
+  <Choose>
+    <When Condition="
+      $(TargetFramework.StartsWith('net4')) or
+      $(TargetFramework.StartsWith('netstandard2.0'))
+    ">
+      <ItemGroup><PackageReference Update="System.Memory" Version="4.5.4" /></ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup><PackageReference Remove="System.Memory" /></ItemGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
+    <When Condition="
+      ($(TargetFramework.StartsWith('net46')) and '$(TargetFramework)' != 'net46') or
+      $(TargetFramework.StartsWith('net47')) or
+      $(TargetFramework.StartsWith('net48')) or
+      $(TargetFramework.StartsWith('netcoreapp2')) or
+      $(TargetFramework.StartsWith('netstandard2.0'))
+    ">
+      <ItemGroup><PackageReference Update="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" /></ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup><PackageReference Remove="Microsoft.Bcl.AsyncInterfaces" /></ItemGroup>
+    </Otherwise>
+  </Choose>
+</Project>

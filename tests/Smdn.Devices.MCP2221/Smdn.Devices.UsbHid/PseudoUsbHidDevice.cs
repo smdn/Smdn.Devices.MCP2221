@@ -2,29 +2,58 @@
 // SPDX-License-Identifier: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+
 using Smdn.Devices.MCP2221;
 
 namespace Smdn.Devices.UsbHid;
 
 class PseudoUsbHidDevice : IUsbHidDevice {
-  public string ProductName => nameof(PseudoUsbHidDevice);
-  public string Manufacturer => typeof(PseudoUsbHidDevice).Assembly.GetName().Name!;
-  public int VendorID => 0xCAFE;
-  public int ProductID => 0xFEED;
-  public string SerialNumber => typeof(PseudoUsbHidDevice).Assembly.GetName().FullName;
-  public Version ReleaseNumber => typeof(PseudoUsbHidDevice).Assembly.GetName().Version!;
-  public string DevicePath => "<null>";
-  public string FileSystemName => "/dev/null";
+  public bool IsDisposed { get; private set; }
 
-  private readonly Func<Stream> createWriteStream;
-  private readonly Func<Stream> createReadStream;
+  /// <inheritdoc/>
+  public int VendorId => 0xCAFE;
 
-  private PseudoUsbHidStream? stream = null;
-  public PseudoUsbHidStream Stream => stream ?? throw new ObjectDisposedException(GetType().FullName);
+  /// <inheritdoc/>
+  public int ProductId => 0xFEED;
 
-  public PseudoUsbHidDevice(Func<Stream> createWriteStream, Func<Stream> createReadStream)
+  public bool TryGetProductName(
+    [NotNullWhen(true)]
+    out string? productName
+  )
+    => (productName = nameof(PseudoUsbHidDevice)) is not null;
+
+  public bool TryGetManufacturer(
+    [NotNullWhen(true)]
+    out string? manufacturer
+  )
+    => (manufacturer = typeof(PseudoUsbHidDevice).Assembly.GetName().Name) is not null;
+
+  public bool TryGetSerialNumber(
+    [NotNullWhen(true)]
+    out string? serialNumber
+  )
+    => (serialNumber = typeof(PseudoUsbHidDevice).Assembly.GetName().FullName) is not null;
+
+  public bool TryGetDeviceIdentifier(
+    [NotNullWhen(true)]
+    out string? deviceIdentifier
+  )
+    => (deviceIdentifier = "/dev/null") is not null;
+
+  private readonly Func<Stream>? createWriteStream;
+  private readonly Func<Stream>? createReadStream;
+
+  private PseudoUsbHidEndPoint? endpoint = null;
+  public PseudoUsbHidEndPoint EndPoint
+    => IsDisposed
+      ? throw new ObjectDisposedException(GetType().FullName)
+      : endpoint ?? throw new InvalidOperationException("endpoint is not opened");
+
+  public PseudoUsbHidDevice(Func<Stream>? createWriteStream, Func<Stream>? createReadStream)
   {
     this.createWriteStream = createWriteStream;
     this.createReadStream = createReadStream;
@@ -32,33 +61,53 @@ class PseudoUsbHidDevice : IUsbHidDevice {
 
   public void Dispose()
   {
-    stream?.Dispose();
-    stream = null;
+    IsDisposed = true;
+
+    endpoint?.Dispose();
+    endpoint = null;
   }
 
   public async ValueTask DisposeAsync()
   {
-    if (stream != null) {
-      await stream.DisposeAsync().ConfigureAwait(false);
-      stream = null;
+    IsDisposed = true;
+
+    if (endpoint != null) {
+      await endpoint.DisposeAsync().ConfigureAwait(false);
+      endpoint = null;
     }
   }
 
-  public ValueTask<IUsbHidStream> OpenStreamAsync()
+  public IUsbHidEndPoint OpenEndPoint(
+    bool openOutEndPoint,
+    bool openInEndPoint,
+    bool shouldDisposeDevice,
+    CancellationToken cancellationToken
+  )
   {
-    stream = new PseudoUsbHidStream(createWriteStream.Invoke(), createReadStream.Invoke());
+    endpoint = new PseudoUsbHidEndPoint(
+      this,
+      openOutEndPoint ? createWriteStream?.Invoke() : null,
+      openInEndPoint ? createReadStream?.Invoke() : null,
+      shouldDisposeDevice
+    );
 
-    return
-#if SYSTEM_THREADING_TASKS_VALUETASK_FROMRESULT
-    ValueTask.FromResult<IUsbHidStream>
-#else
-    new ValueTask<IUsbHidStream>
-#endif
-    (stream);
+    return endpoint;
   }
 
-  public IUsbHidStream OpenStream()
+  public ValueTask<IUsbHidEndPoint> OpenEndPointAsync(
+    bool openOutEndPoint,
+    bool openInEndPoint,
+    bool shouldDisposeDevice,
+    CancellationToken cancellationToken
+  )
   {
-    return new PseudoUsbHidStream(createWriteStream.Invoke(), createReadStream.Invoke());
+    endpoint = new PseudoUsbHidEndPoint(
+      this,
+      openOutEndPoint ? createWriteStream?.Invoke() : null,
+      openInEndPoint ? createReadStream?.Invoke() : null,
+      shouldDisposeDevice
+    );
+
+    return new(endpoint);
   }
 }

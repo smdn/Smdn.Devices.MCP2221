@@ -13,8 +13,8 @@ public static class HidSharpUsbHidServiceBuilderExtensions {
   private const int OpenEndPointRetryIntervalInMilliseconds = 200;
 
   [CLSCompliant(false)]
-  public static UsbHidServiceBuilder<TServiceKey> AddResiliencePipelineForOpenEndPoint<TServiceKey>(
-    this UsbHidServiceBuilder<TServiceKey> builder
+  public static HidSharpUsbHidServiceBuilder<TServiceKey> AddResiliencePipelineForOpenEndPoint<TServiceKey>(
+    this HidSharpUsbHidServiceBuilder<TServiceKey> builder
   )
     => AddResiliencePipelineForOpenEndPoint(
       builder: builder ?? throw new ArgumentNullException(nameof(builder)),
@@ -26,20 +26,25 @@ public static class HidSharpUsbHidServiceBuilderExtensions {
     );
 
   [CLSCompliant(false)]
-  public static UsbHidServiceBuilder<TServiceKey> AddResiliencePipelineForOpenEndPoint<TServiceKey>(
-    this UsbHidServiceBuilder<TServiceKey> builder,
+  public static HidSharpUsbHidServiceBuilder<TServiceKey> AddResiliencePipelineForOpenEndPoint<TServiceKey>(
+    this HidSharpUsbHidServiceBuilder<TServiceKey> builder,
     RetryStrategyOptions retryOptions
   )
-    => AddResiliencePipelineForOpenEndPoint(
+  {
+    if (retryOptions is null)
+      throw new ArgumentNullException(nameof(retryOptions));
+
+    return AddResiliencePipelineForOpenEndPoint(
       builder: builder ?? throw new ArgumentNullException(nameof(builder)),
       configure: (pipelineBuilder, _) => {
-        pipelineBuilder.AddRetry(retryOptions ?? throw new ArgumentNullException(nameof(retryOptions)));
+        pipelineBuilder.AddRetry(retryOptions);
       }
     );
+  }
 
   [CLSCompliant(false)]
-  public static UsbHidServiceBuilder<TServiceKey> AddResiliencePipelineForOpenEndPoint<TServiceKey>(
-    this UsbHidServiceBuilder<TServiceKey> builder,
+  public static HidSharpUsbHidServiceBuilder<TServiceKey> AddResiliencePipelineForOpenEndPoint<TServiceKey>(
+    this HidSharpUsbHidServiceBuilder<TServiceKey> builder,
     Action<ResiliencePipelineBuilder, AddResiliencePipelineContext<HidSharpResiliencePipelineKeyPair<TServiceKey>>> configure
   )
   {

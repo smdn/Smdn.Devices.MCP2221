@@ -11,29 +11,61 @@ using LibUsbDotNet.LibUsb;
 
 namespace Smdn.Devices.UsbHid;
 
-internal class UsbHidEndPoint(
-  UsbHidDevice openedDevice,
-  UsbEndpointReader? endPointReader,
-  int maxInEndPointPacketSize,
-  TimeSpan readEndPointTimeout,
-  UsbEndpointWriter? endPointWriter,
-  int maxOutEndPointPacketSize,
-  TimeSpan writeEndPointTimeout,
-  bool shouldDisposeDevice
-) : IUsbHidEndPoint<UsbEndpointReader, UsbEndpointWriter> {
-  private UsbHidDevice? device = openedDevice ?? throw new ArgumentNullException(nameof(openedDevice));
+/// <summary>
+/// An implementation of <see cref="IUsbHidEndPoint"/> that uses
+/// <see cref="UsbEndpointReader"/> and <see cref="UsbEndpointWriter"/> of
+/// LibUsbDotNet as the backend.
+/// </summary>
+public sealed class LibUsbDotNetUsbHidEndPoint : IUsbHidEndPoint<UsbEndpointReader, UsbEndpointWriter> {
+  private readonly bool shouldDisposeDevice;
+
+  private LibUsbDotNetUsbHidDevice? device;
+
+  /// <inheritdoc/>
   public IUsbHidDevice Device => device ?? throw new ObjectDisposedException(GetType().Name);
 
   private bool IsDisposed => device is null;
 
-  public bool CanRead => !IsDisposed && ReadEndPoint is not null;
+  /// <inheritdoc/>
   public bool CanWrite => !IsDisposed && WriteEndPoint is not null;
 
-  public UsbEndpointReader? ReadEndPoint { get; private set; } = endPointReader;
-  public UsbEndpointWriter? WriteEndPoint { get; private set; } = endPointWriter;
+  /// <inheritdoc/>
+  public bool CanRead => !IsDisposed && ReadEndPoint is not null;
 
-  private readonly int maxInPacketSize = maxInEndPointPacketSize;
-  private readonly int maxOutPacketSize = maxOutEndPointPacketSize;
+  /// <inheritdoc/>
+  [CLSCompliant(false)]
+  public UsbEndpointWriter? WriteEndPoint { get; private set; }
+
+  /// <inheritdoc/>
+  [CLSCompliant(false)]
+  public UsbEndpointReader? ReadEndPoint { get; private set; }
+
+  private readonly int maxOutEndPointPacketSize;
+  private readonly int maxInEndPointPacketSize;
+
+  private readonly int writeEndPointTimeoutInMilliseconds;
+  private readonly int readEndPointTimeoutInMilliseconds;
+
+  internal LibUsbDotNetUsbHidEndPoint(
+    LibUsbDotNetUsbHidDevice device,
+    UsbEndpointWriter? endPointWriter,
+    int maxOutEndPointPacketSize,
+    TimeSpan writeEndPointTimeout,
+    UsbEndpointReader? endPointReader,
+    int maxInEndPointPacketSize,
+    TimeSpan readEndPointTimeout,
+    bool shouldDisposeDevice
+  )
+  {
+    this.device = device ?? throw new ArgumentNullException(nameof(device));
+    ReadEndPoint = endPointReader;
+    WriteEndPoint = endPointWriter;
+    this.maxInEndPointPacketSize = maxInEndPointPacketSize;
+    readEndPointTimeoutInMilliseconds = (int)readEndPointTimeout.TotalMilliseconds;
+    this.maxOutEndPointPacketSize = maxOutEndPointPacketSize;
+    writeEndPointTimeoutInMilliseconds = (int)writeEndPointTimeout.TotalMilliseconds;
+    this.shouldDisposeDevice = shouldDisposeDevice;
+  }
 
   private void ThrowIfDisposed()
   {
@@ -41,6 +73,7 @@ internal class UsbHidEndPoint(
       throw new ObjectDisposedException(GetType().FullName);
   }
 
+  /// <inheritdoc/>
   public void Dispose()
   {
     if (shouldDisposeDevice) {
@@ -49,10 +82,16 @@ internal class UsbHidEndPoint(
     }
 
     // UsbEndpointWriter/UsbEndpointReader does not implement IDisposable
-    ReadEndPoint = null;
     WriteEndPoint = null;
+    ReadEndPoint = null;
   }
 
+  /// <inheritdoc/>
+  /// <remarks>
+  /// This implementation performs a synchronous disposal, as the
+  /// underlying <see cref="UsbEndpointReader"/> and <see cref="UsbEndpointWriter"/>
+  /// do not support asynchronous disposal.
+  /// </remarks>
 #if NET || NETSTANDARD2_1_OR_GREATER
   public async ValueTask DisposeAsync()
   {
@@ -62,8 +101,8 @@ internal class UsbHidEndPoint(
     }
 
     // UsbEndpointWriter/UsbEndpointReader does not implement IDisposable
-    ReadEndPoint = null;
     WriteEndPoint = null;
+    ReadEndPoint = null;
   }
 #else
   public ValueTask DisposeAsync()
@@ -74,6 +113,11 @@ internal class UsbHidEndPoint(
   }
 #endif
 
+  /// <inheritdoc/>
+  /// <remarks>
+  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
+  /// because the underlying LibUsbDotNet API does not require it.
+  /// </remarks>
   public void Write(ReadOnlySpan<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty)
@@ -81,8 +125,8 @@ internal class UsbHidEndPoint(
 
     buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
 
-    if (maxOutPacketSize < buffer.Length)
-      throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutPacketSize})", nameof(buffer));
+    if (maxOutEndPointPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
 
     ThrowIfDisposed();
 
@@ -94,7 +138,7 @@ internal class UsbHidEndPoint(
     WriteCore(
       WriteEndPoint,
       buffer,
-      (int)writeEndPointTimeout.TotalMilliseconds
+      writeEndPointTimeoutInMilliseconds
     );
 
     static void WriteCore(
@@ -124,6 +168,11 @@ internal class UsbHidEndPoint(
     }
   }
 
+  /// <inheritdoc/>
+  /// <remarks>
+  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
+  /// because the underlying LibUsbDotNet API does not require it.
+  /// </remarks>
   public ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty)
@@ -131,8 +180,8 @@ internal class UsbHidEndPoint(
 
     buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
 
-    if (maxOutPacketSize < buffer.Length)
-      throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutPacketSize})", nameof(buffer));
+    if (maxOutEndPointPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum output packet length ({maxOutEndPointPacketSize})", nameof(buffer));
 
     ThrowIfDisposed();
 
@@ -144,7 +193,7 @@ internal class UsbHidEndPoint(
     return WriteAsyncCore(
       WriteEndPoint,
       buffer,
-      (int)writeEndPointTimeout.TotalMilliseconds
+      writeEndPointTimeoutInMilliseconds
     );
 
     static async ValueTask WriteAsyncCore(
@@ -178,6 +227,11 @@ internal class UsbHidEndPoint(
     }
   }
 
+  /// <inheritdoc/>
+  /// <remarks>
+  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
+  /// because the underlying LibUsbDotNet API does not require it.
+  /// </remarks>
   public int Read(Span<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty)
@@ -185,8 +239,8 @@ internal class UsbHidEndPoint(
 
     buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
 
-    if (maxInPacketSize < buffer.Length)
-      throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
+    if (maxInEndPointPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
 
     ThrowIfDisposed();
 
@@ -197,13 +251,18 @@ internal class UsbHidEndPoint(
 
     _ = ReadEndPoint.Read(
       buffer: buffer,
-      timeout: (int)readEndPointTimeout.TotalMilliseconds,
+      timeout: readEndPointTimeoutInMilliseconds,
       out var transferLength
     );
 
     return transferLength;
   }
 
+  /// <inheritdoc/>
+  /// <remarks>
+  /// The first byte of the <paramref name="buffer"/>, which is for the Report ID, is ignored
+  /// because the underlying LibUsbDotNet API does not require it.
+  /// </remarks>
   public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
   {
     if (buffer.IsEmpty) {
@@ -217,8 +276,8 @@ internal class UsbHidEndPoint(
 
     buffer = buffer.Slice(1); // get the slice of the payload only, excluding the report ID
 
-    if (maxInPacketSize < buffer.Length)
-      throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInPacketSize})", nameof(buffer));
+    if (maxInEndPointPacketSize < buffer.Length)
+      throw new ArgumentException($"length of the buffer must be less than or equals to maximum input packet length ({maxInEndPointPacketSize})", nameof(buffer));
 
     ThrowIfDisposed();
 
@@ -230,7 +289,7 @@ internal class UsbHidEndPoint(
     return ReadAsyncCore(
       ReadEndPoint,
       buffer,
-      (int)readEndPointTimeout.TotalMilliseconds
+      readEndPointTimeoutInMilliseconds
     );
 
     static async ValueTask<int> ReadAsyncCore(

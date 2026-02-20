@@ -28,9 +28,12 @@ SPDX-License-Identifier: MIT
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" /> <!-- 'keyed services' are available in 8.0.0+ -->
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" /> <!-- Smdn.Extensions.Polly.KeyedRegistry requires 8.0.0+ -->
+    <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" /> <!-- Polly.Extensions requires 6.0.0+ -->
     <PackageReference Include="LibUsbDotNet" Version="3.0.167-alpha" />
+    <PackageReference Include="Polly.Core" Version="8.0.0" />
+    <PackageReference Include="Polly.Extensions" Version="8.0.0" />
+    <PackageReference Include="Smdn.Extensions.Polly.KeyedRegistry" Version="[1.2.0,2.0.0)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +58,7 @@ This project welcomes contributions, feedbacks and suggestions. You can contribu
 This library uses the following third-party components:
 
 - [LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet) - Licensed under the [LGPL-3.0](https://github.com/LibUsbDotNet/LibUsbDotNet/blob/master/LICENSE)
+- [Polly.Core and Polly.Extensions](https://github.com/App-vNext/Polly/) - Licensed under the [BSD-3-Clause license](https://github.com/App-vNext/Polly/blob/main/LICENSE)
 
 **Important notice**: This software is released under the MIT License. However, it links to `LibUsbDotNet` as a shared library. In accordance with the LGPL-3.0, users are permitted to replace the `LibUsbDotNet` library file with modified versions for their own use.
 

@@ -9,9 +9,9 @@ using Polly.DependencyInjection;
 
 namespace Smdn.Devices.UsbHid.DependencyInjection;
 
-internal static class HidSharpUsbHidServiceCollectionExtensions {
+internal static class LibUsbDotNetUsbHidServiceCollectionExtensions {
   private static
-  HidSharpResiliencePipelineKeyPair<TServiceKey>
+  LibUsbDotNetResiliencePipelineKeyPair<TServiceKey>
   CreateResiliencePipelineKeyPair<TServiceKey>(TServiceKey serviceKey, string pipelineKey)
     => new(serviceKey, pipelineKey);
 
@@ -26,7 +26,7 @@ internal static class HidSharpUsbHidServiceCollectionExtensions {
 
     services
       .AddResiliencePipeline(
-        key: HidSharpUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+        key: LibUsbDotNetUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
         configure: configure
       );
 
@@ -37,7 +37,7 @@ internal static class HidSharpUsbHidServiceCollectionExtensions {
   public static IServiceCollection AddResiliencePipelineForOpenEndPoint<TServiceKey>(
     this IServiceCollection services,
     TServiceKey serviceKey,
-    Action<ResiliencePipelineBuilder, AddResiliencePipelineContext<HidSharpResiliencePipelineKeyPair<TServiceKey>>> configure
+    Action<ResiliencePipelineBuilder, AddResiliencePipelineContext<LibUsbDotNetResiliencePipelineKeyPair<TServiceKey>>> configure
   )
   {
     if (services is null)
@@ -46,7 +46,7 @@ internal static class HidSharpUsbHidServiceCollectionExtensions {
     services
       .AddResiliencePipeline(
         serviceKey: serviceKey,
-        pipelineKey: HidSharpUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
+        pipelineKey: LibUsbDotNetUsbHidDevice.ResiliencePipelineKeyForOpenEndPoint,
         createResiliencePipelineKeyPair: CreateResiliencePipelineKeyPair,
         configure: configure
       );

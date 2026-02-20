@@ -10,9 +10,9 @@ using Polly.Registry.KeyedRegistry;
 namespace Smdn.Devices.UsbHid.DependencyInjection;
 
 #pragma warning disable IDE0055
-public readonly record struct HidSharpResiliencePipelineKeyPair<TServiceKey> :
+public readonly record struct LibUsbDotNetResiliencePipelineKeyPair<TServiceKey> :
   IResiliencePipelineKeyPair<TServiceKey, string>,
-  IEquatable<HidSharpResiliencePipelineKeyPair<TServiceKey>>
+  IEquatable<LibUsbDotNetResiliencePipelineKeyPair<TServiceKey>>
 #pragma warning restore IDE0055
 {
   /// <summary>
@@ -22,11 +22,11 @@ public readonly record struct HidSharpResiliencePipelineKeyPair<TServiceKey> :
   public TServiceKey ServiceKey { get; }
 
   /// <summary name="pipelineKey">
-  /// Gets a key for <see cref="ResiliencePipeline"/> referenced by <see cref="HidSharpUsbHidService"/>.
+  /// Gets a key for <see cref="ResiliencePipeline"/> referenced by <see cref="LibUsbDotNetUsbHidService"/>.
   /// </summary>
   public string PipelineKey { get; }
 
-  public HidSharpResiliencePipelineKeyPair(TServiceKey serviceKey, string pipelineKey)
+  public LibUsbDotNetResiliencePipelineKeyPair(TServiceKey serviceKey, string pipelineKey)
   {
     if (pipelineKey is null)
       throw new ArgumentNullException(nameof(pipelineKey));

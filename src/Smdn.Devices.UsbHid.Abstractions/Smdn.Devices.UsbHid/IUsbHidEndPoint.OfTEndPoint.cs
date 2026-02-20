@@ -3,16 +3,19 @@
 
 namespace Smdn.Devices.UsbHid;
 
+/// <summary>
+/// Provides a mechanism to abstract reading from and writing to USB-HID report endpoints,
+/// and provides properties for accessing the underlying endpoint objects used by
+/// the backend library.
+/// </summary>
 public interface IUsbHidEndPoint<TReadEndPoint, TWriteEndPoint> : IUsbHidEndPoint {
   /// <summary>
-  /// Gets the implementation-dependent endpoint object for reading
-  /// held internally by this object.
+  /// Gets the implementation-dependent underlying endpoint object for reading.
   /// </summary>
   TReadEndPoint? ReadEndPoint { get; }
 
   /// <summary>
-  /// Gets the implementation-dependent endpoint object for writing
-  /// held internally by this object.
+  /// Gets the implementation-dependent underlying endpoint object for writing.
   /// </summary>
   TWriteEndPoint? WriteEndPoint { get; }
 }

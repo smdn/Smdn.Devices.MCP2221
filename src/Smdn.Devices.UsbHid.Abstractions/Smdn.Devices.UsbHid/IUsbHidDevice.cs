@@ -11,13 +11,30 @@ using System.Threading.Tasks;
 namespace Smdn.Devices.UsbHid;
 
 /// <summary>
-/// Defines an interface for accessing information about USB-HID devices.
-/// Typically, it retrieves information obtained from the device descriptor.
+/// Provides a mechanism to abstract and operate USB-HID devices.
 /// </summary>
 public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
+  /// <summary>
+  /// Gets the vendor ID of the USB-HID device.
+  /// </summary>
   int VendorId { get; }
+
+  /// <summary>
+  /// Gets the product ID of the USB-HID device.
+  /// </summary>
   int ProductId { get; }
 
+  /// <summary>
+  /// Attempts to get the product name of the USB-HID device.
+  /// </summary>
+  /// <param name="productName">
+  /// When this method returns, contains the product name of the USB-HID device,
+  /// if the product name can be retrieved; otherwise, <see langword="null"/>.
+  /// </param>
+  /// <returns>
+  /// <see langword="true"/> if the product name was retrieved;
+  /// otherwise, <see langword="false"/>.
+  /// </returns>
   bool TryGetProductName(
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
     [NotNullWhen(true)]
@@ -25,6 +42,17 @@ public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
     out string? productName
   );
 
+  /// <summary>
+  /// Attempts to get the manufacturer of the USB-HID device.
+  /// </summary>
+  /// <param name="manufacturer">
+  /// When this method returns, contains the manufacturer of the USB-HID device,
+  /// if the manufacturer can be retrieved; otherwise, <see langword="null"/>.
+  /// </param>
+  /// <returns>
+  /// <see langword="true"/> if the manufacturer was retrieved;
+  /// otherwise, <see langword="false"/>.
+  /// </returns>
   bool TryGetManufacturer(
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
     [NotNullWhen(true)]
@@ -32,6 +60,17 @@ public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
     out string? manufacturer
   );
 
+  /// <summary>
+  /// Attempts to get the serial number of the USB-HID device.
+  /// </summary>
+  /// <param name="serialNumber">
+  /// When this method returns, contains the serial number of the USB-HID device,
+  /// if the serial number can be retrieved; otherwise, <see langword="null"/>.
+  /// </param>
+  /// <returns>
+  /// <see langword="true"/> if the serial number was retrieved;
+  /// otherwise, <see langword="false"/>.
+  /// </returns>
   bool TryGetSerialNumber(
 #if NULL_STATE_STATIC_ANALYSIS_ATTRIBUTES
     [NotNullWhen(true)]
@@ -43,11 +82,12 @@ public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
   /// Attempts to get the implementation-dependent <see cref="string"/> for identifying the device.
   /// </summary>
   /// <param name="deviceIdentifier">
-  /// The <see cref="string"/> that identifies a specific device.
+  /// When this method returns, contains the implementation-dependent identifier string,
+  /// if the identifier can be retrieved; otherwise, <see langword="null"/>.
   /// </param>
   /// <returns>
-  /// <see langword="true"/> if the implementation-dependent identifier was retrieved,
-  /// otherwise <see langword="false"/>.
+  /// <see langword="true"/> if the implementation-dependent identifier was retrieved;
+  /// otherwise, <see langword="false"/>.
   /// </returns>
   /// <remarks>
   /// This method retrieves an implementation-dependent string.
@@ -64,42 +104,79 @@ public interface IUsbHidDevice : IDisposable, IAsyncDisposable {
   /// <summary>
   /// Opens the endpoint for report input and output.
   /// </summary>
+  /// <param name="openOutEndPoint">
+  /// Specifies whether to open the <c>OUT</c> endpoint for writing reports.
+  /// </param>
+  /// <param name="openInEndPoint">
+  /// Specifies whether to open the <c>IN</c> endpoint for reading reports.
+  /// </param>
   /// <param name="shouldDisposeDevice">
-  /// Specifies whether to also dispose the source <see cref="IUsbHidDevice"/> when
-  /// disposing the opened <see cref="IUsbHidEndPoint"/>.
+  /// <see langword="true"/> to dispose this device instance when the returned
+  /// <see cref="IUsbHidEndPoint"/> is disposed;
+  /// otherwise, <see langword="false"/>.
   /// </param>
   /// <param name="cancellationToken">
   /// The <see cref="CancellationToken"/> to monitor for cancellation requests.
   /// </param>
   /// <returns>
-  /// The <see cref="IUsbHidEndPoint"/> that represents the opened endpoint.
+  /// An <see cref="IUsbHidEndPoint"/> that represents the opened endpoints.
   /// </returns>
-  /// <exception cref="ObjectDisposedException">
-  /// Attempted to open endpoint after the instance was disposed.
+  /// <exception cref="InvalidOperationException">
+  /// Attempted to open an endpoint, but neither <paramref name="openOutEndPoint"/> nor
+  /// <paramref name="openInEndPoint"/> was specified.
   /// </exception>
-  IUsbHidEndPoint OpenEndPoint(bool shouldDisposeDevice, CancellationToken cancellationToken);
+  /// <exception cref="ObjectDisposedException">
+  /// This device instance has been disposed.
+  /// </exception>
+  /// <exception cref="OperationCanceledException">
+  /// The <paramref name="cancellationToken"/> has had cancellation requested.
+  /// </exception>
+  IUsbHidEndPoint OpenEndPoint(
+    bool openOutEndPoint,
+    bool openInEndPoint,
+    bool shouldDisposeDevice,
+    CancellationToken cancellationToken
+  );
 
   /// <summary>
-  /// Opens the endpoint for report input and output.
+  /// Asynchronously opens the endpoint for report input and output.
   /// </summary>
+  /// <param name="openOutEndPoint">
+  /// Specifies whether to open the <c>OUT</c> endpoint for writing reports.
+  /// </param>
+  /// <param name="openInEndPoint">
+  /// Specifies whether to open the <c>IN</c> endpoint for reading reports.
+  /// </param>
   /// <param name="shouldDisposeDevice">
-  /// Specifies whether to also dispose the source <see cref="IUsbHidDevice"/> when
-  /// disposing the opened <see cref="IUsbHidEndPoint"/>.
+  /// <see langword="true"/> to dispose this device instance when the returned
+  /// <see cref="IUsbHidEndPoint"/> is disposed;
+  /// otherwise, <see langword="false"/>.
   /// </param>
   /// <param name="cancellationToken">
   /// The <see cref="CancellationToken"/> to monitor for cancellation requests.
   /// </param>
   /// <returns>
-  /// The <see cref="ValueTask{T}"/> that represents the asynchronous operation.
-  /// The value of its <see cref="ValueTask{T}.Result"/> property contains
-  /// <see cref="IUsbHidEndPoint"/> that represents the opened endpoint.
+  /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
+  /// The result of the task is an <see cref="IUsbHidEndPoint"/> that represents the opened endpoints.
   /// </returns>
+  /// <exception cref="InvalidOperationException">
+  /// Attempted to open an endpoint, but neither <paramref name="openOutEndPoint"/> nor
+  /// <paramref name="openInEndPoint"/> was specified.
+  /// </exception>
   /// <exception cref="ObjectDisposedException">
-  /// Attempted to open endpoint after the instance was disposed.
+  /// This device instance has been disposed.
+  /// </exception>
+  /// <exception cref="OperationCanceledException">
+  /// The <paramref name="cancellationToken"/> has had cancellation requested.
   /// </exception>
   /// <remarks>
-  /// If the implementation does not support asynchronous opening,
+  /// If the underlying implementation does not support asynchronous opening,
   /// this method will perform a synchronous open instead.
   /// </remarks>
-  ValueTask<IUsbHidEndPoint> OpenEndPointAsync(bool shouldDisposeDevice, CancellationToken cancellationToken);
+  ValueTask<IUsbHidEndPoint> OpenEndPointAsync(
+    bool openOutEndPoint,
+    bool openInEndPoint,
+    bool shouldDisposeDevice,
+    CancellationToken cancellationToken
+  );
 }

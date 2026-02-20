@@ -14,11 +14,39 @@ namespace Smdn.Devices.MCP2221;
 #pragma warning disable IDE0040, CA1724
 partial class MCP2221 {
 #pragma warning restore IDE0040, CA1724
-  public static ValueTask<MCP2221> CreateAsync<TServiceKey>(
+  public static ValueTask<MCP2221> CreateAsync(
     IUsbHidDevice usbHidDevice,
     bool shouldDisposeUsbHidDevice = false,
     IServiceProvider? serviceProvider = null,
-    TServiceKey? serviceKey = default,
+    CancellationToken cancellationToken = default
+  )
+    => CreateFromUsbHidDeviceAsyncCore(
+      usbHidDevice: usbHidDevice ?? throw new ArgumentNullException(nameof(usbHidDevice)),
+      shouldDisposeUsbHidDevice: shouldDisposeUsbHidDevice,
+      serviceProvider: serviceProvider,
+      serviceKey: (object?)null,
+      cancellationToken: cancellationToken
+    );
+
+  public static MCP2221 Create(
+    IUsbHidDevice usbHidDevice,
+    bool shouldDisposeUsbHidDevice = false,
+    IServiceProvider? serviceProvider = null,
+    CancellationToken cancellationToken = default
+  )
+    => CreateFromUsbHidDeviceCore(
+      usbHidDevice: usbHidDevice ?? throw new ArgumentNullException(nameof(usbHidDevice)),
+      shouldDisposeUsbHidDevice: shouldDisposeUsbHidDevice,
+      serviceProvider: serviceProvider,
+      serviceKey: (object?)null,
+      cancellationToken: cancellationToken
+    );
+
+  public static ValueTask<MCP2221> CreateAsync<TServiceKey>(
+    IUsbHidDevice usbHidDevice,
+    IServiceProvider serviceProvider,
+    TServiceKey serviceKey,
+    bool shouldDisposeUsbHidDevice = false,
     CancellationToken cancellationToken = default
   )
     => CreateFromUsbHidDeviceAsyncCore(
@@ -31,9 +59,9 @@ partial class MCP2221 {
 
   public static MCP2221 Create<TServiceKey>(
     IUsbHidDevice usbHidDevice,
+    IServiceProvider serviceProvider,
+    TServiceKey serviceKey,
     bool shouldDisposeUsbHidDevice = false,
-    IServiceProvider? serviceProvider = null,
-    TServiceKey? serviceKey = default,
     CancellationToken cancellationToken = default
   )
     => CreateFromUsbHidDeviceCore(
@@ -46,11 +74,11 @@ partial class MCP2221 {
 
   private static async ValueTask<MCP2221> CreateFromUsbHidDeviceAsyncCore<TServiceKey>(
     IUsbHidDevice usbHidDevice,
-    bool shouldDisposeUsbHidDevice,
     IServiceProvider? serviceProvider,
 #pragma warning disable IDE0060
     TServiceKey? serviceKey, // for future extension
 #pragma warning restore IDE0060
+    bool shouldDisposeUsbHidDevice,
     CancellationToken cancellationToken
   )
   {

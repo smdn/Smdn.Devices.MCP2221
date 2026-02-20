@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Smdn.Devices.UsbHid;
 
+/// <summary>
+/// Provides a mechanism to abstract reading from and writing to USB-HID report endpoints.
+/// </summary>
 public interface IUsbHidEndPoint : IDisposable, IAsyncDisposable {
   /// <summary>
   /// Gets the <see cref="IUsbHidDevice"/> that opened this <see cref="IUsbHidEndPoint"/>.
@@ -23,58 +26,73 @@ public interface IUsbHidEndPoint : IDisposable, IAsyncDisposable {
   bool CanWrite { get; }
 
   /// <summary>
-  /// Requests reading of the HID report for the endpoint represented by this object.
+  /// Reads a report from the endpoint.
   /// </summary>
   /// <param name="buffer">
-  /// Specifies the <see cref="Span{T}"/> where the entire report payload will be read.
-  /// The first byte contains the Report ID.
+  /// A <see cref="Span{T}"/> to receive the report payload.
+  /// The first byte will contain the Report ID, or will be zero if the
+  /// underlying implementation does not use Report IDs.
   /// </param>
   /// <param name="cancellationToken">
   /// The <see cref="CancellationToken"/> to monitor for cancellation requests.
   /// </param>
   /// <returns>
-  /// Returns the length of the transferred payload.
+  /// The number of bytes read from the report.
   /// </returns>
   /// <exception cref="ArgumentException">
   /// The length of <paramref name="buffer"/> is too short or too long.
   /// </exception>
+  /// <exception cref="InvalidOperationException">
+  /// The endpoint does not support reading.
+  /// </exception>
   /// <exception cref="ObjectDisposedException">
-  /// Attempted to read report after the instance was disposed.
+  /// The endpoint has been disposed.
+  /// </exception>
+  /// <exception cref="OperationCanceledException">
+  /// The <paramref name="cancellationToken"/> has had cancellation requested.
   /// </exception>
   int Read(Span<byte> buffer, CancellationToken cancellationToken);
 
   /// <summary>
-  /// Requests asynchronous reading of HID reports for the endpoint represented by this object.
+  /// Asynchronously reads a report from the endpoint.
   /// </summary>
   /// <param name="buffer">
-  /// Specifies the <see cref="Span{T}"/> where the entire report payload will be read.
-  /// The first byte contains the Report ID.
+  /// A <see cref="Memory{T}"/> to receive the report payload.
+  /// The first byte will contain the Report ID, or will be zero if the
+  /// underlying implementation does not use Report IDs.
   /// </param>
   /// <param name="cancellationToken">
   /// The <see cref="CancellationToken"/> to monitor for cancellation requests.
   /// </param>
   /// <returns>
-  /// The <see cref="ValueTask{T}"/> that represents the asynchronous operation.
-  /// The value of its <see cref="ValueTask{T}.Result"/> property contains length of the transferred payload.
+  /// A <see cref="ValueTask{TResult}"/> that represents the asynchronous operation.
+  /// The result of the task is the number of bytes read from the report.
   /// </returns>
   /// <exception cref="ArgumentException">
   /// The length of <paramref name="buffer"/> is too short or too long.
   /// </exception>
+  /// <exception cref="InvalidOperationException">
+  /// The endpoint does not support reading.
+  /// </exception>
   /// <exception cref="ObjectDisposedException">
-  /// Attempted to read report after the instance was disposed.
+  /// The endpoint has been disposed.
+  /// </exception>
+  /// <exception cref="OperationCanceledException">
+  /// The <paramref name="cancellationToken"/> has had cancellation requested.
   /// </exception>
   /// <remarks>
-  /// If the implementation does not support asynchronous reading,
+  /// If the underlying implementation does not support asynchronous reading,
   /// this method will perform a synchronous read instead.
   /// </remarks>
   ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken);
 
   /// <summary>
-  /// Requests asynchronous writing of the HID report for the endpoint represented by this object.
+  /// Writes a report to the endpoint.
   /// </summary>
   /// <param name="buffer">
-  /// Specifies the <see cref="ReadOnlySpan{T}"/> where the entire report payload to be sent.
-  /// The first byte contains the Report ID.
+  /// A <see cref="ReadOnlySpan{T}"/> that contains the report payload to send.
+  /// The first byte of the buffer must be the Report ID, or zero if the
+  /// underlying implementation does not use Report IDs.
   /// </param>
   /// <param name="cancellationToken">
   /// The <see cref="CancellationToken"/> to monitor for cancellation requests.
@@ -82,32 +100,45 @@ public interface IUsbHidEndPoint : IDisposable, IAsyncDisposable {
   /// <exception cref="ArgumentException">
   /// The length of <paramref name="buffer"/> is too short or too long.
   /// </exception>
+  /// <exception cref="InvalidOperationException">
+  /// The endpoint does not support writing.
+  /// </exception>
   /// <exception cref="ObjectDisposedException">
-  /// Attempted to write report after the instance was disposed.
+  /// The endpoint has been disposed.
+  /// </exception>
+  /// <exception cref="OperationCanceledException">
+  /// The <paramref name="cancellationToken"/> has had cancellation requested.
   /// </exception>
   void Write(ReadOnlySpan<byte> buffer, CancellationToken cancellationToken);
 
   /// <summary>
-  /// Requests writing of the HID report for the endpoint represented by this object.
+  /// Asynchronously writes a report to the endpoint.
   /// </summary>
   /// <param name="buffer">
-  /// Specifies the <see cref="ReadOnlyMemory{T}"/> where the entire report payload to be sent.
-  /// The first byte contains the Report ID.
+  /// A <see cref="ReadOnlyMemory{T}"/> that contains the report payload to send.
+  /// The first byte of the buffer must be the Report ID, or zero if the
+  /// underlying implementation does not use Report IDs.
   /// </param>
   /// <param name="cancellationToken">
   /// The <see cref="CancellationToken"/> to monitor for cancellation requests.
   /// </param>
   /// <returns>
-  /// The <see cref="ValueTask"/> that represents the asynchronous operation.
+  /// A <see cref="ValueTask"/> that represents the asynchronous operation.
   /// </returns>
   /// <exception cref="ArgumentException">
   /// The length of <paramref name="buffer"/> is too short or too long.
   /// </exception>
+  /// <exception cref="InvalidOperationException">
+  /// The endpoint does not support writing.
+  /// </exception>
   /// <exception cref="ObjectDisposedException">
-  /// Attempted to write report after the instance was disposed.
+  /// The endpoint has been disposed.
+  /// </exception>
+  /// <exception cref="OperationCanceledException">
+  /// The <paramref name="cancellationToken"/> has had cancellation requested.
   /// </exception>
   /// <remarks>
-  /// If the implementation does not support asynchronous writing,
+  /// If the underlying implementation does not support asynchronous writing,
   /// this method will perform a synchronous write instead.
   /// </remarks>
   ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken);

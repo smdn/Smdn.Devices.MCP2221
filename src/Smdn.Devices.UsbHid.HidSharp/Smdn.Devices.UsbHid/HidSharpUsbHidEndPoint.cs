@@ -11,25 +11,48 @@ using HidSharp;
 
 namespace Smdn.Devices.UsbHid;
 
-internal class UsbHidEndPoint(
-  UsbHidDevice openedDevice,
-  HidStream openedStream,
-  bool shouldDisposeDevice
-) : IUsbHidEndPoint<HidStream, HidStream> {
-  private UsbHidDevice? device = openedDevice ?? throw new ArgumentNullException(nameof(openedDevice));
+/// <summary>
+/// An implementation of <see cref="IUsbHidEndPoint"/> that
+/// uses <see cref="HidStream"/> of HidSharp as the backend.
+/// </summary>
+public sealed class HidSharpUsbHidEndPoint : IUsbHidEndPoint<HidStream, HidStream> {
+  private readonly bool shouldDisposeDevice;
+
+  private HidSharpUsbHidDevice? device;
+
+  /// <inheritdoc/>
   public IUsbHidDevice Device => device ?? throw new ObjectDisposedException(GetType().Name);
 
-  private HidStream? endPointImplementation = openedStream ?? throw new ArgumentNullException(nameof(openedStream));
+  private HidStream? endPointImplementation;
   private HidStream EndPointImplementation => endPointImplementation ?? throw new ObjectDisposedException(GetType().Name);
 
+  /// <inheritdoc/>
   public bool CanRead => EndPointImplementation.CanRead;
+
+  /// <inheritdoc/>
   public bool CanWrite => EndPointImplementation.CanWrite;
 
+  /// <inheritdoc/>
+  [CLSCompliant(false)]
   public HidStream? ReadEndPoint => EndPointImplementation;
+
+  /// <inheritdoc/>
+  [CLSCompliant(false)]
   public HidStream? WriteEndPoint => EndPointImplementation;
 
   private int MaxOutputReportLength => EndPointImplementation.Device.GetMaxOutputReportLength();
   private int MaxInputReportLength => EndPointImplementation.Device.GetMaxInputReportLength();
+
+  internal HidSharpUsbHidEndPoint(
+    HidSharpUsbHidDevice device,
+    HidStream stream,
+    bool shouldDisposeDevice
+  )
+  {
+    this.device = device ?? throw new ArgumentNullException(nameof(device));
+    endPointImplementation = stream ?? throw new ArgumentNullException(nameof(stream));
+    this.shouldDisposeDevice = shouldDisposeDevice;
+  }
 
   private void ThrowIfDisposed()
   {
@@ -37,6 +60,7 @@ internal class UsbHidEndPoint(
       throw new ObjectDisposedException(GetType().FullName);
   }
 
+  /// <inheritdoc/>
   public void Dispose()
   {
     if (shouldDisposeDevice) {
@@ -48,6 +72,7 @@ internal class UsbHidEndPoint(
     endPointImplementation = null;
   }
 
+  /// <inheritdoc/>
 #if NET || NETSTANDARD2_1_OR_GREATER
   public async ValueTask DisposeAsync()
   {
@@ -70,6 +95,7 @@ internal class UsbHidEndPoint(
   }
 #endif
 
+  /// <inheritdoc/>
   public void Write(ReadOnlySpan<byte> buffer, CancellationToken cancellationToken)
   {
     if (MaxOutputReportLength < buffer.Length)
@@ -92,6 +118,12 @@ internal class UsbHidEndPoint(
     }
   }
 
+  /// <inheritdoc/>
+  /// <remarks>
+  /// This implementation performs a synchronous write, as the
+  /// underlying <see cref="HidStream"/> does not
+  /// support asynchronous operations.
+  /// </remarks>
   public ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken)
   {
     if (MaxOutputReportLength < buffer.Length)
@@ -120,6 +152,7 @@ internal class UsbHidEndPoint(
 #endif
   }
 
+  /// <inheritdoc/>
   public int Read(Span<byte> buffer, CancellationToken cancellationToken)
   {
     if (MaxInputReportLength < buffer.Length)
@@ -144,6 +177,12 @@ internal class UsbHidEndPoint(
     }
   }
 
+  /// <inheritdoc/>
+  /// <remarks>
+  /// This implementation performs a synchronous read, as the
+  /// underlying <see cref="HidStream"/> does not
+  /// support asynchronous operations.
+  /// </remarks>
   public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken)
   {
     if (MaxInputReportLength < buffer.Length)

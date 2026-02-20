@@ -8,7 +8,10 @@ namespace Smdn.Devices.UsbHid.DependencyInjection;
 
 public static class LibUsbDotNetServiceCollectionExtensions {
 #pragma warning disable IDE0060
-  private static void ConfigureNothing<TServiceKey>(UsbHidServiceBuilder<TServiceKey> builder, LibUsbDotNetOptions options)
+  private static void ConfigureNothing<TServiceKey>(
+    LibUsbDotNetUsbHidServiceBuilder<TServiceKey> builder,
+    LibUsbDotNetOptions options
+  )
   {
     // do nothing
   }
@@ -28,7 +31,7 @@ public static class LibUsbDotNetServiceCollectionExtensions {
   [CLSCompliant(false)]
   public static IServiceCollection AddLibUsbDotNetUsbHid(
     this IServiceCollection services,
-    Action<UsbHidServiceBuilder<object?>, LibUsbDotNetOptions> configure
+    Action<LibUsbDotNetUsbHidServiceBuilder<object?>, LibUsbDotNetOptions> configure
   )
     => AddLibUsbDotNetUsbHid(
       services: services ?? throw new ArgumentNullException(nameof(services)),
@@ -53,7 +56,7 @@ public static class LibUsbDotNetServiceCollectionExtensions {
   public static IServiceCollection AddLibUsbDotNetUsbHid(
     this IServiceCollection services,
     string serviceKey,
-    Action<UsbHidServiceBuilder<string>, LibUsbDotNetOptions> configure
+    Action<LibUsbDotNetUsbHidServiceBuilder<string>, LibUsbDotNetOptions> configure
   )
     => AddLibUsbDotNetUsbHid(
       services: services ?? throw new ArgumentNullException(nameof(services)),
@@ -80,7 +83,7 @@ public static class LibUsbDotNetServiceCollectionExtensions {
     this IServiceCollection services,
     TServiceKey serviceKey,
     Func<TServiceKey, string?> selectOptionsNameForServiceKey,
-    Action<UsbHidServiceBuilder<TServiceKey>, LibUsbDotNetOptions> configure
+    Action<LibUsbDotNetUsbHidServiceBuilder<TServiceKey>, LibUsbDotNetOptions> configure
   )
   {
     if (services is null)

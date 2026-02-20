@@ -8,7 +8,9 @@ namespace Smdn.Devices.UsbHid.DependencyInjection;
 
 public static class HidSharpServiceCollectionExtensions {
 #pragma warning disable IDE0060
-  private static void ConfigureNothing<TServiceKey>(UsbHidServiceBuilder<TServiceKey> builder)
+  private static void ConfigureNothing<TServiceKey>(
+    HidSharpUsbHidServiceBuilder<TServiceKey> builder
+  )
   {
     // do nothing
   }
@@ -28,7 +30,7 @@ public static class HidSharpServiceCollectionExtensions {
   [CLSCompliant(false)]
   public static IServiceCollection AddHidSharpUsbHid(
     this IServiceCollection services,
-    Action<UsbHidServiceBuilder<object?>> configure
+    Action<HidSharpUsbHidServiceBuilder<object?>> configure
   )
     => AddHidSharpUsbHid<object?>(
       services: services ?? throw new ArgumentNullException(nameof(services)),
@@ -53,7 +55,7 @@ public static class HidSharpServiceCollectionExtensions {
   public static IServiceCollection AddHidSharpUsbHid(
     this IServiceCollection services,
     string serviceKey,
-    Action<UsbHidServiceBuilder<string>> configure
+    Action<HidSharpUsbHidServiceBuilder<string>> configure
   )
     => AddHidSharpUsbHid(
       services: services ?? throw new ArgumentNullException(nameof(services)),
@@ -80,7 +82,7 @@ public static class HidSharpServiceCollectionExtensions {
     this IServiceCollection services,
     TServiceKey serviceKey,
     Func<TServiceKey, string?> selectOptionsNameForServiceKey,
-    Action<UsbHidServiceBuilder<TServiceKey>> configure
+    Action<HidSharpUsbHidServiceBuilder<TServiceKey>> configure
   )
   {
     if (services is null)

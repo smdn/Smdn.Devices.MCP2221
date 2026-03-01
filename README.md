@@ -77,6 +77,43 @@ Haven't tested with the actual MCP2221, but it is expected that works as same as
 
 # Getting started and usage examples
 
+## Select USB HID backend provider
+This library communicates with the MCP2221/MCP2221A device using the **USB HID** interface. To do this, you must add a `PackageReference` for one of the following USB HID backend provider packages (`Smdn.IO.UsbHid.Providers.*`). This design, integrated with standard .NET dependency injection, gives you the flexibility to choose a provider based on your specific requirements, such as licensing.
+
+**HidSharp (Apache License 2.0)** [![NuGet Smdn.IO.UsbHid.Providers.HidSharp](https://img.shields.io/nuget/v/Smdn.IO.UsbHid.Providers.HidSharp.svg)](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp/): To use HidSharp, add a `PackageReference` for [Smdn.IO.UsbHid.Providers.HidSharp](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp) to your project file. Then, register the backend provider with the `ServiceCollection` using the `AddHidSharpUsbHid()` extension method.
+
+```cs
+var services = new ServiceCollection();
+
+services.AddHidSharpUsbHid();
+```
+
+**LibUsbDotNet version 3 (LGPL-3.0, alpha release)** [![NuGet Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://img.shields.io/nuget/v/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.svg)](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/): Add a `PackageReference` for [Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3), and then register the provider using the `AddLibUsbDotNetV3UsbHid()` method.
+
+```cs
+services.AddLibUsbDotNetV3UsbHid(
+  configure: (builder, options) => {
+    ...
+  }
+);
+```
+
+**LibUsbDotNet version 2 (LGPL-3.0, stable release)** [![NuGet Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://img.shields.io/nuget/v/Smdn.IO.UsbHid.Providers.LibUsbDotNet.svg)](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet/): Add a `PackageReference` for [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet), and then register the provider using the `AddLibUsbDotNetUsbHid()` method.
+
+If the `libusb-1.0` library fails to load automatically, you can either explicitly specify its filename via the `LibUsbLibraryPath` option, or provide a custom library resolving callback to `LibUsbDllImportResolver`.
+
+```cs
+services.AddLibUsbDotNetUsbHid(
+  configure: (builder, options) => {
+    // Specify the filename of the libusb-1.0 library installed on your
+    // system or placed in the output directory.
+    options.LibUsbLibraryPath = "libusb-1.0.so.0";
+    // options.LibUsbLibraryPath = "libusb-1.0.dll";
+    // options.LibUsbLibraryPath = "libusb-1.0.dylib";
+  }
+);
+```
+
 ## Linux setup
 To use the MCP2221 with this library, two configuration steps may be required depending on your Linux distribution.
 

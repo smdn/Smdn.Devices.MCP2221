@@ -87,21 +87,32 @@ To access the MCP2221 via this library, some system configuration may be require
 On Ubuntu 24.04 (Kernel 6.8+) and newer systems, you may also encounter a driver conflict where the native `hid_mcp2221` driver claims the device, preventing the `/dev/hidraw*` node from being created. In this case, you must **blacklist** the dedicated driver to force the system to use the generic `usbhid` driver. Detailed steps for this process can be found in [modprobe blacklist file](misc/modprobe/blacklist-MCP2221.conf).
 
 ## Write code
-Firstly, add package [Smdn.Devices.MCP2221](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) to your project.
+Add package [Smdn.Devices.MCP2221](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) [![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) to your project.
 
 ```
 dotnet add package Smdn.Devices.MCP2221
 ```
 
-Nextly, write your codes. The simplest code, blinking the LEDs connected to the GP pins is like below.
+Then write your codes. The simplest code, blinking the LEDs connected to the GP pins is like below.
 
 ```cs
 using System.Device.Gpio;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Smdn.Devices.MCP2221;
+using Smdn.IO.UsbHid.DependencyInjection;
+
+var services = new ServiceCollection();
+
+// Use HidSharp (Apache License 2.0)
+// (Add `Smdn.IO.UsbHid.Providers.HidSharp` to PackageReference)
+services.AddHidSharpUsbHid();
+
+using var serviceProvider = services.BuildServiceProvider();
 
 // Find and open the first MCP2221 device connected to the USB port.
-using var device = MCP2221.Open();
+using var device = MCP2221.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
 device.GP0.ConfigureAsGPIO(PinMode.Output);
@@ -126,6 +137,7 @@ foreach (var gp in device.GPs) {
 ```
 
 [See the actual action in the video](https://www.youtube.com/watch?v=MnIunESm71E)
+
 [![See the actual action in the video](https://img.youtube.com/vi/MnIunESm71E/mqdefault.jpg)](https://www.youtube.com/watch?v=MnIunESm71E)
 
 For detailed instructions, including wiring of the devices and parts, see [blink example](examples/Smdn.Devices.MCP2221/blink-csharp) page.

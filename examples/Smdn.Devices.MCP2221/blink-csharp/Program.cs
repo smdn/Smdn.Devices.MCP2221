@@ -5,15 +5,24 @@ using System;
 using System.Device.Gpio;
 using System.Threading;
 
-using Smdn.Devices.MCP2221;
+using Microsoft.Extensions.DependencyInjection;
 
-using var device = MCP2221.Open();
+using Smdn.Devices.MCP2221;
+using Smdn.IO.UsbHid.DependencyInjection;
+
+var services = new ServiceCollection();
+
+services.AddHidSharpUsbHid();
+
+using var serviceProvider = services.BuildServiceProvider();
+
+using var device = MCP2221.Create(serviceProvider);
 
 Console.WriteLine("[MCP2221 Device information]");
-Console.WriteLine($"Release number: {device.HidDevice.ReleaseNumber}");
-Console.WriteLine($"Serial number: {device.HidDevice.SerialNumber ?? "(no serial number)"}");
-Console.WriteLine($"Device path: {device.HidDevice.DevicePath}");
-Console.WriteLine($"File system name: {device.HidDevice.FileSystemName}");
+
+if (device.HidDevice.TryGetSerialNumber(out var serialNumber))
+  Console.WriteLine($"Serial number: {serialNumber}");
+
 Console.WriteLine($"USB Manufacturer descriptor: {device.ManufacturerDescriptor}");
 Console.WriteLine($"USB Product descriptor: {device.ProductDescriptor}");
 Console.WriteLine($"USB Serial number descriptor: {device.SerialNumberDescriptor}");

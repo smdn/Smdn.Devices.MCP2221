@@ -1,18 +1,27 @@
-﻿// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 
 using System;
 using System.Threading.Tasks;
-
-using Smdn.Devices.MCP2221;
-using Smdn.Devices.MCP2221.GpioAdapter;
 
 using Iot.Device.Bmxx80;
 using Iot.Device.Bmxx80.FilteringMode;
 using Iot.Device.Bmxx80.PowerMode;
 using Iot.Device.Common;
 
-await using var device = await MCP2221.OpenAsync();
+using Microsoft.Extensions.DependencyInjection;
+
+using Smdn.Devices.MCP2221;
+using Smdn.Devices.MCP2221.GpioAdapter;
+using Smdn.IO.UsbHid.DependencyInjection;
+
+var services = new ServiceCollection();
+
+services.AddHidSharpUsbHid();
+
+using var serviceProvider = services.BuildServiceProvider();
+
+await using var device = await MCP2221.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLEDI2CAsync();
 

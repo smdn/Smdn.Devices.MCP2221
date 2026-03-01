@@ -5,12 +5,21 @@ using System;
 using System.Threading.Tasks;
 using System.Reflection;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Smdn.Devices.MCP2221;
 using Smdn.Devices.MCP2221.GpioAdapter;
+using Smdn.IO.UsbHid.DependencyInjection;
 
 using Iot.Device.Display;
 
-await using var device = await MCP2221.OpenAsync();
+var services = new ServiceCollection();
+
+services.AddHidSharpUsbHid();
+
+using var serviceProvider = services.BuildServiceProvider();
+
+await using var device = await MCP2221.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLEDI2CAsync();
 
@@ -21,6 +30,11 @@ MCP2221I2cDevice[] i2cDevices = {
 
 i2cDevices[0].BusSpeed = I2CBusSpeed.Default;
 i2cDevices[1].BusSpeed = I2CBusSpeed.Default;
+
+// If an I2CCommandException is thrown when using the
+// HidSharp backend, try the following configuration:
+// i2cDevices[0].BusSpeed = I2CBusSpeed.FastMode;
+// i2cDevices[1].BusSpeed = I2CBusSpeed.FastMode;
 
 FourDigitFourteenSegmentDisplay[] displays = {
   new(i2cDevices[0]) { Brightness = Ht16k33.MaxBrightness, BufferingEnabled = true },

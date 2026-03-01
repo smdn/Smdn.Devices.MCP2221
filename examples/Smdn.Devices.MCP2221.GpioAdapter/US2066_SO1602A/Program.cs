@@ -5,11 +5,20 @@ using System;
 using System.Threading.Tasks;
 using System.Reflection;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Smdn.Devices.MCP2221;
 using Smdn.Devices.MCP2221.GpioAdapter;
 using Smdn.Devices.US2066;
+using Smdn.IO.UsbHid.DependencyInjection;
 
-await using var device = await MCP2221.OpenAsync();
+var services = new ServiceCollection();
+
+services.AddHidSharpUsbHid();
+
+using var serviceProvider = services.BuildServiceProvider();
+
+await using var device = await MCP2221.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLEDI2CAsync();
 

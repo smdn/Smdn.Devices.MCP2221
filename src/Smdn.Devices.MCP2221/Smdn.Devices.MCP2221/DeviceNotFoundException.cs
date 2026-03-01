@@ -3,6 +3,8 @@
 
 using System;
 
+using Smdn.IO.UsbHid;
+
 namespace Smdn.Devices.MCP2221;
 
 public class DeviceNotFoundException : InvalidOperationException {
@@ -18,6 +20,11 @@ public class DeviceNotFoundException : InvalidOperationException {
 
   public DeviceNotFoundException(string message, Exception innerException)
     : base(message, innerException)
+  {
+  }
+
+  internal DeviceNotFoundException(IUsbHidService usbHidService, Predicate<IUsbHidDevice>? predicate)
+    : base($"{nameof(IUsbHidService)} could not find an MCP2221/MCP2221A matching the specified predicate. ({nameof(IUsbHidService)}: {usbHidService}, {nameof(predicate)}: {predicate?.ToString() ?? "null"})")
   {
   }
 }

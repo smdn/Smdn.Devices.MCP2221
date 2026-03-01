@@ -212,42 +212,6 @@ sudo usermod -aG plugdev $USER   # A re-login is required for group changes to t
 ```
 
 
-### DllImport resolving
-LibUsbDotNet do DllImport-ing a shared library with the filename `libusb-1.0.so.0`.
-
-If the libusb's .so filename installed on your system is different from that, use the [NativeLibrary.SetDllImportResolver()](https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.nativelibrary.setdllimportresolver) to load installed .so file like below.
-
-```sh
-$ find /lib/ -name "libusb-*.so*"
-/lib/x86_64-linux-gnu/libusb-1.0.so.x.y.z
-/lib/i386-linux-gnu/libusb-1.0.so.x.y.z
-```
-
-```cs
-using System.Runtime.InteropServices;
-
-static void Main() {
-  // libusb.so filename which is installed on your system
-  const string fileNameLibUsb = "libusb-1.0.so.x.y.z";
-
-  NativeLibrary.SetDllImportResolver(
-    typeof(global::LibUsbDotNet.LibUsb.UsbDevice).Assembly,
-    (libraryName, assembly, searchPath) => {
-      if (string.Equals(libraryName, "libusb-1.0.so.0", StringComparison.OrdinalIgnoreCase)) {
-        if (NativeLibrary.TryLoad(fileNameLibUsb, out var handleOfLibUsb))
-          return handleOfLibUsb;
-      }
-
-      return IntPtr.Zero;
-    }
-  );
-
-  // your codes here
-    ︙
-    ︙
-}
-```
-
 ### Unbinding usbhid driver
 When using LibUsbDotNet, you need to unbind the devices that are bound to the usbhid driver.
 
@@ -315,4 +279,6 @@ This project uses the following components. See [ThirdPartyNotices.md](./ThirdPa
 
 - [LibUsbDotNet/LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet)
 - [SeekHisKingdom/HIDSharp](https://github.com/SeekHisKingdom/HIDSharp)
+- [App-vNext/Polly](https://github.com/App-vNext/Polly)
+- [smdn/Smdn.IO.UsbHid](https://github.com/smdn/Smdn.IO.UsbHid)
 <!-- #pragma section-end NupkgReadmeFile_Notice -->

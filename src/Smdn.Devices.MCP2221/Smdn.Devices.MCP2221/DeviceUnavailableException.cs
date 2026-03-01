@@ -3,13 +3,15 @@
 
 using System;
 
-using Smdn.Devices.UsbHid;
+using Smdn.IO.UsbHid;
 
 namespace Smdn.Devices.MCP2221;
 
 internal class DeviceUnavailableException : UnauthorizedAccessException {
+  private const string DefaultMessage = "MCP2221/MCP2221A is not available, not privileged or disconnected.";
+
   public DeviceUnavailableException()
-    : base("MCP2221/MCP2221A is not available, not privileged or disconnected.")
+    : base(DefaultMessage)
   {
   }
 
@@ -24,7 +26,10 @@ internal class DeviceUnavailableException : UnauthorizedAccessException {
   }
 
   public DeviceUnavailableException(Exception innerException, IUsbHidDevice? device = null)
-    : base($"MCP2221/MCP2221A is not available, not privileged or disconnected. (device='{device?.FileSystemName ?? device?.DevicePath ?? "?"}')", innerException)
+    : base(
+      message: $"{DefaultMessage} (device='{device?.ToIdentificationString() ?? "?"}')",
+      inner: innerException
+    )
   {
   }
 }

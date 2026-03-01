@@ -1,12 +1,15 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 using System;
+#if SYSTEM_DIAGNOSTICS_CODEANALYSIS_MEMBERNOTNULLATTRIBUTE
+using System.Diagnostics.CodeAnalysis;
+#endif
+using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using Smdn.Devices.UsbHid;
+using Smdn.IO.UsbHid;
 
 namespace Smdn.Devices.MCP2221;
 
@@ -26,65 +29,6 @@ public partial class MCP2221 :
   // MCP2221A
   public const string HardwareRevisionMCP2221A = "A.6";
   public const string FirmwareRevisionMCP2221A = "1.2";
-
-  public static ValueTask<MCP2221> OpenAsync(IServiceProvider? serviceProvider = null)
-    => OpenAsync(findDevicePredicate: null, serviceProvider);
-
-  public static MCP2221 Open(IServiceProvider? serviceProvider = null)
-    => Open(findDevicePredicate: null, serviceProvider);
-
-  private class MCP2221DeviceFinder {
-    private readonly Predicate<IUsbHidDevice>? findDevicePredicate;
-
-    public MCP2221DeviceFinder(Predicate<IUsbHidDevice>? findDevicePredicate)
-    {
-      this.findDevicePredicate = findDevicePredicate;
-    }
-
-    public bool Find(IUsbHidDevice device)
-    {
-      if (device.VendorID != DeviceVendorID)
-        return false;
-      if (device.ProductID != DeviceProductID)
-        return false;
-      if (findDevicePredicate is null)
-        return true; // select first device
-
-      return findDevicePredicate(device);
-    }
-  }
-
-  private static Func<IUsbHidDevice?> Create(Predicate<IUsbHidDevice>? findDevicePredicate, IServiceProvider? serviceProvider)
-  {
-    Predicate<IUsbHidDevice> predicate = new MCP2221DeviceFinder(findDevicePredicate).Find;
-
-#if USBHIDDRIVER_HIDSHARP
-    return () => Smdn.Devices.UsbHid.HidSharp.Device.Find(predicate, serviceProvider);
-#elif USBHIDDRIVER_LIBUSBDOTNET
-    return () => Smdn.Devices.UsbHid.LibUsbDotNet.Device.Find(predicate, serviceProvider);
-#else
-#error USB-HID driver must be specified.
-    throw new NotImplementedException("USB-HID driver must be specified");
-#endif
-  }
-
-  public static ValueTask<MCP2221> OpenAsync(
-    Predicate<IUsbHidDevice>? findDevicePredicate,
-    IServiceProvider? serviceProvider = null
-  )
-    => OpenAsync(
-      Create(findDevicePredicate, serviceProvider),
-      serviceProvider
-    );
-
-  public static MCP2221 Open(
-    Predicate<IUsbHidDevice>? findDevicePredicate,
-    IServiceProvider? serviceProvider = null
-  )
-    => Open(
-      Create(findDevicePredicate, serviceProvider),
-      serviceProvider
-    );
 
   private static void ValidateHardwareRevision(string revision)
   {
@@ -110,90 +54,24 @@ public partial class MCP2221 :
     }
   }
 
+  [Obsolete($"Use {nameof(CreateAsync)} with {nameof(IUsbHidDevice)} instead.", error: true)]
   public static async ValueTask<MCP2221> OpenAsync(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
-  {
-    if (createHidDevice is null)
-      throw new ArgumentNullException(nameof(createHidDevice));
+    => throw new NotSupportedException($"Use {nameof(CreateAsync)} with {nameof(IUsbHidDevice)} instead.");
 
-    MCP2221? device = null;
-
-    try {
-      IUsbHidDevice? baseDevice = null;
-
-      try {
-        baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
-
-        device = new MCP2221(
-          baseDevice,
-          await baseDevice.OpenStreamAsync().ConfigureAwait(false),
-          serviceProvider
-        );
-      }
-      catch (Exception ex) when (ex is not DeviceNotFoundException) {
-        throw new DeviceUnavailableException(ex, baseDevice);
-      }
-
-      await device.RetrieveChipInformationAsync(
-        ValidateHardwareRevision,
-        ValidateFirmwareRevision
-      ).ConfigureAwait(false);
-
-      return device;
-    }
-    catch {
-      if (device != null)
-        await device.DisposeAsync().ConfigureAwait(false);
-
-      throw;
-    }
-  }
-
+  [Obsolete($"Use {nameof(Create)} with {nameof(IUsbHidDevice)} instead.", error: true)]
   public static MCP2221 Open(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
-  {
-    if (createHidDevice is null)
-      throw new ArgumentNullException(nameof(createHidDevice));
-
-    MCP2221? device = null;
-
-    try {
-      IUsbHidDevice? baseDevice = null;
-
-      try {
-        baseDevice = createHidDevice() ?? throw new DeviceNotFoundException();
-
-        device = new MCP2221(
-          baseDevice,
-          baseDevice.OpenStream(),
-          serviceProvider
-        );
-      }
-      catch (Exception ex) when (ex is not DeviceNotFoundException) {
-        throw new DeviceUnavailableException(ex, baseDevice);
-      }
-
-      device.RetrieveChipInformation(
-        ValidateHardwareRevision,
-        ValidateFirmwareRevision
-      );
-
-      return device;
-    }
-    catch {
-      if (device != null)
-        device.Dispose();
-
-      throw;
-    }
-  }
+    => throw new NotSupportedException($"Use {nameof(Create)} with {nameof(IUsbHidDevice)} instead.");
 
   /*
    * instance members
    */
+  private readonly bool shouldDisposeUsbHidDevice;
+
   private IUsbHidDevice? hidDevice;
   public IUsbHidDevice HidDevice => hidDevice ?? throw new ObjectDisposedException(GetType().Name);
 
-  private IUsbHidStream? hidStream;
-  private IUsbHidStream HidStream => hidStream ?? throw new ObjectDisposedException(GetType().Name);
+  private IUsbHidEndPoint? hidStream;
+  private IUsbHidEndPoint HidStream => hidStream ?? throw new ObjectDisposedException(GetType().Name);
 
   private readonly ILogger? logger;
 
@@ -206,10 +84,14 @@ public partial class MCP2221 :
   /// <remarks>Always returns <c>01234567</c>.</remarks>
   public string? ChipFactorySerialNumber { get; private set; } = null;
 
-  private MCP2221(IUsbHidDevice hidDevice, IUsbHidStream hidStream, IServiceProvider? serviceProvider)
+  private MCP2221(
+    IUsbHidDevice hidDevice,
+    bool shouldDisposeUsbHidDevice,
+    ILogger? logger
+  )
   {
     this.hidDevice = hidDevice ?? throw new ArgumentNullException(nameof(hidDevice));
-    this.hidStream = hidStream ?? throw new ArgumentNullException(nameof(hidStream));
+    this.shouldDisposeUsbHidDevice = shouldDisposeUsbHidDevice;
 
     this.GP0 = new GP0Functionality(this);
     this.GP1 = new GP1Functionality(this);
@@ -224,7 +106,7 @@ public partial class MCP2221 :
 
     this.I2C = new I2CFunctionality(this);
 
-    this.logger = serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger<MCP2221>();
+    this.logger = logger;
   }
 
   public void Dispose()
@@ -249,7 +131,9 @@ public partial class MCP2221 :
       hidStream?.Dispose();
       hidStream = null;
 
-      hidDevice?.Dispose();
+      if (shouldDisposeUsbHidDevice)
+        hidDevice?.Dispose();
+
       hidDevice = null;
     }
   }
@@ -262,10 +146,47 @@ public partial class MCP2221 :
     }
 
     if (hidDevice is not null) {
-      await hidDevice.DisposeAsync().ConfigureAwait(false);
+      if (shouldDisposeUsbHidDevice)
+        await hidDevice.DisposeAsync().ConfigureAwait(false);
+
       hidDevice = null;
     }
   }
 
-  private void ThrowIfDisposed() => _ = hidStream ?? throw new ObjectDisposedException(GetType().Name);
+#if SYSTEM_DIAGNOSTICS_CODEANALYSIS_MEMBERNOTNULLATTRIBUTE
+  [MemberNotNull(nameof(hidDevice))]
+#endif
+  private void ThrowIfDisposed() => _ = hidDevice ?? throw new ObjectDisposedException(GetType().Name);
+
+  internal void OpenEndPoint(CancellationToken cancellationToken)
+  {
+    ThrowIfDisposed();
+
+    hidStream =
+#if SYSTEM_DIAGNOSTICS_CODEANALYSIS_MEMBERNOTNULLATTRIBUTE
+      hidDevice
+#else
+      hidDevice!
+#endif
+        .OpenEndPoint(
+          shouldDisposeDevice: false, // the source device must not be disposed when disposing of an endpoint
+          cancellationToken: cancellationToken
+        );
+  }
+
+  internal async ValueTask OpenEndPointAsync(CancellationToken cancellationToken)
+  {
+    ThrowIfDisposed();
+
+    hidStream = await
+#if SYSTEM_DIAGNOSTICS_CODEANALYSIS_MEMBERNOTNULLATTRIBUTE
+      hidDevice
+#else
+      hidDevice!
+#endif
+        .OpenEndPointAsync(
+          shouldDisposeDevice: false, // the source device must not be disposed when disposing of an endpoint
+          cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+  }
 }

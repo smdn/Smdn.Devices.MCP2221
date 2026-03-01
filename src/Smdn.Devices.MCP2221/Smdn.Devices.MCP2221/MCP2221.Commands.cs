@@ -80,7 +80,8 @@ partial class MCP2221 {
 
       try {
         await HidStream.WriteAsync(
-          commandReportMemory.Slice(HidStream.RequiresPacketOnly ? 1 : 0)
+          commandReportMemory,
+          cancellationToken
         ).ConfigureAwait(false);
       }
       catch (Exception ex) {
@@ -89,7 +90,8 @@ partial class MCP2221 {
 
       try {
         await HidStream.ReadAsync(
-          responseReportMemory.Slice(HidStream.RequiresPacketOnly ? 1 : 0)
+          responseReportMemory,
+          cancellationToken
         ).ConfigureAwait(false);
       }
       catch (Exception ex) {
@@ -146,14 +148,20 @@ partial class MCP2221 {
     logger?.LogTrace(EventIdCommand, "> " + ConvertByteSequenceToString(commandReport.Slice(1)));
 
     try {
-      HidStream.Write(commandReport.Slice(HidStream.RequiresPacketOnly ? 1 : 0));
+      HidStream.Write(
+        commandReport,
+        cancellationToken
+      );
     }
     catch (Exception ex) {
       throw new CommandException("writing command report failed", ex);
     }
 
     try {
-      HidStream.Read(responseReport.Slice(HidStream.RequiresPacketOnly ? 1 : 0));
+      HidStream.Read(
+        responseReport,
+        cancellationToken
+      );
     }
     catch (Exception ex) {
       throw new CommandException("reading response report failed", ex);
@@ -273,13 +281,14 @@ partial class MCP2221 {
 
   private async ValueTask RetrieveChipInformationAsync(
     Action<string> validateHardwareRevision,
-    Action<string> validateFirmwareRevision
+    Action<string> validateFirmwareRevision,
+    CancellationToken cancellationToken
   )
   {
     (HardwareRevision, FirmwareRevision) = await CommandAsync(
       userData: default,
       arg: 0,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveRevisionCommand.ConstructCommand,
       parseResponse: RetrieveRevisionCommand.ParseResponse
     ).ConfigureAwait(false);
@@ -290,7 +299,7 @@ partial class MCP2221 {
     ManufacturerDescriptor = await CommandAsync(
       userData: default,
       arg: ReadFlashDataSubCode.UsbDescriptorStringManufacturer,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     ).ConfigureAwait(false);
@@ -298,7 +307,7 @@ partial class MCP2221 {
     ProductDescriptor = await CommandAsync(
       userData: default,
       arg: ReadFlashDataSubCode.UsbDescriptorStringProduct,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     ).ConfigureAwait(false);
@@ -306,7 +315,7 @@ partial class MCP2221 {
     SerialNumberDescriptor = await CommandAsync(
       userData: default,
       arg: ReadFlashDataSubCode.UsbDescriptorStringSerialNumber,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     ).ConfigureAwait(false);
@@ -314,7 +323,7 @@ partial class MCP2221 {
     ChipFactorySerialNumber = await CommandAsync(
       userData: default,
       arg: ReadFlashDataSubCode.ChipFactorySerialNumber,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     ).ConfigureAwait(false);
@@ -322,13 +331,14 @@ partial class MCP2221 {
 
   private void RetrieveChipInformation(
     Action<string> validateHardwareRevision,
-    Action<string> validateFirmwareRevision
+    Action<string> validateFirmwareRevision,
+    CancellationToken cancellationToken
   )
   {
     (HardwareRevision, FirmwareRevision) = Command(
       userData: default,
       arg: 0,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveRevisionCommand.ConstructCommand,
       parseResponse: RetrieveRevisionCommand.ParseResponse
     );
@@ -339,7 +349,7 @@ partial class MCP2221 {
     ManufacturerDescriptor = Command(
       userData: default,
       arg: ReadFlashDataSubCode.UsbDescriptorStringManufacturer,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     );
@@ -347,7 +357,7 @@ partial class MCP2221 {
     ProductDescriptor = Command(
       userData: default,
       arg: ReadFlashDataSubCode.UsbDescriptorStringProduct,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     );
@@ -355,7 +365,7 @@ partial class MCP2221 {
     SerialNumberDescriptor = Command(
       userData: default,
       arg: ReadFlashDataSubCode.UsbDescriptorStringSerialNumber,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     );
@@ -363,7 +373,7 @@ partial class MCP2221 {
     ChipFactorySerialNumber = Command(
       userData: default,
       arg: ReadFlashDataSubCode.ChipFactorySerialNumber,
-      cancellationToken: default,
+      cancellationToken: cancellationToken,
       constructCommand: RetrieveFlashStringCommand.ConstructCommand,
       parseResponse: RetrieveFlashStringCommand.ParseResponse
     );

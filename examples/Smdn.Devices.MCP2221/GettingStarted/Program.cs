@@ -1,9 +1,49 @@
 using System.Device.Gpio;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
 using Smdn.Devices.MCP2221;
+using Smdn.IO.UsbHid.DependencyInjection;
+
+var services = new ServiceCollection();
+
+// To operate the MCP2221/MCP2221A, you need to select one of
+// the following as the USB HID backend:
+
+// Use HidSharp (Apache License 2.0)
+// (Add `Smdn.IO.UsbHid.Providers.HidSharp` to PackageReference)
+services.AddHidSharpUsbHid();
+
+// Use LibUsbDotNet version 3 (LGPL-3.0, alpha release)
+// (Add `Smdn.IO.UsbHid.Providers.LibUsbDotNetV3` to PackageReference)
+/*
+services.AddLibUsbDotNetV3UsbHid(
+  configure: static (builder, options) => {
+    options.DebugLevel = LogLevel.None;
+  }
+);
+*/
+
+// Use LibUsbDotNet version 2 (LGPL-3.0, stable release)
+// (Add `Smdn.IO.UsbHid.Providers.LibUsbDotNet` to PackageReference)
+/*
+services.AddLibUsbDotNetUsbHid(
+  configure: static (builder, options) => {
+    options.DebugLevel = LogLevel.None;
+    // Specify the filename of the libusb-1.0 library installed on your
+    // system or placed in the output directory.
+    options.LibUsbLibraryPath = "libusb-1.0.so.0";
+    // options.LibUsbLibraryPath = "libusb-1.0.dll";
+    // options.LibUsbLibraryPath = "libusb-1.0.dylib";
+  }
+);
+*/
+
+using var serviceProvider = services.BuildServiceProvider();
 
 // Find and open the first MCP2221 device connected to the USB port.
-using var device = MCP2221.Open();
+using var device = MCP2221.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
 device.GP0.ConfigureAsGPIO(PinMode.Output);

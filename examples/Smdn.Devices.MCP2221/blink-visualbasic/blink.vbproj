@@ -10,8 +10,23 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Smdn.Devices.MCP2221" Version="*" />
+    <PackageReference Include="Smdn.Devices.MCP2221" Version="0.99.0" />
     <PackageReference Include="System.Device.Gpio" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+
+    <!-- Add HidSharp (Apache License 2.0) as the USB HID backend provider. -->
+    <PackageReference Include="Smdn.IO.UsbHid.Providers.HidSharp" Version="1.0.0-preview2" />
+    <!-- Alternatively, you can use the following backend providers by changing the package reference. -->
+
+    <!-- Add LibUsbDotNet version 2 (LGPL-3.0, stable release) as the USB HID backend provider. -->
+    <!--
+    <PackageReference Include="Smdn.IO.UsbHid.Providers.LibUsbDotNet" Version="1.0.0-preview2" />
+    -->
+
+    <!-- Add LibUsbDotNet version 3 (LGPL-3.0, alpha release) as the USB HID backend provider. -->
+    <!--
+    <PackageReference Include="Smdn.IO.UsbHid.Providers.LibUsbDotNetV3" Version="1.0.0-preview2" />
+    -->
   </ItemGroup>
 
 </Project>

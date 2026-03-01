@@ -3,33 +3,12 @@ SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 SPDX-License-Identifier: MIT
 -->
 <Project Sdk="Microsoft.NET.Sdk">
-  <!--
-    Smdn.Devices.MCP2221 uses HIDSharp as the USB-HID driver by default.
-    Smdn.Devices.MCP2221 also supports LibUsbDotNet as an alternative driver.
-
-    The driver can be specified with `UsbHidDriver` project property.
-    You can set this property by one of the following instruction:
-      1. Set an environment variable `SMDN_DEVICES_MCP2221_USBHIDDRIVER=<DRIVER>`.
-      2. Build with command `dotnet build /p:UsbHidDriver=<DRIVER>`.
-      3. Modify project property directly.
-  -->
-  <PropertyGroup>
-
-    <UsbHidDriver Condition=" '$(SMDN_DEVICES_MCP2221_USBHIDDRIVER)' != '' ">$(SMDN_DEVICES_MCP2221_USBHIDDRIVER)</UsbHidDriver>
-    <UsbHidDriver Condition=" '$(UsbHidDriver)' == '' ">HIDSharp</UsbHidDriver> <!-- as default -->
-    <!--
-    <UsbHidDriver Condition=" '$(UsbHidDriver)' == '' ">LibUsbDotNet</UsbHidDriver>
-    -->
-  </PropertyGroup>
-
   <PropertyGroup>
     <TargetFrameworks>net10.0;net8.0;netstandard2.1</TargetFrameworks>
-    <VersionPrefix>0.9.4</VersionPrefix>
+    <VersionPrefix>0.99.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <!-- <PackageValidationBaselineVersion>0.9.0</PackageValidationBaselineVersion> -->
-    <DefineConstants>$(DefineConstants);USBHIDDRIVER_$(UsbHidDriver.ToUpper())</DefineConstants>
     <IsAotCompatible>false</IsAotCompatible>
-    <AllowUnsafeBlocks Condition="'$(UsbHidDriver)' == 'LibUsbDotNet'">true</AllowUnsafeBlocks>
     <NoWarn>CS1591;$(NoWarn)</NoWarn> <!-- CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member' -->
   </PropertyGroup>
 
@@ -48,8 +27,9 @@ This library provides APIs that enable .NET applications to access the functions
     <PackageReference Include="System.Device.Gpio" Version="[1.4.0,5.0.0)" />
     <!-- System.Device.Gpio version 4.0.0 or later does not support .NET Standard 2.x -->
     <PackageReference Update="System.Device.Gpio" Version="[1.4.0,4.0.0)" Condition="$(TargetFramework.StartsWith('netstandard2.'))" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" /> <!-- 'keyed services' are available in 8.0.0+ -->
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Smdn.IO.UsbHid.Abstractions" Version="1.0.0-preview2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,38 +41,6 @@ This library provides APIs that enable .NET applications to access the functions
       CopyToOutputDirectory="None"
     />
   </ItemGroup>
-
-  <!-- choose USB-HID backed -->
-  <Choose>
-    <When Condition=" '$(UsbHidDriver)' == 'HIDSharp' ">
-      <ItemGroup>
-        <PackageReference Include="HidSharp" Version="[2.1.0,3.0.0)" />
-      </ItemGroup>
-      <PropertyGroup>
-        <UsbHidDriverMessage>USB-HID driver: HidSharp (Apache License 2.0)</UsbHidDriverMessage>
-      </PropertyGroup>
-    </When>
-    <When Condition=" '$(UsbHidDriver)' == 'LibUsbDotNet' ">
-      <ItemGroup>
-        <PackageReference Include="LibUsbDotNet" Version="3.0.87-alpha" />
-      </ItemGroup>
-      <PropertyGroup>
-        <UsbHidDriverMessage>USB-HID driver: LibUsbDotNet (LGPL-3.0)</UsbHidDriverMessage>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <UsbHidDriverMessage />
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
-
-  <Target Name="DisplayUsbHidDriverWarning" AfterTargets="AfterBuild" Condition=" '$(UsbHidDriverMessage)' != '' ">
-    <Warning Text="$(UsbHidDriverMessage)"/>
-  </Target>
-  <Target Name="DisplayUsbHidDriverError" BeforeTargets="BeforeBuild" Condition=" '$(UsbHidDriverMessage)' == '' ">
-    <Error Text="USB-HID driver not specified or undefined: '$(UsbHidDriver)'" />
-  </Target>
 
   <Target Name="GenerateReadmeFileContent" DependsOnTargets="ReadReadmeFileNoticeSectionContent">
     <PropertyGroup>

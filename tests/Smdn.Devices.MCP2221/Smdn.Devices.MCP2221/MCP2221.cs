@@ -4,8 +4,10 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+
 using NUnit.Framework;
-using Smdn.Devices.UsbHid;
+
+using Smdn.IO.UsbHid;
 
 namespace Smdn.Devices.MCP2221;
 
@@ -56,7 +58,7 @@ public partial class MCP2221Tests {
   {
     MCP2221? device = null;
 
-    Assert.That(async () => device = await MCP2221.OpenAsync(CreatePseudoDevice), Throws.Nothing);
+    Assert.That(async () => device = await MCP2221.CreateAsync(CreatePseudoDevice(), shouldDisposeUsbHidDevice: true), Throws.Nothing);
 
     Assert.That(device, Is.Not.Null);
     Assert.That(device.HidDevice, Is.Not.Null);
@@ -76,22 +78,21 @@ public partial class MCP2221Tests {
   }
 
   [Test]
-  public void OpenAsync_ArgumentNull()
-    => Assert.That(async () => await MCP2221.OpenAsync((Func<IUsbHidDevice>)null!), Throws.ArgumentNullException);
+  public async Task Dispose(
+    [Values] bool shouldDisposeUsbHidDevice
+  )
+    => await TestDispose(shouldDisposeUsbHidDevice, d => { d.Dispose(); return Task.CompletedTask; });
 
   [Test]
-  public void OpenAsync_CreateDeviceReturnNull()
-    => Assert.That(async () => await MCP2221.OpenAsync(() => (IUsbHidDevice)null!), Throws.TypeOf<DeviceNotFoundException>());
+  public async Task DisposeAsync(
+    [Values] bool shouldDisposeUsbHidDevice
+  )
+    => await TestDispose(shouldDisposeUsbHidDevice, async d => await d.DisposeAsync());
 
-
-
-  [Test] public async Task Dispose() => await TestDispose(d => { d.Dispose(); return Task.CompletedTask; });
-
-  [Test] public async Task DisposeAsync() => await TestDispose(async d => await d.DisposeAsync());
-
-  private async Task TestDispose(Func<MCP2221, Task> disposeAction)
+  private async Task TestDispose(bool shouldDisposeUsbHidDevice, Func<MCP2221, Task> disposeAction)
   {
-    await using var device = await MCP2221.OpenAsync(CreatePseudoDevice);
+    using var baseDevice = CreatePseudoDevice();
+    await using var device = await MCP2221.CreateAsync(baseDevice, shouldDisposeUsbHidDevice: shouldDisposeUsbHidDevice);
 
     Assert.That(() => _ = device.HidDevice, Throws.Nothing);
 
@@ -128,6 +129,8 @@ public partial class MCP2221Tests {
     Assert.That(() => _ = device.GP2, Throws.Nothing);
     Assert.That(() => _ = device.GP3, Throws.Nothing);
     Assert.That(() => _ = device.I2C, Throws.Nothing);
+
+    Assert.That(baseDevice.IsDisposed, Is.EqualTo(shouldDisposeUsbHidDevice), "USB-HID device disposed");
 
     Assert.That(async () => await disposeAction(device), Throws.Nothing, "dispose again");
   }

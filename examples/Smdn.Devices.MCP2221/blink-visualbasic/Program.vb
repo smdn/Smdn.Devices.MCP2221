@@ -7,65 +7,77 @@ Imports System
 Imports System.Device.Gpio
 Imports System.Threading
 
+Imports Microsoft.Extensions.DependencyInjection
+
 Imports Smdn.Devices.MCP2221
+Imports Smdn.IO.UsbHid.DependencyInjection
 
 Class Blink
   Shared Sub Main()
-    Using device = MCP2221.Open()
-      Console.WriteLine("[MCP2221 Device information]")
-      Console.WriteLine($"Release number: {device.HidDevice.ReleaseNumber}")
-      Console.WriteLine($"Serial number: {If(device.HidDevice.SerialNumber, "(no serial number)")}")
-      Console.WriteLine($"Device path: {device.HidDevice.DevicePath}")
-      Console.WriteLine($"File system name: {device.HidDevice.FileSystemName}")
-      Console.WriteLine($"USB Manufacturer descriptor: {device.ManufacturerDescriptor}")
-      Console.WriteLine($"USB Product descriptor: {device.ProductDescriptor}")
-      Console.WriteLine($"USB Serial number descriptor: {device.SerialNumberDescriptor}")
-      Console.WriteLine($"Hardware revision: {device.HardwareRevision}")
-      Console.WriteLine($"Firmware revision: {device.FirmwareRevision}")
-      Console.WriteLine()
+    Dim services As New ServiceCollection()
 
-      ' configure GP0-GP3 as GPIO output
-      device.GP0.ConfigureAsGPIO(PinMode.Output)
-      device.GP1.ConfigureAsGPIO(PinMode.Output)
-      device.GP2.ConfigureAsGPIO(PinMode.Output)
-      device.GP3.ConfigureAsGPIO(PinMode.Output, PinValue.Low) ' initial value also can be specified
+    services.AddHidSharpUsbHid()
 
-      ' set GPIO pin values
-      Console.WriteLine("set all GPs HIGH")
+    Using serviceProvider = services.BuildServiceProvider()
+      Using device = MCP2221.Create(serviceProvider)
+        Console.WriteLine("[MCP2221 Device information]")
 
-      device.GPs(0).SetValue(1) ' set GP0 to HIGH with integer value (0 = LOW, any other value = HIGH)
+        Dim serialNumber As String = Nothing
 
-      device.GPs(1).SetValue(True) ' set GP1 to HIGH with boolean value
+        If device.HidDevice.TryGetSerialNumber(serialNumber) Then
+          Console.WriteLine($"Serial number: {serialNumber}")
+        End If
 
-      device.GP2.SetValue(CByte(1)) ' set GP2 to HIGH with byte value
+        Console.WriteLine($"USB Manufacturer descriptor: {device.ManufacturerDescriptor}")
+        Console.WriteLine($"USB Product descriptor: {device.ProductDescriptor}")
+        Console.WriteLine($"USB Serial number descriptor: {device.SerialNumberDescriptor}")
+        Console.WriteLine($"Hardware revision: {device.HardwareRevision}")
+        Console.WriteLine($"Firmware revision: {device.FirmwareRevision}")
+        Console.WriteLine()
 
-      Dim gp3Value As PinValue = 1
+        ' configure GP0-GP3 as GPIO output
+        device.GP0.ConfigureAsGPIO(PinMode.Output)
+        device.GP1.ConfigureAsGPIO(PinMode.Output)
+        device.GP2.ConfigureAsGPIO(PinMode.Output)
+        device.GP3.ConfigureAsGPIO(PinMode.Output, PinValue.Low) ' initial value also can be specified
 
-      device.GP3.SetValue(gp3Value) ' set GP3 to HIGH with struct PinValue
+        ' set GPIO pin values
+        Console.WriteLine("set all GPs HIGH")
 
-      Thread.Sleep(1000)
+        device.GPs(0).SetValue(1) ' set GP0 to HIGH with integer value (0 = LOW, any other value = HIGH)
 
-      Console.WriteLine("set all GPs LOW")
+        device.GPs(1).SetValue(True) ' set GP1 to HIGH with boolean value
 
-      ' GP0-GP3 also can be accessed via `GPs` read-only collection property
-      For Each gp In device.GPs
-        gp.SetValue(PinValue.Low)
-      Next
+        device.GP2.SetValue(CByte(1)) ' set GP2 to HIGH with byte value
 
-      Thread.Sleep(1000)
+        Dim gp3Value As PinValue = 1
 
-      ' blink GP0-GP3
-      For Each gp In device.GPs
-        Console.WriteLine($"blink {gp.PinDesignation}")
+        device.GP3.SetValue(gp3Value) ' set GP3 to HIGH with struct PinValue
 
-        For n = 0 To 9
-          gp.SetValue(False)
-          Thread.Sleep(100)
+        Thread.Sleep(1000)
 
-          gp.SetValue(True)
-          Thread.Sleep(100)
+        Console.WriteLine("set all GPs LOW")
+
+        ' GP0-GP3 also can be accessed via `GPs` read-only collection property
+        For Each gp In device.GPs
+          gp.SetValue(PinValue.Low)
         Next
-      Next
+
+        Thread.Sleep(1000)
+
+        ' blink GP0-GP3
+        For Each gp In device.GPs
+          Console.WriteLine($"blink {gp.PinDesignation}")
+
+          For n = 0 To 9
+            gp.SetValue(False)
+            Thread.Sleep(100)
+
+            gp.SetValue(True)
+            Thread.Sleep(100)
+          Next
+        Next
+      End Using
     End Using
   End Sub
 End Class

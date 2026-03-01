@@ -77,6 +77,43 @@ Haven't tested with the actual MCP2221, but it is expected that works as same as
 
 # Getting started and usage examples
 
+## Select USB HID backend provider
+This library communicates with the MCP2221/MCP2221A device using the **USB HID** interface. To do this, you must add a `PackageReference` for one of the following USB HID backend provider packages (`Smdn.IO.UsbHid.Providers.*`). This design, integrated with standard .NET dependency injection, gives you the flexibility to choose a provider based on your specific requirements, such as licensing.
+
+**HidSharp (Apache License 2.0)** [![NuGet Smdn.IO.UsbHid.Providers.HidSharp](https://img.shields.io/nuget/v/Smdn.IO.UsbHid.Providers.HidSharp.svg)](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp/): To use HidSharp, add a `PackageReference` for [Smdn.IO.UsbHid.Providers.HidSharp](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.HidSharp) to your project file. Then, register the backend provider with the `ServiceCollection` using the `AddHidSharpUsbHid()` extension method.
+
+```cs
+var services = new ServiceCollection();
+
+services.AddHidSharpUsbHid();
+```
+
+**LibUsbDotNet version 3 (LGPL-3.0, alpha release)** [![NuGet Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://img.shields.io/nuget/v/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3.svg)](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3/): Add a `PackageReference` for [Smdn.IO.UsbHid.Providers.LibUsbDotNetV3](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNetV3), and then register the provider using the `AddLibUsbDotNetV3UsbHid()` method.
+
+```cs
+services.AddLibUsbDotNetV3UsbHid(
+  configure: (builder, options) => {
+    ...
+  }
+);
+```
+
+**LibUsbDotNet version 2 (LGPL-3.0, stable release)** [![NuGet Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://img.shields.io/nuget/v/Smdn.IO.UsbHid.Providers.LibUsbDotNet.svg)](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet/): Add a `PackageReference` for [Smdn.IO.UsbHid.Providers.LibUsbDotNet](https://www.nuget.org/packages/Smdn.IO.UsbHid.Providers.LibUsbDotNet), and then register the provider using the `AddLibUsbDotNetUsbHid()` method.
+
+If the `libusb-1.0` library fails to load automatically, you can either explicitly specify its filename via the `LibUsbLibraryPath` option, or provide a custom library resolving callback to `LibUsbDllImportResolver`.
+
+```cs
+services.AddLibUsbDotNetUsbHid(
+  configure: (builder, options) => {
+    // Specify the filename of the libusb-1.0 library installed on your
+    // system or placed in the output directory.
+    options.LibUsbLibraryPath = "libusb-1.0.so.0";
+    // options.LibUsbLibraryPath = "libusb-1.0.dll";
+    // options.LibUsbLibraryPath = "libusb-1.0.dylib";
+  }
+);
+```
+
 ## Linux setup
 To use the MCP2221 with this library, two configuration steps may be required depending on your Linux distribution.
 
@@ -87,21 +124,32 @@ To access the MCP2221 via this library, some system configuration may be require
 On Ubuntu 24.04 (Kernel 6.8+) and newer systems, you may also encounter a driver conflict where the native `hid_mcp2221` driver claims the device, preventing the `/dev/hidraw*` node from being created. In this case, you must **blacklist** the dedicated driver to force the system to use the generic `usbhid` driver. Detailed steps for this process can be found in [modprobe blacklist file](misc/modprobe/blacklist-MCP2221.conf).
 
 ## Write code
-Firstly, add package [Smdn.Devices.MCP2221](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) to your project.
+Add package [Smdn.Devices.MCP2221](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) [![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) to your project.
 
 ```
 dotnet add package Smdn.Devices.MCP2221
 ```
 
-Nextly, write your codes. The simplest code, blinking the LEDs connected to the GP pins is like below.
+Then write your codes. The simplest code, blinking the LEDs connected to the GP pins is like below.
 
 ```cs
 using System.Device.Gpio;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Smdn.Devices.MCP2221;
+using Smdn.IO.UsbHid.DependencyInjection;
+
+var services = new ServiceCollection();
+
+// Use HidSharp (Apache License 2.0)
+// (Add `Smdn.IO.UsbHid.Providers.HidSharp` to PackageReference)
+services.AddHidSharpUsbHid();
+
+using var serviceProvider = services.BuildServiceProvider();
 
 // Find and open the first MCP2221 device connected to the USB port.
-using var device = MCP2221.Open();
+using var device = MCP2221.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
 device.GP0.ConfigureAsGPIO(PinMode.Output);
@@ -126,6 +174,7 @@ foreach (var gp in device.GPs) {
 ```
 
 [See the actual action in the video](https://www.youtube.com/watch?v=MnIunESm71E)
+
 [![See the actual action in the video](https://img.youtube.com/vi/MnIunESm71E/mqdefault.jpg)](https://www.youtube.com/watch?v=MnIunESm71E)
 
 For detailed instructions, including wiring of the devices and parts, see [blink example](examples/Smdn.Devices.MCP2221/blink-csharp) page.
@@ -212,42 +261,6 @@ sudo usermod -aG plugdev $USER   # A re-login is required for group changes to t
 ```
 
 
-### DllImport resolving
-LibUsbDotNet do DllImport-ing a shared library with the filename `libusb-1.0.so.0`.
-
-If the libusb's .so filename installed on your system is different from that, use the [NativeLibrary.SetDllImportResolver()](https://docs.microsoft.com/ja-jp/dotnet/api/system.runtime.interopservices.nativelibrary.setdllimportresolver) to load installed .so file like below.
-
-```sh
-$ find /lib/ -name "libusb-*.so*"
-/lib/x86_64-linux-gnu/libusb-1.0.so.x.y.z
-/lib/i386-linux-gnu/libusb-1.0.so.x.y.z
-```
-
-```cs
-using System.Runtime.InteropServices;
-
-static void Main() {
-  // libusb.so filename which is installed on your system
-  const string fileNameLibUsb = "libusb-1.0.so.x.y.z";
-
-  NativeLibrary.SetDllImportResolver(
-    typeof(global::LibUsbDotNet.LibUsb.UsbDevice).Assembly,
-    (libraryName, assembly, searchPath) => {
-      if (string.Equals(libraryName, "libusb-1.0.so.0", StringComparison.OrdinalIgnoreCase)) {
-        if (NativeLibrary.TryLoad(fileNameLibUsb, out var handleOfLibUsb))
-          return handleOfLibUsb;
-      }
-
-      return IntPtr.Zero;
-    }
-  );
-
-  // your codes here
-    ︙
-    ︙
-}
-```
-
 ### Unbinding usbhid driver
 When using LibUsbDotNet, you need to unbind the devices that are bound to the usbhid driver.
 
@@ -315,4 +328,6 @@ This project uses the following components. See [ThirdPartyNotices.md](./ThirdPa
 
 - [LibUsbDotNet/LibUsbDotNet](https://github.com/LibUsbDotNet/LibUsbDotNet)
 - [SeekHisKingdom/HIDSharp](https://github.com/SeekHisKingdom/HIDSharp)
+- [App-vNext/Polly](https://github.com/App-vNext/Polly)
+- [smdn/Smdn.IO.UsbHid](https://github.com/smdn/Smdn.IO.UsbHid)
 <!-- #pragma section-end NupkgReadmeFile_Notice -->

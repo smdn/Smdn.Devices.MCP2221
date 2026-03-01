@@ -5,9 +5,18 @@ using System;
 using System.Device.Gpio;
 using System.Threading.Tasks;
 
-using Smdn.Devices.MCP2221;
+using Microsoft.Extensions.DependencyInjection;
 
-using var device = MCP2221.Open();
+using Smdn.Devices.MCP2221;
+using Smdn.IO.UsbHid.DependencyInjection;
+
+var services = new ServiceCollection();
+
+services.AddHidSharpUsbHid();
+
+using var serviceProvider = services.BuildServiceProvider();
+
+using var device = MCP2221.Create(serviceProvider);
 
 // configure GP0-GP3 as GPIO output
 device.GP0.ConfigureAsGPIO(PinMode.Output);

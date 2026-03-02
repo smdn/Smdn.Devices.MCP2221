@@ -48,9 +48,9 @@ partial class Mcp2221Tests {
       return (device, baseDevice.EndPoint);
     }
 
-    [Test] public async Task Write() => await TestWrite(d => { d.I2C.Write(address, new byte[] {0x00, 0x00, 0x00}); return Task.CompletedTask; });
+    [Test] public async Task Write() => await TestWrite(d => { d.I2c.Write(address, new byte[] {0x00, 0x00, 0x00}); return Task.CompletedTask; });
 
-    [Test] public async Task WriteAsync() => await TestWrite(async d => { await d.I2C.WriteAsync(address, new byte[] {0x00, 0x00, 0x00}); });
+    [Test] public async Task WriteAsync() => await TestWrite(async d => { await d.I2c.WriteAsync(address, new byte[] {0x00, 0x00, 0x00}); });
 
     private async Task TestWrite(Func<Mcp2221, Task> writeAction)
     {

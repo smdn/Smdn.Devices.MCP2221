@@ -107,15 +107,15 @@ public partial class Mcp2221Tests {
     Assert.That(() =>_ = device.GP1, Throws.Nothing);
     Assert.That(() =>_ = device.GP2, Throws.Nothing);
     Assert.That(() =>_ = device.GP3, Throws.Nothing);
-    Assert.That(() =>_ = device.I2C, Throws.Nothing);
+    Assert.That(() =>_ = device.I2c, Throws.Nothing);
 
     await disposeAction(device);
 
     Assert.That(() => _ = device.HidDevice, Throws.TypeOf<ObjectDisposedException>());
     Assert.That(async () => await device.GP0.SetValueAsync(default), Throws.TypeOf<ObjectDisposedException>());
     Assert.That(async () => await device.GP0.GetValueAsync(), Throws.TypeOf<ObjectDisposedException>());
-    Assert.That(async () => await device.I2C.WriteAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
-    Assert.That(async () => await device.I2C.ReadAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.I2c.WriteAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.I2c.ReadAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
 
     Assert.That(() => _ = device.HardwareRevision, Throws.Nothing);
     Assert.That(() => _ = device.FirmwareRevision, Throws.Nothing);
@@ -128,7 +128,7 @@ public partial class Mcp2221Tests {
     Assert.That(() => _ = device.GP1, Throws.Nothing);
     Assert.That(() => _ = device.GP2, Throws.Nothing);
     Assert.That(() => _ = device.GP3, Throws.Nothing);
-    Assert.That(() => _ = device.I2C, Throws.Nothing);
+    Assert.That(() => _ = device.I2c, Throws.Nothing);
 
     Assert.That(baseDevice.IsDisposed, Is.EqualTo(shouldDisposeUsbHidDevice), "USB-HID device disposed");
 

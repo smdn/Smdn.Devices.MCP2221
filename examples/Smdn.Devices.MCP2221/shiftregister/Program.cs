@@ -19,9 +19,9 @@ using var serviceProvider = services.BuildServiceProvider();
 using var device = Mcp2221.Create(serviceProvider);
 
 // configure GP0-GP3 as GPIO output
-device.GP0.ConfigureAsGPIO(PinMode.Output);
-device.GP1.ConfigureAsGPIO(PinMode.Output);
-device.GP2.ConfigureAsGPIO(PinMode.Output);
+device.GP0.ConfigureAsGpio(PinMode.Output);
+device.GP1.ConfigureAsGpio(PinMode.Output);
+device.GP2.ConfigureAsGpio(PinMode.Output);
 
 // construct shift register
 var shiftRegister = new ShiftRegister(

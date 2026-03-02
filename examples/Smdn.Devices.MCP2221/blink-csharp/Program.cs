@@ -31,10 +31,10 @@ Console.WriteLine($"Firmware revision: {device.FirmwareRevision}");
 Console.WriteLine();
 
 // configure GP0-GP3 as GPIO output
-device.GP0.ConfigureAsGPIO(PinMode.Output);
-device.GP1.ConfigureAsGPIO(PinMode.Output);
-device.GP2.ConfigureAsGPIO(PinMode.Output);
-device.GP3.ConfigureAsGPIO(PinMode.Output, initialValue: PinValue.Low); // initial value also can be specified
+device.GP0.ConfigureAsGpio(PinMode.Output);
+device.GP1.ConfigureAsGpio(PinMode.Output);
+device.GP2.ConfigureAsGpio(PinMode.Output);
+device.GP3.ConfigureAsGpio(PinMode.Output, initialValue: PinValue.Low); // initial value also can be specified
 
 // set GPIO pin values
 Console.WriteLine("set all GPs HIGH");

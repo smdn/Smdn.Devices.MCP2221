@@ -152,10 +152,10 @@ using var serviceProvider = services.BuildServiceProvider();
 using var device = Mcp2221.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
-device.GP0.ConfigureAsGPIO(PinMode.Output);
-device.GP1.ConfigureAsGPIO(PinMode.Output);
-device.GP2.ConfigureAsGPIO(PinMode.Output);
-device.GP3.ConfigureAsGPIO(PinMode.Output);
+device.GP0.ConfigureAsGpio(PinMode.Output);
+device.GP1.ConfigureAsGpio(PinMode.Output);
+device.GP2.ConfigureAsGpio(PinMode.Output);
+device.GP3.ConfigureAsGpio(PinMode.Output);
 
 // Blink the configured GPIO pins.
 foreach (var gp in device.GPs) {

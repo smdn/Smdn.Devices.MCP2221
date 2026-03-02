@@ -16,7 +16,7 @@ namespace Smdn.Devices.MCP2221;
 #pragma warning disable IDE0040
 partial class Mcp2221 {
 #pragma warning restore IDE0040
-  public I2cFunctionality I2C { get; }
+  public I2cFunctionality I2c { get; }
 
 #pragma warning disable CA1034
   public sealed partial class I2cFunctionality {
@@ -147,7 +147,7 @@ partial class Mcp2221 {
       }
       catch (Exception ex) {
         device.logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
-        if (ex is not I2cNAckException)
+        if (ex is not I2cNackException)
           await CancelAsync(device, address, ex).ConfigureAwait(false);
         throw;
       }
@@ -200,7 +200,7 @@ partial class Mcp2221 {
       }
       catch (Exception ex) {
         device.logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
-        if (ex is not I2cNAckException)
+        if (ex is not I2cNackException)
           Cancel(device, address, ex);
         throw;
       }

@@ -152,7 +152,7 @@ partial class Mcp2221 {
 
       private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2cAddress address, I2cEngineState engineState)
       {
-        if (currentState == OperationState.Initial && (engineState.LineValueSCL.IsLow() || engineState.LineValueSDA.IsLow()))
+        if (currentState == OperationState.Initial && (engineState.LineValueScl.IsLow() || engineState.LineValueSda.IsLow()))
           throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
 
         if (engineState.BusStatus == I2cEngineState.TransferStatus.MarkedForCancellation)
@@ -174,7 +174,7 @@ partial class Mcp2221 {
           // 0x25: write operation still in progress?
           0x25 when currentState == OperationState.Initial => OperationState.CancelAndRetry, // remains previous operation state(?)
           0x25 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
-          0x25 => throw new I2cNAckException(address), // time out
+          0x25 => throw new I2cNackException(address), // time out
 
           // 0x61: read operation still in progress?
           // 0x61 when (currentState == OperationState.Initial) => OperationState.CancelAndRetry, // issuing cancellation in this state will transit state to 0x62, and will be in state which cannot reset with command

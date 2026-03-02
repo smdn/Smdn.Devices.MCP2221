@@ -20,10 +20,10 @@ using var serviceProvider = services.BuildServiceProvider();
 using var device = Mcp2221.Create(serviceProvider);
 
 // configure GP0-GP3 as GPIO input
-device.GP0.ConfigureAsGPIO(PinMode.Input);
-device.GP1.ConfigureAsGPIO(PinMode.Input);
-device.GP2.ConfigureAsGPIO(PinMode.Input);
-device.GP3.ConfigureAsGPIO(PinMode.Input);
+device.GP0.ConfigureAsGpio(PinMode.Input);
+device.GP1.ConfigureAsGpio(PinMode.Input);
+device.GP2.ConfigureAsGpio(PinMode.Input);
+device.GP3.ConfigureAsGpio(PinMode.Input);
 
 // read GP0 value
 var gp0Val = device.GP0.GetValue();

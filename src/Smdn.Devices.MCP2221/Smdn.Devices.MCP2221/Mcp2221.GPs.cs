@@ -67,7 +67,7 @@ partial class Mcp2221 {
     AlternateFunction1          = 0b_000_0_0_011,
     AlternateFunction0          = 0b_000_0_0_010,
     DedicatedFunctionOperation  = 0b_000_0_0_001,
-    GPIOOperation               = 0b_000_0_0_000,
+    GpioOperation               = 0b_000_0_0_000,
   }
 
 #pragma warning disable CA1034
@@ -77,26 +77,26 @@ partial class Mcp2221 {
 
     internal GP0Functionality(Mcp2221 device) : base(device) { }
 
-    public ValueTask ConfigureAsLEDURXAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsLedUrxAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "LED_URX",
         gpDesignation: GPDesignation.AlternateFunction0,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsLEDURX(CancellationToken cancellationToken = default)
+    public void ConfigureAsLedUrx(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "LED_URX",
         gpDesignation: GPDesignation.AlternateFunction0,
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsSSPNDAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsSspndAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "SSPND",
         gpDesignation: GPDesignation.DedicatedFunctionOperation,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsSSPND(CancellationToken cancellationToken = default)
+    public void ConfigureAsSspnd(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "SSPND",
         gpDesignation: GPDesignation.DedicatedFunctionOperation,
@@ -105,7 +105,7 @@ partial class Mcp2221 {
   }
 
 #pragma warning disable CA1034
-  public sealed class GP1Functionality : GPFunctionality, IInterruptDetectionFunctionality, IADCFunctionality, IClockOutputFunctionality {
+  public sealed class GP1Functionality : GPFunctionality, IInterruptDetectionFunctionality, IAdcFunctionality, IClockOutputFunctionality {
 #pragma warning restore CA1034
     private protected override int GPIndex => 1;
 
@@ -124,26 +124,26 @@ partial class Mcp2221 {
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsLEDUTXAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsLedUtxAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "LED_UTX",
         gpDesignation: GPDesignation.AlternateFunction1,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsLEDUTX(CancellationToken cancellationToken = default)
+    public void ConfigureAsLedUtx(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "LED_UTX",
         gpDesignation: GPDesignation.AlternateFunction1,
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsADCAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsAdcAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "ADC1",
         gpDesignation: GPDesignation.AlternateFunction0,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsADC(CancellationToken cancellationToken = default)
+    public void ConfigureAsAdc(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "ADC1",
         gpDesignation: GPDesignation.AlternateFunction0,
@@ -165,45 +165,45 @@ partial class Mcp2221 {
   }
 
 #pragma warning disable CA1034
-  public sealed class GP2Functionality : GPFunctionality, IADCFunctionality, IDACFunctionality {
+  public sealed class GP2Functionality : GPFunctionality, IAdcFunctionality, IDacFunctionality {
 #pragma warning restore CA1034
     private protected override int GPIndex => 2;
 
     internal GP2Functionality(Mcp2221 device) : base(device) { }
 
-    public ValueTask ConfigureAsDACAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsDacAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "DAC1",
         gpDesignation: GPDesignation.AlternateFunction1,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsDAC(CancellationToken cancellationToken = default)
+    public void ConfigureAsDac(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "DAC1",
         gpDesignation: GPDesignation.AlternateFunction1,
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsADCAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsAdcAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "ADC2",
         gpDesignation: GPDesignation.AlternateFunction0,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsADC(CancellationToken cancellationToken = default)
+    public void ConfigureAsAdc(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "ADC2",
         gpDesignation: GPDesignation.AlternateFunction0,
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsUSBCFGAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsUsbCfgAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "USBCFG",
         gpDesignation: GPDesignation.DedicatedFunctionOperation,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsUSBCFG(CancellationToken cancellationToken = default)
+    public void ConfigureAsUsbCfg(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "USBCFG",
         gpDesignation: GPDesignation.DedicatedFunctionOperation,
@@ -212,45 +212,45 @@ partial class Mcp2221 {
   }
 
 #pragma warning disable CA1034
-  public sealed class GP3Functionality : GPFunctionality, IADCFunctionality, IDACFunctionality {
+  public sealed class GP3Functionality : GPFunctionality, IAdcFunctionality, IDacFunctionality {
 #pragma warning restore CA1034
     private protected override int GPIndex => 3;
 
     internal GP3Functionality(Mcp2221 device) : base(device) { }
 
-    public ValueTask ConfigureAsDACAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsDacAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "DAC2",
         gpDesignation: GPDesignation.AlternateFunction1,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsDAC(CancellationToken cancellationToken = default)
+    public void ConfigureAsDac(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "DAC2",
         gpDesignation: GPDesignation.AlternateFunction1,
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsADCAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsAdcAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "ADC3",
         gpDesignation: GPDesignation.AlternateFunction0,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsADC(CancellationToken cancellationToken = default)
+    public void ConfigureAsAdc(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "ADC3",
         gpDesignation: GPDesignation.AlternateFunction0,
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsLEDI2cAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsLedI2cAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "LED_I2C",
         gpDesignation: GPDesignation.DedicatedFunctionOperation,
         cancellationToken: cancellationToken
       );
-    public void ConfigureAsLEDI2C(CancellationToken cancellationToken = default)
+    public void ConfigureAsLedI2c(CancellationToken cancellationToken = default)
       => ConfigureGPDesignation(
         pinDesignation: "LED_I2C",
         gpDesignation: GPDesignation.DedicatedFunctionOperation,

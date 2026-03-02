@@ -17,7 +17,7 @@ using var serviceProvider = services.BuildServiceProvider();
 
 await using var device = await Mcp2221.CreateAsync(serviceProvider);
 
-device.I2C.BusSpeed = I2cBusSpeed.Default;
+device.I2c.BusSpeed = I2cBusSpeed.Default;
 
 var initialCursorPosition = (left: Console.CursorLeft, top: Console.CursorTop);
 
@@ -41,7 +41,7 @@ I2cAddress addressRangeMax = I2cAddress.DeviceMaxValue;
 // I2cAddress addressRangeMin = 0x20;
 // I2cAddress addressRangeMax = 0x27;
 
-var (writeAddressSet, readAddressSet) = await device.I2C.ScanBusAsync(addressRangeMin, addressRangeMax, scanBusProgress);
+var (writeAddressSet, readAddressSet) = await device.I2c.ScanBusAsync(addressRangeMin, addressRangeMax, scanBusProgress);
 
 foreach (var writeRead in new[] {
   new {Header = "[I2C write]", AddressSet = writeAddressSet},

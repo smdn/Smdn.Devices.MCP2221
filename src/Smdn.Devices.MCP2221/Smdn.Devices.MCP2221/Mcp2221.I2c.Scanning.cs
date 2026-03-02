@@ -48,7 +48,7 @@ partial class Mcp2221 {
 
           writeAddressSet.Add(address);
         }
-        catch (I2cNAckException ex) when (ex.Address.Equals(address)) {
+        catch (I2cNackException ex) when (ex.Address.Equals(address)) {
           // expected exception
         }
 
@@ -93,7 +93,7 @@ partial class Mcp2221 {
 
           writeAddressSet.Add(address);
         }
-        catch (I2cNAckException ex) when (ex.Address.Equals(address)) {
+        catch (I2cNackException ex) when (ex.Address.Equals(address)) {
           // expected exception
         }
 

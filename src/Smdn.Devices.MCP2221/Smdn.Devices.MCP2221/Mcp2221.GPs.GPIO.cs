@@ -12,13 +12,13 @@ namespace Smdn.Devices.MCP2221;
 #pragma warning disable IDE0040
 partial class Mcp2221 {
 #pragma warning restore IDE0040
-  internal interface IGPIOFunctionality {
-    ValueTask ConfigureAsGPIOAsync(
+  internal interface IGpioFunctionality {
+    ValueTask ConfigureAsGpioAsync(
       PinMode initialDirection = PinMode.Output,
       PinValue initialValue = default,
       CancellationToken cancellationToken = default
     );
-    void ConfigureAsGPIO(
+    void ConfigureAsGpio(
       PinMode initialDirection = PinMode.Output,
       PinValue initialValue = default,
       CancellationToken cancellationToken = default
@@ -58,31 +58,31 @@ partial class Mcp2221 {
   }
 
 #pragma warning disable IDE0040
-  partial class GPFunctionality : IGPIOFunctionality {
+  partial class GPFunctionality : IGpioFunctionality {
 #pragma warning restore IDE0040
     [CLSCompliant(false)]
-    public ValueTask ConfigureAsGPIOAsync(
+    public ValueTask ConfigureAsGpioAsync(
       PinMode initialDirection = PinMode.Output,
       PinValue initialValue = default,
       CancellationToken cancellationToken = default
     )
       => ConfigureGPDesignationAsync(
         pinDesignation: $"GPIO{GPIndex}",
-        gpDesignation: GPDesignation.GPIOOperation,
+        gpDesignation: GPDesignation.GpioOperation,
         gpioInitialDirection: initialDirection,
         gpioInitialValue: initialValue,
         cancellationToken: cancellationToken
       );
 
     [CLSCompliant(false)]
-    public void ConfigureAsGPIO(
+    public void ConfigureAsGpio(
       PinMode initialDirection = PinMode.Output,
       PinValue initialValue = default,
       CancellationToken cancellationToken = default
     )
       => ConfigureGPDesignation(
         pinDesignation: $"GPIO{GPIndex}",
-        gpDesignation: GPDesignation.GPIOOperation,
+        gpDesignation: GPDesignation.GpioOperation,
         gpioInitialDirection: initialDirection,
         gpioInitialValue: initialValue,
         cancellationToken: cancellationToken

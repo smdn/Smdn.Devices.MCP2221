@@ -26,8 +26,8 @@ internal readonly struct I2cEngineState {
   public int ReadPendingValue { get; init; }
   public byte CommunicationSpeedDividerValue { get; init; }
   public byte TimeoutValue { get; init; }
-  public PinValue LineValueSCL { get; init; }
-  public PinValue LineValueSDA { get; init; }
+  public PinValue LineValueScl { get; init; }
+  public PinValue LineValueSda { get; init; }
 
   public static I2cEngineState Parse(ReadOnlySpan<byte> resp)
     => new() {
@@ -41,8 +41,8 @@ internal readonly struct I2cEngineState {
       CommunicationSpeedDividerValue  = resp[14], // Current I2C communication speed divider value
       TimeoutValue                    = resp[15], // Current I2C time-out value
       Address                         = resp[16] /* | (resp[17] << 8) */, // Lower/Higher byte of the I2C address being used
-      LineValueSCL                    = resp[22], // SCL line value as read from the pin
-      LineValueSDA                    = resp[23], // SDA line value as read from the pin
+      LineValueScl                    = resp[22], // SCL line value as read from the pin
+      LineValueSda                    = resp[23], // SDA line value as read from the pin
       ReadPendingValue                = resp[25], // I2C Read pending value
 #pragma warning restore IDE0055 // Fix formatting
     };
@@ -65,8 +65,8 @@ internal readonly struct I2cEngineState {
           (nameof(DataBufferCounter), DataBufferCounter),
           (nameof(CommunicationSpeedDividerValue), $"0x{CommunicationSpeedDividerValue:X2}"),
           (nameof(TimeoutValue), TimeoutValue),
-          (nameof(LineValueSCL), LineValueSCL),
-          (nameof(LineValueSDA), LineValueSDA),
+          (nameof(LineValueScl), LineValueScl),
+          (nameof(LineValueSda), LineValueSda),
         }.Select(pair => string.Concat(pair.Name, "=", pair.Value))
       ),
       "}"

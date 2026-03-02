@@ -19,8 +19,8 @@ public partial class Mcp2221 :
   IAsyncDisposable
 {
 #pragma warning restore IDE0055, CA1724
-  public const int DeviceVendorID = 0x04d8;
-  public const int DeviceProductID = 0x00dd;
+  public const int DeviceVendorId = 0x04d8;
+  public const int DeviceProductId = 0x00dd;
 
   // MCP2221 (not tested)
   public const string HardwareRevisionMcp2221 = "A.6";
@@ -104,7 +104,7 @@ public partial class Mcp2221 :
       this.GP3,
     };
 
-    this.I2C = new I2cFunctionality(this);
+    this.I2c = new I2cFunctionality(this);
 
     this.logger = logger;
   }

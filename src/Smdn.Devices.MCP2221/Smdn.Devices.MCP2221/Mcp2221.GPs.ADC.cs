@@ -9,15 +9,15 @@ namespace Smdn.Devices.MCP2221;
 #pragma warning disable IDE0040
 partial class Mcp2221 {
 #pragma warning restore IDE0040
-  internal interface IADCFunctionality {
-    ValueTask ConfigureAsADCAsync(
+  internal interface IAdcFunctionality {
+    ValueTask ConfigureAsAdcAsync(
       CancellationToken cancellationToken = default
     );
-    void ConfigureAsADC(
+    void ConfigureAsAdc(
       CancellationToken cancellationToken = default
     );
 #if __FUTURE_VERSION
-    int ADCValue { get; }
+    int AdcValue { get; }
 #endif
   }
 }

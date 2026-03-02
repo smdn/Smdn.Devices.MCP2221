@@ -17,7 +17,7 @@ System.Collections.Generic.IReadOnlyCollection
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040
-partial class MCP2221 {
+partial class Mcp2221 {
   partial class I2cFunctionality {
 #pragma warning restore IDE0040
     public async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(

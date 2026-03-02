@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040
-partial class MCP2221 {
+partial class Mcp2221 {
 #pragma warning restore IDE0040
 
 #if __FUTURE_VERSION
@@ -75,7 +75,7 @@ partial class MCP2221 {
 #pragma warning restore CA1034
     private protected override int GPIndex => 0;
 
-    internal GP0Functionality(MCP2221 device) : base(device) { }
+    internal GP0Functionality(Mcp2221 device) : base(device) { }
 
     public ValueTask ConfigureAsLEDURXAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
@@ -109,7 +109,7 @@ partial class MCP2221 {
 #pragma warning restore CA1034
     private protected override int GPIndex => 1;
 
-    internal GP1Functionality(MCP2221 device) : base(device) { }
+    internal GP1Functionality(Mcp2221 device) : base(device) { }
 
     public ValueTask ConfigureAsInterruptDetectionAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
@@ -169,7 +169,7 @@ partial class MCP2221 {
 #pragma warning restore CA1034
     private protected override int GPIndex => 2;
 
-    internal GP2Functionality(MCP2221 device) : base(device) { }
+    internal GP2Functionality(Mcp2221 device) : base(device) { }
 
     public ValueTask ConfigureAsDACAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
@@ -216,7 +216,7 @@ partial class MCP2221 {
 #pragma warning restore CA1034
     private protected override int GPIndex => 3;
 
-    internal GP3Functionality(MCP2221 device) : base(device) { }
+    internal GP3Functionality(Mcp2221 device) : base(device) { }
 
     public ValueTask ConfigureAsDACAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
@@ -263,12 +263,12 @@ partial class MCP2221 {
 #pragma warning restore CA1034
     private const int NumberOfGPs = 4;
 
-    private readonly MCP2221 device;
+    private readonly Mcp2221 device;
     private protected abstract int GPIndex { get; }
     public string PinName => $"GP{GPIndex}";
     public string? PinDesignation { get; private set; }
 
-    private protected GPFunctionality(MCP2221 device)
+    private protected GPFunctionality(Mcp2221 device)
     {
       this.device = device;
     }

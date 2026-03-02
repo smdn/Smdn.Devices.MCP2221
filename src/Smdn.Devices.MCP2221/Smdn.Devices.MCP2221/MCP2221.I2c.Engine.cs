@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040
-partial class MCP2221 {
+partial class Mcp2221 {
   partial class I2cFunctionality {
 #pragma warning restore IDE0040
     private static Exception CreateUnexpectedResponseException(I2cAddress? address, byte response)

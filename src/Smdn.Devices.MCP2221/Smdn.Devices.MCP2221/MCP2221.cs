@@ -14,7 +14,7 @@ using Smdn.IO.UsbHid;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0055, CA1724
-public partial class MCP2221 :
+public partial class Mcp2221 :
   IDisposable,
   IAsyncDisposable
 {
@@ -23,18 +23,18 @@ public partial class MCP2221 :
   public const int DeviceProductID = 0x00dd;
 
   // MCP2221 (not tested)
-  public const string HardwareRevisionMCP2221 = "A.6";
-  public const string FirmwareRevisionMCP2221 = "1.1";
+  public const string HardwareRevisionMcp2221 = "A.6";
+  public const string FirmwareRevisionMcp2221 = "1.1";
 
   // MCP2221A
-  public const string HardwareRevisionMCP2221A = "A.6";
-  public const string FirmwareRevisionMCP2221A = "1.2";
+  public const string HardwareRevisionMcp2221A = "A.6";
+  public const string FirmwareRevisionMcp2221A = "1.2";
 
   private static void ValidateHardwareRevision(string revision)
   {
     switch (revision) {
-      // case HardwareRevisionMCP2221A:
-      case HardwareRevisionMCP2221:
+      // case HardwareRevisionMcp2221A:
+      case HardwareRevisionMcp2221:
         break;
 
       default:
@@ -45,8 +45,8 @@ public partial class MCP2221 :
   private static void ValidateFirmwareRevision(string revision)
   {
     switch (revision) {
-      case FirmwareRevisionMCP2221:
-      case FirmwareRevisionMCP2221A:
+      case FirmwareRevisionMcp2221:
+      case FirmwareRevisionMcp2221A:
         break;
 
       default:
@@ -55,11 +55,11 @@ public partial class MCP2221 :
   }
 
   [Obsolete($"Use {nameof(CreateAsync)} with {nameof(IUsbHidDevice)} instead.", error: true)]
-  public static async ValueTask<MCP2221> OpenAsync(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
+  public static async ValueTask<Mcp2221> OpenAsync(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
     => throw new NotSupportedException($"Use {nameof(CreateAsync)} with {nameof(IUsbHidDevice)} instead.");
 
   [Obsolete($"Use {nameof(Create)} with {nameof(IUsbHidDevice)} instead.", error: true)]
-  public static MCP2221 Open(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
+  public static Mcp2221 Open(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
     => throw new NotSupportedException($"Use {nameof(Create)} with {nameof(IUsbHidDevice)} instead.");
 
   /*
@@ -84,7 +84,7 @@ public partial class MCP2221 :
   /// <remarks>Always returns <c>01234567</c>.</remarks>
   public string? ChipFactorySerialNumber { get; private set; } = null;
 
-  private MCP2221(
+  private Mcp2221(
     IUsbHidDevice hidDevice,
     bool shouldDisposeUsbHidDevice,
     ILogger? logger

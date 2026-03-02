@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040
-partial class MCP2221 {
+partial class Mcp2221 {
 #pragma warning restore IDE0040
   public I2cFunctionality I2C { get; }
 
@@ -24,11 +24,11 @@ partial class MCP2221 {
     public const int MaxBlockLength = 0xFFFF;
     private const int MaxTransferLengthPerCommand = 64 - 4;
 
-    private readonly MCP2221 device;
+    private readonly Mcp2221 device;
 
     public I2cBusSpeed BusSpeed { get; set; } = I2cBusSpeed.Default;
 
-    internal I2cFunctionality(MCP2221 device)
+    internal I2cFunctionality(Mcp2221 device)
     {
       this.device = device;
     }
@@ -74,7 +74,7 @@ partial class MCP2221 {
       }
     }
 
-    private static async ValueTask CancelAsync(MCP2221 device, I2cAddress address, Exception exceptionCauseOfCancellation)
+    private static async ValueTask CancelAsync(Mcp2221 device, I2cAddress address, Exception exceptionCauseOfCancellation)
     {
       var engineState = await device.CommandAsync(
         userData: default,
@@ -87,7 +87,7 @@ partial class MCP2221 {
       device.logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
     }
 
-    private static void Cancel(MCP2221 device, I2cAddress address, Exception exceptionCauseOfCancellation)
+    private static void Cancel(Mcp2221 device, I2cAddress address, Exception exceptionCauseOfCancellation)
     {
       var engineState = device.Command(
         userData: default,

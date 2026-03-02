@@ -21,17 +21,17 @@ enum Endianness {
 }
 
 class ShiftRegister {
-  private readonly MCP2221.GPFunctionality /*IGPIOFunctionality*/ gpioLatch;
-  private readonly MCP2221.GPFunctionality /*IGPIOFunctionality*/ gpioClock;
-  private readonly MCP2221.GPFunctionality /*IGPIOFunctionality*/ gpioData;
+  private readonly Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioLatch;
+  private readonly Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioClock;
+  private readonly Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioData;
 
   /// <param name="gpioLatch">storage register clock pin (RCLK/ST_CP)</param>
   /// <param name="gpioClock">shift register clock pin (SRCLK/SH_CP)</param>
   /// <param name="gpioData">serial output pin (SER)</param>
   public ShiftRegister(
-    MCP2221.GPFunctionality /*IGPIOFunctionality*/ gpioLatch,
-    MCP2221.GPFunctionality /*IGPIOFunctionality*/ gpioClock,
-    MCP2221.GPFunctionality /*IGPIOFunctionality*/ gpioData
+    Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioLatch,
+    Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioClock,
+    Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioData
   )
   {
     this.gpioLatch = gpioLatch ?? throw new ArgumentNullException(nameof(gpioLatch));

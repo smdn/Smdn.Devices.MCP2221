@@ -21,12 +21,12 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-await using var device = await MCP2221.CreateAsync(serviceProvider);
+await using var device = await Mcp2221.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLEDI2cAsync();
 
-var i2cDevice = new MCP2221I2cDevice(device.I2C, Bme280.DefaultI2cAddress);
-//var i2cDevice = new MCP2221I2cDevice(device.I2C, Bme280.SecondaryI2cAddress);
+var i2cDevice = new Mcp2221I2cDevice(device.I2C, Bme280.DefaultI2cAddress);
+//var i2cDevice = new Mcp2221I2cDevice(device.I2C, Bme280.SecondaryI2cAddress);
 
 i2cDevice.BusSpeed = I2cBusSpeed.Default;
 

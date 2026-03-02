@@ -16,7 +16,7 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-using var device = MCP2221.Create(serviceProvider);
+using var device = Mcp2221.Create(serviceProvider);
 
 Console.WriteLine("[MCP2221 Device information]");
 

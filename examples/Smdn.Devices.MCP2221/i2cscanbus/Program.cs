@@ -15,7 +15,7 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-await using var device = await MCP2221.CreateAsync(serviceProvider);
+await using var device = await Mcp2221.CreateAsync(serviceProvider);
 
 device.I2C.BusSpeed = I2cBusSpeed.Default;
 

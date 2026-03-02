@@ -16,7 +16,7 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-using var device = MCP2221.Create(serviceProvider);
+using var device = Mcp2221.Create(serviceProvider);
 
 // configure GP0-GP3 as GPIO output
 device.GP0.ConfigureAsGPIO(PinMode.Output);

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040
-partial class MCP2221 {
+partial class Mcp2221 {
 #pragma warning restore IDE0040
   internal interface IGPIOFunctionality {
     ValueTask ConfigureAsGPIOAsync(

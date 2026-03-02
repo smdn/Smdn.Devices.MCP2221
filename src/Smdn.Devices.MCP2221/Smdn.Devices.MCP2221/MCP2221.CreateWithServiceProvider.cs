@@ -11,9 +11,9 @@ using Smdn.IO.UsbHid;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040, CA1724
-partial class MCP2221 {
+partial class Mcp2221 {
 #pragma warning restore IDE0040, CA1724
-  public static ValueTask<MCP2221> CreateAsync(
+  public static ValueTask<Mcp2221> CreateAsync(
     IServiceProvider serviceProvider,
     CancellationToken cancellationToken = default
   )
@@ -24,7 +24,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  public static MCP2221 Create(
+  public static Mcp2221 Create(
     IServiceProvider serviceProvider,
     CancellationToken cancellationToken = default
   )
@@ -35,7 +35,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  public static ValueTask<MCP2221> CreateAsync<TServiceKey>(
+  public static ValueTask<Mcp2221> CreateAsync<TServiceKey>(
     IServiceProvider serviceProvider,
     TServiceKey serviceKey,
     CancellationToken cancellationToken = default
@@ -47,7 +47,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  public static MCP2221 Create<TServiceKey>(
+  public static Mcp2221 Create<TServiceKey>(
     IServiceProvider serviceProvider,
     TServiceKey serviceKey,
     CancellationToken cancellationToken = default
@@ -67,7 +67,7 @@ partial class MCP2221 {
       serviceProvider?.GetKeyedService<IMcp2221UsbHidDeviceFactory>(serviceKey) ??
       Mcp2221DefaultUsbHidDeviceFactory.Instance; // fallback to default factory
 
-  private static ValueTask<MCP2221> CreateWithServiceProviderAsyncCore<TServiceKey>(
+  private static ValueTask<Mcp2221> CreateWithServiceProviderAsyncCore<TServiceKey>(
     IServiceProvider? serviceProvider,
     TServiceKey? serviceKey,
     Predicate<IUsbHidDevice>? predicate,
@@ -81,7 +81,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  private static MCP2221 CreateWithServiceProviderCore<TServiceKey>(
+  private static Mcp2221 CreateWithServiceProviderCore<TServiceKey>(
     IServiceProvider? serviceProvider,
     TServiceKey? serviceKey,
     Predicate<IUsbHidDevice>? predicate,

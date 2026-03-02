@@ -43,7 +43,7 @@ services.AddLibUsbDotNetUsbHid(
 using var serviceProvider = services.BuildServiceProvider();
 
 // Find and open the first MCP2221 device connected to the USB port.
-using var device = MCP2221.Create(serviceProvider);
+using var device = Mcp2221.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
 device.GP0.ConfigureAsGPIO(PinMode.Output);

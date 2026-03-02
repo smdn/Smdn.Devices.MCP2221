@@ -58,8 +58,8 @@ internal sealed class Mcp2221DefaultUsbHidDeviceFactory : IMcp2221UsbHidDeviceFa
       serviceProvider.GetRequiredService<IUsbHidService>();
 
     return usbHidService.FindDevice(
-      MCP2221.DeviceVendorID,
-      MCP2221.DeviceProductID,
+      Mcp2221.DeviceVendorID,
+      Mcp2221.DeviceProductID,
       predicate,
       cancellationToken
     ) ?? throw new DeviceNotFoundException(usbHidService, predicate);

@@ -12,9 +12,9 @@ using Smdn.IO.UsbHid;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040, CA1724
-partial class MCP2221 {
+partial class Mcp2221 {
 #pragma warning restore IDE0040, CA1724
-  public static ValueTask<MCP2221> CreateAsync(
+  public static ValueTask<Mcp2221> CreateAsync(
     IUsbHidDevice usbHidDevice,
     bool shouldDisposeUsbHidDevice = false,
     IServiceProvider? serviceProvider = null,
@@ -28,7 +28,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  public static MCP2221 Create(
+  public static Mcp2221 Create(
     IUsbHidDevice usbHidDevice,
     bool shouldDisposeUsbHidDevice = false,
     IServiceProvider? serviceProvider = null,
@@ -42,7 +42,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  public static ValueTask<MCP2221> CreateAsync<TServiceKey>(
+  public static ValueTask<Mcp2221> CreateAsync<TServiceKey>(
     IUsbHidDevice usbHidDevice,
     IServiceProvider serviceProvider,
     TServiceKey serviceKey,
@@ -57,7 +57,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  public static MCP2221 Create<TServiceKey>(
+  public static Mcp2221 Create<TServiceKey>(
     IUsbHidDevice usbHidDevice,
     IServiceProvider serviceProvider,
     TServiceKey serviceKey,
@@ -72,7 +72,7 @@ partial class MCP2221 {
       cancellationToken: cancellationToken
     );
 
-  private static async ValueTask<MCP2221> CreateFromUsbHidDeviceAsyncCore<TServiceKey>(
+  private static async ValueTask<Mcp2221> CreateFromUsbHidDeviceAsyncCore<TServiceKey>(
     IUsbHidDevice usbHidDevice,
     IServiceProvider? serviceProvider,
 #pragma warning disable IDE0060
@@ -82,13 +82,13 @@ partial class MCP2221 {
     CancellationToken cancellationToken
   )
   {
-    MCP2221? device = null;
+    Mcp2221? device = null;
 
     try {
-      device = new MCP2221(
+      device = new Mcp2221(
         hidDevice: usbHidDevice,
         shouldDisposeUsbHidDevice: shouldDisposeUsbHidDevice,
-        logger: serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger<MCP2221>()
+        logger: serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger<Mcp2221>()
       );
 
       try {
@@ -115,7 +115,7 @@ partial class MCP2221 {
     }
   }
 
-  private static MCP2221 CreateFromUsbHidDeviceCore<TServiceKey>(
+  private static Mcp2221 CreateFromUsbHidDeviceCore<TServiceKey>(
     IUsbHidDevice usbHidDevice,
     bool shouldDisposeUsbHidDevice,
     IServiceProvider? serviceProvider,
@@ -125,13 +125,13 @@ partial class MCP2221 {
     CancellationToken cancellationToken
   )
   {
-    MCP2221? device = null;
+    Mcp2221? device = null;
 
     try {
-      device = new MCP2221(
+      device = new Mcp2221(
         hidDevice: usbHidDevice,
         shouldDisposeUsbHidDevice: shouldDisposeUsbHidDevice,
-        logger: serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger<MCP2221>()
+        logger: serviceProvider?.GetService<ILoggerFactory>()?.CreateLogger<Mcp2221>()
       );
 
       try {

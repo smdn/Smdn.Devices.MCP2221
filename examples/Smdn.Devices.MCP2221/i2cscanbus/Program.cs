@@ -17,11 +17,11 @@ using var serviceProvider = services.BuildServiceProvider();
 
 await using var device = await MCP2221.CreateAsync(serviceProvider);
 
-device.I2C.BusSpeed = I2CBusSpeed.Default;
+device.I2C.BusSpeed = I2cBusSpeed.Default;
 
 var initialCursorPosition = (left: Console.CursorLeft, top: Console.CursorTop);
 
-var scanBusProgress = new Progress<I2CScanBusProgress>(progress => {
+var scanBusProgress = new Progress<I2cScanBusProgress>(progress => {
   Console.SetCursorPosition(initialCursorPosition.left, initialCursorPosition.top);
   Console.Write(
     "Scanning 0x{0}: Min=0x{1} {3}{4} Max=0x{2}",
@@ -36,10 +36,10 @@ var scanBusProgress = new Progress<I2CScanBusProgress>(progress => {
     Console.WriteLine();
 });
 
-I2CAddress addressRangeMin = I2CAddress.DeviceMinValue;
-I2CAddress addressRangeMax = I2CAddress.DeviceMaxValue;
-// I2CAddress addressRangeMin = 0x20;
-// I2CAddress addressRangeMax = 0x27;
+I2cAddress addressRangeMin = I2cAddress.DeviceMinValue;
+I2cAddress addressRangeMax = I2cAddress.DeviceMaxValue;
+// I2cAddress addressRangeMin = 0x20;
+// I2cAddress addressRangeMax = 0x27;
 
 var (writeAddressSet, readAddressSet) = await device.I2C.ScanBusAsync(addressRangeMin, addressRangeMax, scanBusProgress);
 
@@ -62,7 +62,7 @@ foreach (var writeRead in new[] {
     for (var col = 0x00; col <= 0x0F; col += 0x01) {
       var address = row | col;
 
-      if (writeRead.AddressSet.Contains((I2CAddress)address))
+      if (writeRead.AddressSet.Contains((I2cAddress)address))
         Console.Write($"{address,3:X2} ");
       else
         Console.Write($"{("--"),3} ");

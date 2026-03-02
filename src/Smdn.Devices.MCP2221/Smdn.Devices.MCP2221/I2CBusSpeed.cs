@@ -4,7 +4,7 @@
 
 namespace Smdn.Devices.MCP2221;
 
-public enum I2CBusSpeed {
+public enum I2cBusSpeed {
   Default = default,
 
   StandardMode = Default,

@@ -244,7 +244,7 @@ partial class MCP2221 {
         cancellationToken: cancellationToken
       );
 
-    public ValueTask ConfigureAsLEDI2CAsync(CancellationToken cancellationToken = default)
+    public ValueTask ConfigureAsLEDI2cAsync(CancellationToken cancellationToken = default)
       => ConfigureGPDesignationAsync(
         pinDesignation: "LED_I2C",
         gpDesignation: GPDesignation.DedicatedFunctionOperation,

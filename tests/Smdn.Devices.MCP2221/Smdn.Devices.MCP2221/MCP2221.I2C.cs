@@ -14,8 +14,8 @@ namespace Smdn.Devices.MCP2221;
 
 partial class MCP2221Tests {
   [TestFixture]
-  public class I2CFunctionality {
-    private readonly I2CAddress address = new I2CAddress(0x20);
+  public class I2cFunctionality {
+    private readonly I2cAddress address = new I2cAddress(0x20);
 
     private static byte[] ToByteArray(string hexByteSequence)
       => hexByteSequence.Split('-').Select(hex => Convert.ToByte(hex, 16)).ToArray();

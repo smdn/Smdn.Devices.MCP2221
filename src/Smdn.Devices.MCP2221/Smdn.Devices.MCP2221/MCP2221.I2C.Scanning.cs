@@ -6,49 +6,49 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using IReadOnlyI2CAddressSet =
+using IReadOnlyI2cAddressSet =
 #if SYSTEM_COLLECTIONS_GENERIC_IREADONLYSET
 System.Collections.Generic.IReadOnlySet
 #else
 System.Collections.Generic.IReadOnlyCollection
 #endif
-<Smdn.Devices.MCP2221.I2CAddress>;
+<Smdn.Devices.MCP2221.I2cAddress>;
 
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040
 partial class MCP2221 {
-  partial class I2CFunctionality {
+  partial class I2cFunctionality {
 #pragma warning restore IDE0040
-    public async ValueTask<(IReadOnlyI2CAddressSet WriteAddressSet, IReadOnlyI2CAddressSet ReadAddressSet)> ScanBusAsync(
-      I2CAddress addressRangeMin = default,
-      I2CAddress addressRangeMax = default,
-      IProgress<I2CScanBusProgress>? progress = null,
+    public async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(
+      I2cAddress addressRangeMin = default,
+      I2cAddress addressRangeMax = default,
+      IProgress<I2cScanBusProgress>? progress = null,
       CancellationToken cancellationToken = default
     )
     {
       if ((int)addressRangeMax < (int)addressRangeMin)
         throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
 
-      if (addressRangeMin.Equals(I2CAddress.Zero))
-        addressRangeMin = I2CAddress.DeviceMinValue;
-      if (addressRangeMax.Equals(I2CAddress.Zero))
-        addressRangeMax = I2CAddress.DeviceMaxValue;
+      if (addressRangeMin.Equals(I2cAddress.Zero))
+        addressRangeMin = I2cAddress.DeviceMinValue;
+      if (addressRangeMax.Equals(I2cAddress.Zero))
+        addressRangeMax = I2cAddress.DeviceMaxValue;
 
-      var writeAddressSet = new SortedSet<I2CAddress>();
-      var readAddressSet = new SortedSet<I2CAddress>();
+      var writeAddressSet = new SortedSet<I2cAddress>();
+      var readAddressSet = new SortedSet<I2cAddress>();
 
       for (var addr = (int)addressRangeMin; addr <= (int)addressRangeMax; addr++) {
-        var address = new I2CAddress(addr);
+        var address = new I2cAddress(addr);
 
-        progress?.Report(new I2CScanBusProgress(address, addressRangeMin, addressRangeMax));
+        progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
         try {
           await WriteAsync(address, default, cancellationToken).ConfigureAwait(false);
 
           writeAddressSet.Add(address);
         }
-        catch (I2CNAckException ex) when (ex.Address.Equals(address)) {
+        catch (I2cNAckException ex) when (ex.Address.Equals(address)) {
           // expected exception
         }
 
@@ -57,7 +57,7 @@ partial class MCP2221 {
 
           readAddressSet.Add(address);
         }
-        catch (I2CReadException ex) when (ex.Address.Equals(address)) {
+        catch (I2cReadException ex) when (ex.Address.Equals(address)) {
           // expected exception
         }
       }
@@ -65,35 +65,35 @@ partial class MCP2221 {
       return (writeAddressSet, readAddressSet);
     }
 
-    public (IReadOnlyI2CAddressSet WriteAddressSet, IReadOnlyI2CAddressSet ReadAddressSet) ScanBus(
-      I2CAddress addressRangeMin = default,
-      I2CAddress addressRangeMax = default,
-      IProgress<I2CScanBusProgress>? progress = null,
+    public (IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet) ScanBus(
+      I2cAddress addressRangeMin = default,
+      I2cAddress addressRangeMax = default,
+      IProgress<I2cScanBusProgress>? progress = null,
       CancellationToken cancellationToken = default
     )
     {
       if ((int)addressRangeMax < (int)addressRangeMin)
         throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
 
-      if (addressRangeMin.Equals(I2CAddress.Zero))
-        addressRangeMin = I2CAddress.DeviceMinValue;
-      if (addressRangeMax.Equals(I2CAddress.Zero))
-        addressRangeMax = I2CAddress.DeviceMaxValue;
+      if (addressRangeMin.Equals(I2cAddress.Zero))
+        addressRangeMin = I2cAddress.DeviceMinValue;
+      if (addressRangeMax.Equals(I2cAddress.Zero))
+        addressRangeMax = I2cAddress.DeviceMaxValue;
 
-      var writeAddressSet = new SortedSet<I2CAddress>();
-      var readAddressSet = new SortedSet<I2CAddress>();
+      var writeAddressSet = new SortedSet<I2cAddress>();
+      var readAddressSet = new SortedSet<I2cAddress>();
 
       for (var addr = (int)addressRangeMin; addr <= (int)addressRangeMax; addr++) {
-        var address = new I2CAddress(addr);
+        var address = new I2cAddress(addr);
 
-        progress?.Report(new I2CScanBusProgress(address, addressRangeMin, addressRangeMax));
+        progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
         try {
           Write(address, default, cancellationToken);
 
           writeAddressSet.Add(address);
         }
-        catch (I2CNAckException ex) when (ex.Address.Equals(address)) {
+        catch (I2cNAckException ex) when (ex.Address.Equals(address)) {
           // expected exception
         }
 
@@ -102,7 +102,7 @@ partial class MCP2221 {
 
           readAddressSet.Add(address);
         }
-        catch (I2CReadException ex) when (ex.Address.Equals(address)) {
+        catch (I2cReadException ex) when (ex.Address.Equals(address)) {
           // expected exception
         }
       }

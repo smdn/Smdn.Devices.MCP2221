@@ -8,16 +8,16 @@ namespace Smdn.Devices.MCP2221.GpioAdapter;
 
 [CLSCompliant(false)]
 public class MCP2221I2cDevice : I2cDevice {
-  private readonly MCP2221.I2CFunctionality bus;
-  private readonly I2CAddress address;
+  private readonly MCP2221.I2cFunctionality bus;
+  private readonly I2cAddress address;
   public override I2cConnectionSettings ConnectionSettings { get; }
 
-  public I2CBusSpeed BusSpeed {
+  public I2cBusSpeed BusSpeed {
     get => bus.BusSpeed;
     set => bus.BusSpeed = value;
   }
 
-  public MCP2221I2cDevice(MCP2221.I2CFunctionality i2cBus, I2CAddress i2cDeviceAddress)
+  public MCP2221I2cDevice(MCP2221.I2cFunctionality i2cBus, I2cAddress i2cDeviceAddress)
   {
     this.bus = i2cBus ?? throw new ArgumentNullException(nameof(i2cBus));
     this.address = i2cDeviceAddress;

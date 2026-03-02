@@ -7,16 +7,16 @@ using System.Collections.Generic;
 namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0055
-public readonly struct I2CAddress :
-  IEquatable<I2CAddress>,
+public readonly struct I2cAddress :
+  IEquatable<I2cAddress>,
   IEquatable<int>,
   IEquatable<byte>,
-  IComparable<I2CAddress>
+  IComparable<I2cAddress>
 {
 #pragma warning disable IDE0055
-  public static readonly I2CAddress Zero = default;
-  public static readonly I2CAddress DeviceMinValue = new((byte)0b_0_0001_000u);
-  public static readonly I2CAddress DeviceMaxValue = new((byte)0b_0_1110_111u);
+  public static readonly I2cAddress Zero = default;
+  public static readonly I2cAddress DeviceMinValue = new((byte)0b_0_0001_000u);
+  public static readonly I2cAddress DeviceMaxValue = new((byte)0b_0_1110_111u);
 
   private readonly byte address;
 
@@ -46,7 +46,7 @@ public readonly struct I2CAddress :
     return (byte)(address & 0b0_0000_111u);
   }
 
-  public I2CAddress(int deviceAddressBits, int hardwareAddressBits)
+  public I2cAddress(int deviceAddressBits, int hardwareAddressBits)
     : this(
       (byte)(
         ValidateDeviceAddressBits((uint)deviceAddressBits, nameof(deviceAddressBits)) |
@@ -64,44 +64,44 @@ public readonly struct I2CAddress :
     return (byte)(address & 0b_0_1111_111u);
   }
 
-  public I2CAddress(int address)
+  public I2cAddress(int address)
     : this(ValidateAddress((uint)address, nameof(address)))
   {
   }
 
-  private I2CAddress(byte address)
+  private I2cAddress(byte address)
   {
     this.address = address;
   }
 
-  public bool Equals(I2CAddress other) => this.address == other.address;
+  public bool Equals(I2cAddress other) => this.address == other.address;
   public bool Equals(int other) => this.address == other;
   public bool Equals(byte other) => this.address == other;
   public override bool Equals(object? obj) => obj switch {
     null => false,
-    I2CAddress other => this.Equals(other),
+    I2cAddress other => this.Equals(other),
     int other => this.Equals(other),
     byte other => this.Equals(other),
     _ => false,
   };
   public override int GetHashCode() => address.GetHashCode();
-  public static bool operator ==(I2CAddress x, I2CAddress y) => x.Equals(y);
-  public static bool operator !=(I2CAddress x, I2CAddress y) => !x.Equals(y);
+  public static bool operator ==(I2cAddress x, I2cAddress y) => x.Equals(y);
+  public static bool operator !=(I2cAddress x, I2cAddress y) => !x.Equals(y);
 
-  public int CompareTo(I2CAddress other) => Comparer<byte>.Default.Compare(this.address, other.address);
-  public static bool operator <(I2CAddress left, I2CAddress right) => left.address < right.address;
-  public static bool operator <=(I2CAddress left, I2CAddress right) => left.address <= right.address;
-  public static bool operator >(I2CAddress left, I2CAddress right) => left.address > right.address;
-  public static bool operator >=(I2CAddress left, I2CAddress right) => left.address >= right.address;
+  public int CompareTo(I2cAddress other) => Comparer<byte>.Default.Compare(this.address, other.address);
+  public static bool operator <(I2cAddress left, I2cAddress right) => left.address < right.address;
+  public static bool operator <=(I2cAddress left, I2cAddress right) => left.address <= right.address;
+  public static bool operator >(I2cAddress left, I2cAddress right) => left.address > right.address;
+  public static bool operator >=(I2cAddress left, I2cAddress right) => left.address >= right.address;
 
-  public static explicit operator byte(I2CAddress address) => address.address;
-  public static explicit operator int(I2CAddress address) => address.address;
-  public static implicit operator I2CAddress(byte address) => new(address);
+  public static explicit operator byte(I2cAddress address) => address.address;
+  public static explicit operator int(I2cAddress address) => address.address;
+  public static implicit operator I2cAddress(byte address) => new(address);
 
   public byte ToByte() => address;
   public int ToInt32() => address;
 
-  public static I2CAddress FromByte(byte address) => new(address);
+  public static I2cAddress FromByte(byte address) => new(address);
 
   internal byte GetReadAddress() => (byte)((address << 1) | 0b_0000_0001);
   internal byte GetWriteAddress() => (byte)(address << 1);

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Smdn.Devices.MCP2221;
 
-internal readonly struct I2CEngineState {
+internal readonly struct I2cEngineState {
   public enum TransferStatus : byte {
     NoSpecialOperation = 0x00, // No special operation
     MarkedForCancellation = 0x10, // The current I2C/SMBus transfer was marked for cancellation
@@ -29,7 +29,7 @@ internal readonly struct I2CEngineState {
   public PinValue LineValueSCL { get; init; }
   public PinValue LineValueSDA { get; init; }
 
-  public static I2CEngineState Parse(ReadOnlySpan<byte> resp)
+  public static I2cEngineState Parse(ReadOnlySpan<byte> resp)
     => new() {
 #pragma warning disable IDE0055 // Fix formatting
       // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
@@ -50,7 +50,7 @@ internal readonly struct I2CEngineState {
   public override string ToString()
     => string.Concat(
       "{",
-      nameof(I2CEngineState),
+      nameof(I2cEngineState),
       ": ",
       string.Join(
         ", ",

@@ -20,11 +20,11 @@ using var serviceProvider = services.BuildServiceProvider();
 
 await using var device = await MCP2221.CreateAsync(serviceProvider);
 
-await device.GP3.ConfigureAsLEDI2CAsync();
+await device.GP3.ConfigureAsLEDI2cAsync();
 
 using var display = SO1602A.Create(
-  new MCP2221I2cDevice(device.I2C, SO1602A.DefaultI2CAddress) {
-    BusSpeed = I2CBusSpeed.FastMode
+  new MCP2221I2cDevice(device.I2C, SO1602A.DefaultI2cAddress) {
+    BusSpeed = I2cBusSpeed.FastMode
   }
 );
 

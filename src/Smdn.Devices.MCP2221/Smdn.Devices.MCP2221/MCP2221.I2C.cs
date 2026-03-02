@@ -16,30 +16,30 @@ namespace Smdn.Devices.MCP2221;
 #pragma warning disable IDE0040
 partial class MCP2221 {
 #pragma warning restore IDE0040
-  public I2CFunctionality I2C { get; }
+  public I2cFunctionality I2C { get; }
 
 #pragma warning disable CA1034
-  public sealed partial class I2CFunctionality {
+  public sealed partial class I2cFunctionality {
 #pragma warning restore CA1034
     public const int MaxBlockLength = 0xFFFF;
     private const int MaxTransferLengthPerCommand = 64 - 4;
 
     private readonly MCP2221 device;
 
-    public I2CBusSpeed BusSpeed { get; set; } = I2CBusSpeed.Default;
+    public I2cBusSpeed BusSpeed { get; set; } = I2cBusSpeed.Default;
 
-    internal I2CFunctionality(MCP2221 device)
+    internal I2cFunctionality(MCP2221 device)
     {
       this.device = device;
     }
 
-    private static readonly EventId EventIdI2CCommand = new(10, "I2C command");
-    private static readonly EventId EventIdI2CEngineState = new(11, "I2C engine state");
+    private static readonly EventId EventIdI2cCommand = new(10, "I2C command");
+    private static readonly EventId EventIdI2cEngineState = new(11, "I2C engine state");
 
     private static class CancelTransferCommand {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
 #pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
-      public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Exception exceptionCauseOfCancellation) args)
+      public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Exception exceptionCauseOfCancellation) args)
 #pragma warning restore IDE0060
       {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
@@ -49,21 +49,21 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      public static I2CEngineState ParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Exception exceptionCauseOfCancellation) args)
+      public static I2cEngineState ParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Exception exceptionCauseOfCancellation) args)
       {
         if (resp[1] != 0x00) // Command completed successfully
           throw new CommandException($"unexpected response (0x{resp[1]:X2})", args.exceptionCauseOfCancellation);
 
-        var state = I2CEngineState.Parse(resp);
+        var state = I2cEngineState.Parse(resp);
         var isBusStatusDefined =
 #if SYSTEM_ENUM_ISDEFINED_OF_TENUM
-          Enum.IsDefined<I2CEngineState.TransferStatus>(state.BusStatus);
+          Enum.IsDefined<I2cEngineState.TransferStatus>(state.BusStatus);
 #else
-          Enum.IsDefined(typeof(I2CEngineState.TransferStatus), state.BusStatus);
+          Enum.IsDefined(typeof(I2cEngineState.TransferStatus), state.BusStatus);
 #endif
 
         if (!isBusStatusDefined) {
-          throw new I2CCommandException(
+          throw new I2cCommandException(
             args.address,
             $"unexpected response while transfer cancellation (0x{resp[2]:X2})",
             args.exceptionCauseOfCancellation
@@ -74,7 +74,7 @@ partial class MCP2221 {
       }
     }
 
-    private static async ValueTask CancelAsync(MCP2221 device, I2CAddress address, Exception exceptionCauseOfCancellation)
+    private static async ValueTask CancelAsync(MCP2221 device, I2cAddress address, Exception exceptionCauseOfCancellation)
     {
       var engineState = await device.CommandAsync(
         userData: default,
@@ -84,10 +84,10 @@ partial class MCP2221 {
         parseResponse: CancelTransferCommand.ParseResponse
       ).ConfigureAwait(false);
 
-      device.logger?.LogWarning(EventIdI2CEngineState, $"CANCEL TRANSFER: {engineState}");
+      device.logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
     }
 
-    private static void Cancel(MCP2221 device, I2CAddress address, Exception exceptionCauseOfCancellation)
+    private static void Cancel(MCP2221 device, I2cAddress address, Exception exceptionCauseOfCancellation)
     {
       var engineState = device.Command(
         userData: default,
@@ -97,11 +97,11 @@ partial class MCP2221 {
         parseResponse: CancelTransferCommand.ParseResponse
       );
 
-      device.logger?.LogWarning(EventIdI2CEngineState, $"CANCEL TRANSFER: {engineState}");
+      device.logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
     }
 
     public ValueTask WriteAsync(
-      I2CAddress address,
+      I2cAddress address,
       byte[] buffer,
       int offset,
       int count,
@@ -115,7 +115,7 @@ partial class MCP2221 {
 
     /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues writing command with 0-length in this case.</remarks>
     public async ValueTask WriteAsync(
-      I2CAddress address,
+      I2cAddress address,
       ReadOnlyMemory<byte> buffer,
       CancellationToken cancellationToken = default
     )
@@ -124,7 +124,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+        device.logger?.LogInformation(EventIdI2cCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
 
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
@@ -146,15 +146,15 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(EventIdI2CCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
-        if (ex is not I2CNAckException)
+        device.logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
+        if (ex is not I2cNAckException)
           await CancelAsync(device, address, ex).ConfigureAwait(false);
         throw;
       }
     }
 
     public void Write(
-      I2CAddress address,
+      I2cAddress address,
       byte[] buffer,
       int offset,
       int count,
@@ -168,7 +168,7 @@ partial class MCP2221 {
 
     /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues writing command with 0-length in this case.</remarks>
     public void Write(
-      I2CAddress address,
+      I2cAddress address,
       ReadOnlySpan<byte> buffer,
       CancellationToken cancellationToken = default
     )
@@ -177,7 +177,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+        device.logger?.LogInformation(EventIdI2cCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
 
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
@@ -199,15 +199,15 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(EventIdI2CCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
-        if (ex is not I2CNAckException)
+        device.logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
+        if (ex is not I2cNAckException)
           Cancel(device, address, ex);
         throw;
       }
     }
 
     public ValueTask<int> ReadAsync(
-      I2CAddress address,
+      I2cAddress address,
       byte[] buffer,
       int offset,
       int count,
@@ -221,7 +221,7 @@ partial class MCP2221 {
 
     /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues reading command with 0-length in this case.</remarks>
     public async ValueTask<int> ReadAsync(
-      I2CAddress address,
+      I2cAddress address,
       Memory<byte> buffer,
       CancellationToken cancellationToken = default
     )
@@ -230,7 +230,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
+        device.logger?.LogInformation(EventIdI2cCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
 
         var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
@@ -273,15 +273,15 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(EventIdI2CCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
-        if (ex is not I2CReadException)
+        device.logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
+        if (ex is not I2cReadException)
           await CancelAsync(device, address, ex).ConfigureAwait(false);
         throw;
       }
     }
 
     public int Read(
-      I2CAddress address,
+      I2cAddress address,
       byte[] buffer,
       int offset,
       int count,
@@ -295,7 +295,7 @@ partial class MCP2221 {
 
     /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues reading command with 0-length in this case.</remarks>
     public int Read(
-      I2CAddress address,
+      I2cAddress address,
       Span<byte> buffer,
       CancellationToken cancellationToken = default
     )
@@ -304,7 +304,7 @@ partial class MCP2221 {
         throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
       try {
-        device.logger?.LogInformation(EventIdI2CCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
+        device.logger?.LogInformation(EventIdI2cCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
 
         var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
@@ -347,15 +347,15 @@ partial class MCP2221 {
         }
       }
       catch (Exception ex) {
-        device.logger?.LogError(EventIdI2CCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
-        if (ex is not I2CReadException)
+        device.logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
+        if (ex is not I2cReadException)
           Cancel(device, address, ex);
         throw;
       }
     }
 
     public async ValueTask WriteByteAsync(
-      I2CAddress address,
+      I2cAddress address,
       byte value,
       CancellationToken cancellationToken = default
     )
@@ -373,14 +373,14 @@ partial class MCP2221 {
     }
 
     public void WriteByte(
-      I2CAddress address,
+      I2cAddress address,
       byte value,
       CancellationToken cancellationToken = default
     )
       => Write(address, [value], cancellationToken);
 
     public async ValueTask<int> ReadByteAsync(
-      I2CAddress address,
+      I2cAddress address,
       CancellationToken cancellationToken = default
     )
     {
@@ -398,7 +398,7 @@ partial class MCP2221 {
     }
 
     public int ReadByte(
-      I2CAddress address,
+      I2cAddress address,
       CancellationToken cancellationToken = default
     )
     {

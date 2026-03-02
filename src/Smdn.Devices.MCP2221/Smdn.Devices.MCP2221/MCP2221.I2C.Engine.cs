@@ -13,15 +13,15 @@ namespace Smdn.Devices.MCP2221;
 
 #pragma warning disable IDE0040
 partial class MCP2221 {
-  partial class I2CFunctionality {
+  partial class I2cFunctionality {
 #pragma warning restore IDE0040
-    private static Exception CreateUnexpectedResponseException(I2CAddress? address, byte response)
+    private static Exception CreateUnexpectedResponseException(I2cAddress? address, byte response)
       => address == null
         ? new CommandException($"unexpected response (0x{response:X2})")
-        : new I2CCommandException(address.Value, $"unexpected response (0x{response:X2})");
-    private static I2CCommandException CreateI2CErrorException(I2CAddress address, byte? stateValue, string message, string? i2cEngineState = null)
+        : new I2cCommandException(address.Value, $"unexpected response (0x{response:X2})");
+    private static I2cCommandException CreateI2cErrorException(I2cAddress address, byte? stateValue, string message, string? i2cEngineState = null)
       => new(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
-    private static I2CCommandException CreateUnknownEngineStateException(I2CAddress address, byte? stateValue, string? i2cEngineState = null)
+    private static I2cCommandException CreateUnknownEngineStateException(I2cAddress address, byte? stateValue, string? i2cEngineState = null)
       => new(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
 
     private enum OperationState {
@@ -32,31 +32,31 @@ partial class MCP2221 {
     }
 
     private class OperationContext {
-      public OperationContext(ILogger? logger, I2CBusSpeed busSpeed)
+      public OperationContext(ILogger? logger, I2cBusSpeed busSpeed)
       {
         this.logger = logger;
         this.busSpeed = busSpeed;
       }
 
       private readonly ILogger? logger;
-      private readonly I2CBusSpeed busSpeed;
+      private readonly I2cBusSpeed busSpeed;
       private OperationState operationState;
-      private I2CEngineState lastEngineState;
+      private I2cEngineState lastEngineState;
       public int ReadLength { get; private set; } = -1;
 
 #pragma warning disable 0164
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
       public IEnumerable<(
-        ConstructCommandAction<(I2CAddress, Memory<byte>)> constructCommand,
-        ParseResponseFunc<(I2CAddress, Memory<byte>), bool> parseResponse
+        ConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
+        ParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
       )>
       IterateWriteCommands()
       {
         operationState = OperationState.Initial;
 
       WRITE_INIT:
-        logger?.LogDebug(EventIdI2CCommand, "WRITE_INIT");
+        logger?.LogDebug(EventIdI2cCommand, "WRITE_INIT");
 
         yield return (
           StatusConstructCommand,
@@ -70,7 +70,7 @@ partial class MCP2221 {
 
 #pragma warning disable IDE0055
       WRITE_DO:
-        logger?.LogDebug(EventIdI2CCommand, "WRITE_DO");
+        logger?.LogDebug(EventIdI2cCommand, "WRITE_DO");
 #pragma warning restore IDE0055
 
         yield return (
@@ -79,7 +79,7 @@ partial class MCP2221 {
         );
 
       WRITE_STATUS:
-        logger?.LogDebug(EventIdI2CCommand, "WRITE_STATUS");
+        logger?.LogDebug(EventIdI2cCommand, "WRITE_STATUS");
 
         yield return (
           StatusConstructCommand,
@@ -97,8 +97,8 @@ partial class MCP2221 {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
       public IEnumerable<(
-        ConstructCommandAction<(I2CAddress, Memory<byte>)> constructCommand,
-        ParseResponseFunc<(I2CAddress, Memory<byte>), bool> parseResponse
+        ConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
+        ParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
       )>
       IterateReadCommands()
       {
@@ -106,7 +106,7 @@ partial class MCP2221 {
         ReadLength = -1;
 
       READ_INIT:
-        logger?.LogDebug(EventIdI2CCommand, "READ_INIT");
+        logger?.LogDebug(EventIdI2cCommand, "READ_INIT");
 
         yield return (
           StatusConstructCommand,
@@ -120,7 +120,7 @@ partial class MCP2221 {
 
 #pragma warning disable IDE0055
       READ_DO:
-        logger?.LogDebug(EventIdI2CCommand, "READ_DO");
+        logger?.LogDebug(EventIdI2cCommand, "READ_DO");
 #pragma warning restore IDE0055
 
         yield return (
@@ -150,13 +150,13 @@ partial class MCP2221 {
       }
 #pragma warning restore 0164
 
-      private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2CAddress address, I2CEngineState engineState)
+      private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2cAddress address, I2cEngineState engineState)
       {
         if (currentState == OperationState.Initial && (engineState.LineValueSCL.IsLow() || engineState.LineValueSDA.IsLow()))
-          throw CreateI2CErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
+          throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
 
-        if (engineState.BusStatus == I2CEngineState.TransferStatus.MarkedForCancellation)
-          throw CreateI2CErrorException(address, engineState.StateMachineStateValue, "I2C engine has been marked for cancellation unexpectedly. It may need to be reset or powered off.", engineState.ToString());
+        if (engineState.BusStatus == I2cEngineState.TransferStatus.MarkedForCancellation)
+          throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been marked for cancellation unexpectedly. It may need to be reset or powered off.", engineState.ToString());
 
         return engineState.StateMachineStateValue switch {
           /*
@@ -174,13 +174,13 @@ partial class MCP2221 {
           // 0x25: write operation still in progress?
           0x25 when currentState == OperationState.Initial => OperationState.CancelAndRetry, // remains previous operation state(?)
           0x25 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
-          0x25 => throw new I2CNAckException(address), // time out
+          0x25 => throw new I2cNAckException(address), // time out
 
           // 0x61: read operation still in progress?
           // 0x61 when (currentState == OperationState.Initial) => OperationState.CancelAndRetry, // issuing cancellation in this state will transit state to 0x62, and will be in state which cannot reset with command
           0x61 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
           // 0x62: has been marked for cancellation?
-          0x62 => throw CreateI2CErrorException(address, engineState.StateMachineStateValue, "I2C engine has been in invalid state. It may need to be reset or powered off.", engineState.ToString()),
+          0x62 => throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been in invalid state. It may need to be reset or powered off.", engineState.ToString()),
 
           /*
            * exceptional / unknown states
@@ -190,7 +190,7 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private void StatusConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
+      private void StatusConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
         comm[0] = 0x10; // Status/Set Parameters
@@ -200,9 +200,9 @@ partial class MCP2221 {
         if (operationState == OperationState.Initial) {
           comm[3] = 0x20; // Set I2C/SMBus communication speed
           comm[4] = busSpeed switch {
-            I2CBusSpeed.Speed10kBitsPerSec => 0xAD,
-            I2CBusSpeed.Speed100kBitsPerSec => 0x75,
-            I2CBusSpeed.Speed400kBitsPerSec => 0x1B,
+            I2cBusSpeed.Speed10kBitsPerSec => 0xAD,
+            I2cBusSpeed.Speed100kBitsPerSec => 0x75,
+            I2cBusSpeed.Speed400kBitsPerSec => 0x1B,
             _ => 0x75, // as default (or should throw InvalidEnumValueException?)
           };
         }
@@ -212,7 +212,7 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private bool StatusParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> _) args)
+      private bool StatusParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
         _ = resp[1] switch {
@@ -220,9 +220,9 @@ partial class MCP2221 {
           _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
         };
 
-        lastEngineState = I2CEngineState.Parse(resp);
+        lastEngineState = I2cEngineState.Parse(resp);
 
-        logger?.LogInformation(EventIdI2CEngineState, $"STATUS/SET PARAMETERS: {lastEngineState}");
+        logger?.LogInformation(EventIdI2cEngineState, $"STATUS/SET PARAMETERS: {lastEngineState}");
 
         if (operationState == OperationState.Initial) {
           var isSpeedConsidered = resp[3] switch {
@@ -233,7 +233,7 @@ partial class MCP2221 {
           };
 
           if (!isSpeedConsidered)
-            logger?.LogWarning(EventIdI2CEngineState, $"STATUS/SET PARAMETERS: new I2C/SMBus communication speed is not considered");
+            logger?.LogWarning(EventIdI2cEngineState, $"STATUS/SET PARAMETERS: new I2C/SMBus communication speed is not considered");
         }
 
         operationState = TransitStateOrThrowIfEngineStateInvalid(
@@ -246,7 +246,7 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private void WriteConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
+      private void WriteConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.5 I2C WRITE DATA
         comm[0] = 0x90; // I2C Write Data
@@ -257,7 +257,7 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private bool WriteParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> _) args)
+      private bool WriteParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.5 I2C WRITE DATA
         operationState = resp[1] switch {
@@ -270,7 +270,7 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private void ReadConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
+      private void ReadConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.8 I2C READ DATA
         comm[0] = 0x91; // I2C Read Data
@@ -280,7 +280,7 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private bool ReadParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> _) args)
+      private bool ReadParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.8 I2C READ DATA
         operationState = resp[1] switch {
@@ -293,7 +293,7 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private void GetConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2CAddress address, Memory<byte> _) args)
+      private void GetConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
       {
         // [MCP2221A] 3.1.10 I2C READ DATA - GET I2C DATA
         comm[0] = 0x40; // I2C Read Data - Get I2C Data
@@ -302,21 +302,21 @@ partial class MCP2221 {
       }
 
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      private bool GetParseResponse(ReadOnlySpan<byte> resp, (I2CAddress address, Memory<byte> buffer) args)
+      private bool GetParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> buffer) args)
       {
         // [MCP2221A] 3.1.10 I2C READ DATA - GET I2C DATA
         operationState = resp[1] switch {
           0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
           0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-          0x41 => throw new I2CReadException(args.address, "can not read from I2C slave"), // Error reading the I2C slave data
+          0x41 => throw new I2cReadException(args.address, "can not read from I2C slave"), // Error reading the I2C slave data
           _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
         };
 
         if (operationState == OperationState.AdvanceToNextStep) {
           ReadLength = resp[3] switch {
             _ when resp[3] is >= 0 and <= 60 => resp[3],
-            127 => throw new I2CCommandException("error has occurred on reading"),
-            _ => throw new I2CCommandException(args.address, $"unexpected data length ({resp[3]})"),
+            127 => throw new I2cCommandException("error has occurred on reading"),
+            _ => throw new I2cCommandException(args.address, $"unexpected data length ({resp[3]})"),
           };
 
           resp.Slice(4, ReadLength).CopyTo(args.buffer.Span);

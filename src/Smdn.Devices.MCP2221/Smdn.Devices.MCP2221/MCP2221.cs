@@ -104,7 +104,7 @@ public partial class MCP2221 :
       this.GP3,
     };
 
-    this.I2C = new I2CFunctionality(this);
+    this.I2C = new I2cFunctionality(this);
 
     this.logger = logger;
   }

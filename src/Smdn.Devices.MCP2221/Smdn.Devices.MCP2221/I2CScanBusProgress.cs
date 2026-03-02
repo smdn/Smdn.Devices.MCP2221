@@ -4,16 +4,16 @@
 
 namespace Smdn.Devices.MCP2221;
 
-public readonly struct I2CScanBusProgress {
-  public I2CAddress ScanningAddress { get; }
-  public I2CAddress AddressRangeMin { get; }
-  public I2CAddress AddressRangeMax { get; }
+public readonly struct I2cScanBusProgress {
+  public I2cAddress ScanningAddress { get; }
+  public I2cAddress AddressRangeMin { get; }
+  public I2cAddress AddressRangeMax { get; }
   public int ProgressInPercent => 100 * ((int)ScanningAddress - (int)AddressRangeMin) / ((int)AddressRangeMax - (int)AddressRangeMin);
 
-  internal I2CScanBusProgress(
-    I2CAddress scanningAddress,
-    I2CAddress addressRangeMin,
-    I2CAddress addressRangeMax
+  internal I2cScanBusProgress(
+    I2cAddress scanningAddress,
+    I2cAddress addressRangeMin,
+    I2cAddress addressRangeMax
   )
   {
     this.ScanningAddress = scanningAddress;

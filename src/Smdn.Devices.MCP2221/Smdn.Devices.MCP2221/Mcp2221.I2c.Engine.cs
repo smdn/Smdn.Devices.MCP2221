@@ -18,10 +18,12 @@ partial class Mcp2221 {
 #pragma warning restore IDE0040
     private static Exception CreateUnexpectedResponseException(I2cAddress? address, byte response)
       => address == null
-        ? new CommandException($"unexpected response (0x{response:X2})")
+        ? new Mcp2221CommandException($"unexpected response (0x{response:X2})")
         : new I2cCommandException(address.Value, $"unexpected response (0x{response:X2})");
+
     private static I2cCommandException CreateI2cErrorException(I2cAddress address, byte? stateValue, string message, string? i2cEngineState = null)
       => new(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
+
     private static I2cCommandException CreateUnknownEngineStateException(I2cAddress address, byte? stateValue, string? i2cEngineState = null)
       => new(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
 

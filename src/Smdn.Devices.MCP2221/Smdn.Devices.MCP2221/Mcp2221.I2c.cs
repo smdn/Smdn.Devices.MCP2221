@@ -52,7 +52,7 @@ partial class Mcp2221 {
       public static I2cEngineState ParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Exception exceptionCauseOfCancellation) args)
       {
         if (resp[1] != 0x00) // Command completed successfully
-          throw new CommandException($"unexpected response (0x{resp[1]:X2})", args.exceptionCauseOfCancellation);
+          throw new Mcp2221CommandException($"unexpected response (0x{resp[1]:X2})", args.exceptionCauseOfCancellation);
 
         var state = I2cEngineState.Parse(resp);
         var isBusStatusDefined =

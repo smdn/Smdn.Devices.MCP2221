@@ -85,7 +85,7 @@ partial class Mcp2221 {
         ).ConfigureAwait(false);
       }
       catch (Exception ex) {
-        throw new CommandException("writing command report failed", ex);
+        throw new Mcp2221CommandException("writing command report failed", ex);
       }
 
       try {
@@ -95,13 +95,13 @@ partial class Mcp2221 {
         ).ConfigureAwait(false);
       }
       catch (Exception ex) {
-        throw new CommandException("reading response report failed", ex);
+        throw new Mcp2221CommandException("reading response report failed", ex);
       }
 
       logger?.LogTrace(EventIdResponse, "< " + ConvertByteSequenceToString(responseReportMemory.Span.Slice(1, ResponseLength)));
 
       if (commandReportMemory.Span[0] != responseReportMemory.Span[0])
-        throw new CommandException($"unexpected command echo (command code: {commandReportMemory.Span[0]:X2}, command code echo: {responseReportMemory.Span[0]:X2})");
+        throw new Mcp2221CommandException($"unexpected command echo (command code: {commandReportMemory.Span[0]:X2}, command code echo: {responseReportMemory.Span[0]:X2})");
 
       return parseResponse(
         responseReportMemory.Span.Slice(1, ResponseLength),
@@ -154,7 +154,7 @@ partial class Mcp2221 {
       );
     }
     catch (Exception ex) {
-      throw new CommandException("writing command report failed", ex);
+      throw new Mcp2221CommandException("writing command report failed", ex);
     }
 
     try {
@@ -164,13 +164,13 @@ partial class Mcp2221 {
       );
     }
     catch (Exception ex) {
-      throw new CommandException("reading response report failed", ex);
+      throw new Mcp2221CommandException("reading response report failed", ex);
     }
 
     logger?.LogTrace(EventIdResponse, "< " + ConvertByteSequenceToString(responseReport.Slice(1)));
 
     if (commandReport[0] != responseReport[0])
-      throw new CommandException($"unexpected command echo (command code: {commandReport[0]:X2}, command code echo: {responseReport[0]:X2})");
+      throw new Mcp2221CommandException($"unexpected command echo (command code: {commandReport[0]:X2}, command code echo: {responseReport[0]:X2})");
 
     return parseResponse(
       responseReport.Slice(1),

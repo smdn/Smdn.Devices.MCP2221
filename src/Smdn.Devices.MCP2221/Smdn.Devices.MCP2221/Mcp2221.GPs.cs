@@ -363,7 +363,7 @@ partial class Mcp2221 {
       {
         return resp[1] switch {
           0x00 => true, // Command completed successfully
-          _ => throw new CommandException($"unexpected command response ({resp[1]:X2})"),
+          _ => throw new Mcp2221CommandException($"unexpected command response ({resp[1]:X2})"),
         };
       }
     }

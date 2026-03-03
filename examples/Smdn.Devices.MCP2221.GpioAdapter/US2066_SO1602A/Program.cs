@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 
 using System;
@@ -8,7 +8,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 using Smdn.Devices.Mcp2221A;
-using Smdn.Devices.Mcp2221A.GpioAdapter;
+using Smdn.Devices.Mcp2221A.Peripherals.I2c;
 using Smdn.Devices.US2066;
 using Smdn.IO.UsbHid.DependencyInjection;
 
@@ -22,10 +22,10 @@ await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLedI2cAsync();
 
+device.I2c.BusSpeed = I2cBusSpeed.FastMode;
+
 using var display = SO1602A.Create(
-  new Mcp2221AI2cDevice(device.I2c, SO1602A.DefaultI2CAddress) {
-    BusSpeed = I2cBusSpeed.FastMode
-  }
+  device.I2c.CreateI2cDeviceAdapter(SO1602A.DefaultI2CAddress)
 );
 
 // write string and display it

@@ -16,7 +16,7 @@ public partial class Mcp2221ATests {
   private const byte ReportInput = 0x00;
   private const byte ReportOutput = 0x00;
 
-  private static PseudoUsbHidDevice CreatePseudoDevice()
+  internal static PseudoUsbHidDevice CreatePseudoDevice()
     => new PseudoUsbHidDevice(
       createWriteStream: () => new MemoryStream(capacity: (1 + 64) * 5),
       createReadStream: () => {

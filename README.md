@@ -187,7 +187,6 @@ For detailed instructions, including wiring of the devices and parts, see [blink
 More examples can be found in following examples directory.
 
 - [Smdn.Devices.Mcp2221A examples](examples/Smdn.Devices.Mcp2221A/): Small examples using MCP2221/MCP2221A functionalities.
-- [Smdn.Devices.MCP2221.GpioAdapter examples](examples/Smdn.Devices.MCP2221.GpioAdapter/): Small examples using [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/).
 
 # Troubleshooting
 ## Linux

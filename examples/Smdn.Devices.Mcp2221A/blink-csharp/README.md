@@ -32,15 +32,3 @@ This example is written in C#. For Visual Basic version, see [blink-visualbasic]
 
 ## Next step
 To learn more usage of `Smdn.Devices.Mcp2221A`, see [Smdn.Devices.Mcp2221A examples](../../Smdn.Devices.Mcp2221A/) directory.
-
-
-To use device bindings from `Iot.Device.Bindings` with MCP2221/MCP2221A, see [Smdn.Devices.MCP2221.GpioAdapter examples](../../Smdn.Devices.MCP2221.GpioAdapter/) directory.
-
-If you want to use `Smdn.Devices.Mcp2221A` in your project, create project and add package `Smdn.Devices.Mcp2221A` to the project. Add `Smdn.Devices.MCP2221.GpioAdapter` also if you want to use device bindings from `Iot.Device.Bindings`.
-
-```
-dotnet new console --name your-project
-cd your-project/
-dotnet add package Smdn.Devices.Mcp2221A
-dotnet add package Smdn.Devices.MCP2221.GpioAdapter
-```

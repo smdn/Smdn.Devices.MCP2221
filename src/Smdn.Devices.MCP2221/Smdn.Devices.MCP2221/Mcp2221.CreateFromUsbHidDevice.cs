@@ -97,7 +97,7 @@ partial class Mcp2221 {
         ).ConfigureAwait(false);
       }
       catch (Exception ex) {
-        throw new DeviceUnavailableException(ex, usbHidDevice);
+        throw new Mcp2221UnavailableException(ex, usbHidDevice);
       }
 
       await device.RetrieveChipInformationAsync(
@@ -140,7 +140,7 @@ partial class Mcp2221 {
         );
       }
       catch (Exception ex) {
-        throw new DeviceUnavailableException(ex, usbHidDevice);
+        throw new Mcp2221UnavailableException(ex, usbHidDevice);
       }
 
       device.RetrieveChipInformation(

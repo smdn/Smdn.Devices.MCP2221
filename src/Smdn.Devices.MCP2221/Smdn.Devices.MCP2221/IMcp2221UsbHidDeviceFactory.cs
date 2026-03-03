@@ -53,7 +53,7 @@ public interface IMcp2221UsbHidDeviceFactory {
   /// <see cref="IUsbHidDevice"/> corresponding to the MCP2221/MCP2221A,
   /// but <paramref name="serviceProvider"/> is <see langword="null"/>.
   /// </exception>
-  /// <exception cref="DeviceNotFoundException">
+  /// <exception cref="Mcp2221NotFoundException">
   /// No MCP2221/MCP2221A <see cref="IUsbHidDevice"/> matching the specified
   /// <paramref name="predicate"/> was found.
   /// Or, the available MCP2221/MCP2221A was not found on the current system.
@@ -105,7 +105,7 @@ public interface IMcp2221UsbHidDeviceFactory {
   /// <see cref="IUsbHidDevice"/> corresponding to the MCP2221/MCP2221A,
   /// but <paramref name="serviceProvider"/> is <see langword="null"/>.
   /// </exception>
-  /// <exception cref="DeviceNotFoundException">
+  /// <exception cref="Mcp2221NotFoundException">
   /// No MCP2221/MCP2221A <see cref="IUsbHidDevice"/> matching the specified
   /// <paramref name="predicate"/> was found.
   /// Or, the available MCP2221/MCP2221A was not found on the current system.

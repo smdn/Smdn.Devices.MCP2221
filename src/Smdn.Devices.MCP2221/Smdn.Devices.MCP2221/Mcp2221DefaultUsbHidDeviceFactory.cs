@@ -62,6 +62,6 @@ internal sealed class Mcp2221DefaultUsbHidDeviceFactory : IMcp2221UsbHidDeviceFa
       Mcp2221.DeviceProductId,
       predicate,
       cancellationToken
-    ) ?? throw new DeviceNotFoundException(usbHidService, predicate);
+    ) ?? throw new Mcp2221NotFoundException(usbHidService, predicate);
   }
 }

@@ -38,7 +38,7 @@ public partial class Mcp2221 :
         break;
 
       default:
-        throw new DeviceNotSupportedException($"hardware revision '{revision}' is not supported");
+        throw new Mcp2221NotSupportedException($"hardware revision '{revision}' is not supported");
     }
   }
 
@@ -50,7 +50,7 @@ public partial class Mcp2221 :
         break;
 
       default:
-        throw new DeviceNotSupportedException($"firmware revision '{revision}' is not supported");
+        throw new Mcp2221NotSupportedException($"firmware revision '{revision}' is not supported");
     }
   }
 

@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Device.Gpio;
 using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Logging;
@@ -152,7 +153,7 @@ partial class Mcp2221 {
 
       private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2cAddress address, I2cEngineState engineState)
       {
-        if (currentState == OperationState.Initial && (engineState.LineValueScl.IsLow() || engineState.LineValueSda.IsLow()))
+        if (currentState == OperationState.Initial && (engineState.LineValueScl.IsLow || engineState.LineValueSda.IsLow))
           throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
 
         if (engineState.BusStatus == I2cEngineState.TransferStatus.MarkedForCancellation)

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,10 +11,12 @@ using Smdn.IO.UsbHid;
 
 namespace Smdn.Devices.Mcp2221A;
 
+#pragma warning disable IDE0040
 partial class Mcp2221ATests {
+#pragma warning restore IDE0040
   [TestFixture]
   public class I2cFunctionality {
-    private readonly I2cAddress address = new I2cAddress(0x20);
+    private readonly I2cAddress address = new(0x20);
 
     private static byte[] ToByteArray(string hexByteSequence)
       => hexByteSequence.Split('-').Select(hex => Convert.ToByte(hex, 16)).ToArray();
@@ -48,9 +49,62 @@ partial class Mcp2221ATests {
       return (device, baseDevice.EndPoint);
     }
 
-    [Test] public async Task Write() => await TestWrite(d => { d.I2c.Write(address, new byte[] {0x00, 0x00, 0x00}); return Task.CompletedTask; });
+    private static System.Collections.IEnumerable YieldTestCases_CreateI2cDeviceAdapter()
+    {
+      const bool ShouldDisposeMcp2221A = true;
+      const bool ShouldNotDisposeMcp2221A = false;
 
-    [Test] public async Task WriteAsync() => await TestWrite(async d => { await d.I2c.WriteAsync(address, new byte[] {0x00, 0x00, 0x00}); });
+      yield return new object[] { I2cAddress.DeviceMinValue, ShouldDisposeMcp2221A };
+      yield return new object[] { I2cAddress.DeviceMaxValue, ShouldDisposeMcp2221A };
+      yield return new object[] { I2cAddress.DeviceMinValue, ShouldNotDisposeMcp2221A };
+    }
+
+    [TestCaseSource(nameof(YieldTestCases_CreateI2cDeviceAdapter))]
+    public async Task CreateI2cDeviceAdapter(
+      I2cAddress deviceAddress,
+      bool shouldDisposeMcp2221A
+    )
+    {
+      var (device, _) = await CreatePseudoDeviceWithConfiguredI2C();
+
+      using var i2cDevice = device.I2c.CreateI2cDeviceAdapter(deviceAddress, shouldDisposeMcp2221A);
+
+      Assert.That(i2cDevice, Is.Not.Null);
+      Assert.That(i2cDevice.ConnectionSettings, Is.Not.Null);
+      Assert.That(i2cDevice.ConnectionSettings.DeviceAddress, Is.EqualTo(deviceAddress));
+
+      i2cDevice.Dispose();
+
+      Assert.That(
+        () => i2cDevice.WriteByte(0x00),
+        Throws.TypeOf<ObjectDisposedException>()
+      );
+      Assert.That(
+        i2cDevice.ReadByte,
+        Throws.TypeOf<ObjectDisposedException>()
+      );
+
+      Assert.That(
+        () => _ = device.HidDevice,
+        shouldDisposeMcp2221A
+          ? Throws.TypeOf<ObjectDisposedException>()
+          : Throws.Nothing
+      );
+
+      Assert.That(
+        i2cDevice.Dispose,
+        Throws.Nothing,
+        "dispose again"
+      );
+    }
+
+    [Test]
+    public async Task Write()
+      => await TestWrite(d => { d.I2c.Write(address, [0x00, 0x00, 0x00]); return Task.CompletedTask; });
+
+    [Test]
+    public async Task WriteAsync()
+      => await TestWrite(async d => { await d.I2c.WriteAsync(address, new byte[] { 0x00, 0x00, 0x00 }); });
 
     private async Task TestWrite(Func<Mcp2221A, Task> writeAction)
     {

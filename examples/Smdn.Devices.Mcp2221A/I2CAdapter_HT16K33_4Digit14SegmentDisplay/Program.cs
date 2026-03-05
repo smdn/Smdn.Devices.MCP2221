@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 
 using System;
@@ -8,7 +8,7 @@ using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 using Smdn.Devices.Mcp2221A;
-using Smdn.Devices.Mcp2221A.GpioAdapter;
+using Smdn.Devices.Mcp2221A.Peripherals.I2c;
 using Smdn.IO.UsbHid.DependencyInjection;
 
 using Iot.Device.Display;
@@ -23,23 +23,22 @@ await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLedI2cAsync();
 
-Mcp2221AI2cDevice[] i2cDevices = {
-  new(device.I2c, Ht16k33.DefaultI2cAddress | 0b_000),
-  new(device.I2c, Ht16k33.DefaultI2cAddress | 0b_001),
+var i2cBus = device.I2c.CreateI2cBusAdapter(
+  busSpeed: I2cBusSpeed.Default
+  // If an I2cCommandException is thrown when using the
+  // HidSharp backend, try the following configuration:
+  // busSpeed: I2cBusSpeed.FastMode
+);
+
+var i2cDevices = new[] {
+  i2cBus.CreateDevice(Ht16k33.DefaultI2cAddress | 0b_000),
+  i2cBus.CreateDevice(Ht16k33.DefaultI2cAddress | 0b_001),
 };
 
-i2cDevices[0].BusSpeed = I2cBusSpeed.Default;
-i2cDevices[1].BusSpeed = I2cBusSpeed.Default;
-
-// If an I2cCommandException is thrown when using the
-// HidSharp backend, try the following configuration:
-// i2cDevices[0].BusSpeed = I2cBusSpeed.FastMode;
-// i2cDevices[1].BusSpeed = I2cBusSpeed.FastMode;
-
-FourDigitFourteenSegmentDisplay[] displays = {
+FourDigitFourteenSegmentDisplay[] displays = [
   new(i2cDevices[0]) { Brightness = Ht16k33.MaxBrightness, BufferingEnabled = true },
   new(i2cDevices[1]) { Brightness = Ht16k33.MaxBrightness, BufferingEnabled = true },
-};
+];
 
 // clear display
 displays[0].Clear();

@@ -18,7 +18,7 @@ SPDX-License-Identifier: MIT
 This library provides APIs that enable .NET applications to access the functions of the MCP2221/MCP2221A via the USB-HID interface.
 ]]>
     </Description>
-    <PackageTags>USB,USB-HID,MCP2221,MCP2221A,I2C,GPIO</PackageTags>
+    <PackageTags>USB,USB-HID,MCP2221,MCP2221A,I2C,GPIO,System.Device.Gpio</PackageTags>
     <CopyrightYear>2021</CopyrightYear>
     <GenerateNupkgReadmeFileDependsOnTargets>$(GenerateNupkgReadmeFileDependsOnTargets);GenerateReadmeFileContent</GenerateNupkgReadmeFileDependsOnTargets>
   </PropertyGroup>

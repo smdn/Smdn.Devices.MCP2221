@@ -20,14 +20,9 @@
 
 With this library, you can interface with I<sup>2</sup>C devices and control GPIO pins from any PC that has a USB port. It can be used without intermediate microcontrollers like Raspberry Pi or Arduino and does not require any special kernel drivers, offering an alternative for hardware control and prototyping.
 
+This library also provides the MCP2221/MCP2221A adapter interface for [System.Device.Gpio](https://www.nuget.org/packages/System.Device.Gpio/). This library enables you to use the many device bindings provided by [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/).
+
 See [Smdn.Devices.Mcp2221A examples](examples/Smdn.Devices.Mcp2221A/).
-
-## Smdn.Devices.MCP2221.GpioAdapter
-[![NuGet Smdn.Devices.MCP2221.GpioAdapter](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.GpioAdapter.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221.GpioAdapter/)
-
-[Smdn.Devices.MCP2221.GpioAdapter](src/Smdn.Devices.MCP2221.GpioAdapter/) provides the MCP2221/MCP2221A adapter interface for [System.Device.Gpio](https://www.nuget.org/packages/System.Device.Gpio/). This library enables you to use the many device bindings provided by [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/).
-
-See [Smdn.Devices.MCP2221.GpioAdapter examples](examples/Smdn.Devices.MCP2221.GpioAdapter/).
 
 # Supported MCP2221/MCP2221A features
 - [x] GP functionalities
@@ -82,9 +77,8 @@ Haven't tested with the actual MCP2221, but it is expected that works as same as
   - Can handle multiple MCP2221/MCP2221A by finding target with `Predicate<IUsbHidDevice>`
   - I2C bus scanning ([example](examples/Smdn.Devices.Mcp2221A/i2cscanbus/))
   - Using [HIDSharp](https://www.zer7.com/software/hidsharp) as default USB-HID driver, [LibUsbDotNet](https://www.nuget.org/packages/LibUsbDotNet/) also supported.
-- `Smdn.Devices.MCP2221.GpioAdapter`
   - Provides an adapter for [System.Device.Gpio](https://www.nuget.org/packages/System.Device.Gpio/)
-  - Can handle I2C devices using with [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/) ([examples](examples/Smdn.Devices.MCP2221.GpioAdapter/))
+  - Can handle I2C devices using with [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/)
 
 # Getting started and usage examples
 
@@ -193,7 +187,6 @@ For detailed instructions, including wiring of the devices and parts, see [blink
 More examples can be found in following examples directory.
 
 - [Smdn.Devices.Mcp2221A examples](examples/Smdn.Devices.Mcp2221A/): Small examples using MCP2221/MCP2221A functionalities.
-- [Smdn.Devices.MCP2221.GpioAdapter examples](examples/Smdn.Devices.MCP2221.GpioAdapter/): Small examples using [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/).
 
 # Troubleshooting
 ## Linux

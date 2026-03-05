@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
+// SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
 
 using System;
@@ -9,7 +9,7 @@ using Iot.Device.Mcp23xxx;
 using Microsoft.Extensions.DependencyInjection;
 
 using Smdn.Devices.Mcp2221A;
-using Smdn.Devices.Mcp2221A.GpioAdapter;
+using Smdn.Devices.Mcp2221A.Peripherals.I2c;
 using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -22,11 +22,11 @@ await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLedI2cAsync();
 
-const int deviceAddressMcp23017 = 0x20; // The address of MCP23017 which is connected to MCP2221/MCP2221A
+const int DeviceAddressMcp23017 = 0x20; // The address of MCP23017 which is connected to MCP2221/MCP2221A
 
-var i2cDevice = new Mcp2221AI2cDevice(device.I2c, deviceAddressMcp23017);
+device.I2c.BusSpeed = I2cBusSpeed.Default;
 
-i2cDevice.BusSpeed = I2cBusSpeed.Default;
+var i2cDevice = device.I2c.CreateI2cDeviceAdapter(DeviceAddressMcp23017);
 
 var mcp23017 = new Mcp23017(
   i2cDevice: i2cDevice,

@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-using Smdn.Devices.MCP2221;
+using Smdn.Devices.Mcp2221A;
 using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -39,6 +39,6 @@ services.AddLogging(
 
 using var serviceProvider = services.BuildServiceProvider();
 
-await using var device = await Mcp2221.CreateAsync(serviceProvider);
+await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 
 await device.I2c.ScanBusAsync();

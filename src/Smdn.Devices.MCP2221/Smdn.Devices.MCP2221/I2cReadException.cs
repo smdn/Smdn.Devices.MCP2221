@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 public class I2cReadException : I2cCommandException {
   public I2cReadException() : base("The requested I2C read operation failed.") { }

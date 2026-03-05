@@ -10,15 +10,15 @@ using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Logging;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 #pragma warning disable IDE0040
-partial class Mcp2221 {
+partial class Mcp2221A {
   partial class I2cFunctionality {
 #pragma warning restore IDE0040
     private static Exception CreateUnexpectedResponseException(I2cAddress? address, byte response)
       => address == null
-        ? new Mcp2221CommandException($"unexpected response (0x{response:X2})")
+        ? new Mcp2221ACommandException($"unexpected response (0x{response:X2})")
         : new I2cCommandException(address.Value, $"unexpected response (0x{response:X2})");
 
     private static I2cCommandException CreateI2cErrorException(I2cAddress address, byte? stateValue, string message, string? i2cEngineState = null)

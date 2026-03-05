@@ -1,8 +1,8 @@
-[Issue]:https://github.com/smdn/Smdn.Devices.MCP2221/issues/ "GitHub issues"
-[Open an Issue]:https://github.com/smdn/Smdn.Devices.MCP2221/issues/new "GitHub issues"
-[Pull Request]:https://github.com/smdn/Smdn.Devices.MCP2221/pulls/ "GitHub pull requests"
-[General Bug Report]:https://github.com/smdn/Smdn.Devices.MCP2221/issues/new?template=01_bug-report.yml "GitHub issue template"
-[Feature Request]:https://github.com/smdn/Smdn.Devices.MCP2221/issues/new?template=02_feature-request.yml "GitHub issue template"
+[Issue]:https://github.com/smdn/Smdn.Devices.Mcp2221A/issues/ "GitHub issues"
+[Open an Issue]:https://github.com/smdn/Smdn.Devices.Mcp2221A/issues/new "GitHub issues"
+[Pull Request]:https://github.com/smdn/Smdn.Devices.Mcp2221A/pulls/ "GitHub pull requests"
+[General Bug Report]:https://github.com/smdn/Smdn.Devices.Mcp2221A/issues/new?template=01_bug-report.yml "GitHub issue template"
+[Feature Request]:https://github.com/smdn/Smdn.Devices.Mcp2221A/issues/new?template=02_feature-request.yml "GitHub issue template"
 
 # Contribution guidelines
 Contributions are welcome! You can contribute to this project by submitting [Issue]s or [Pull Request]s.

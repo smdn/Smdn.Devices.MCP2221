@@ -10,9 +10,9 @@ using NUnit.Framework;
 
 using Smdn.IO.UsbHid;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
-partial class Mcp2221Tests {
+partial class Mcp2221ATests {
   [TestFixture]
   public class I2cFunctionality {
     private readonly I2cAddress address = new I2cAddress(0x20);
@@ -35,10 +35,10 @@ partial class Mcp2221Tests {
       endpoint.ReadStream.Position = currentPosition;
     }
 
-    private static async Task<(Mcp2221, PseudoUsbHidEndPoint)> CreatePseudoDeviceWithConfiguredI2C()
+    private static async Task<(Mcp2221A, PseudoUsbHidEndPoint)> CreatePseudoDeviceWithConfiguredI2C()
     {
       var baseDevice = CreatePseudoDevice();
-      var device = await Mcp2221.CreateAsync(baseDevice, shouldDisposeUsbHidDevice: true);
+      var device = await Mcp2221A.CreateAsync(baseDevice, shouldDisposeUsbHidDevice: true);
 
       AppendResponse(
         baseDevice.EndPoint,
@@ -52,7 +52,7 @@ partial class Mcp2221Tests {
 
     [Test] public async Task WriteAsync() => await TestWrite(async d => { await d.I2c.WriteAsync(address, new byte[] {0x00, 0x00, 0x00}); });
 
-    private async Task TestWrite(Func<Mcp2221, Task> writeAction)
+    private async Task TestWrite(Func<Mcp2221A, Task> writeAction)
     {
       var (device, stream) = await CreatePseudoDeviceWithConfiguredI2C();
 

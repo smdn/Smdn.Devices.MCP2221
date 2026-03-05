@@ -9,10 +9,10 @@ using NUnit.Framework;
 
 using Smdn.IO.UsbHid;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 [TestFixture]
-public partial class Mcp2221Tests {
+public partial class Mcp2221ATests {
   private const byte ReportInput = 0x00;
   private const byte ReportOutput = 0x00;
 
@@ -56,9 +56,9 @@ public partial class Mcp2221Tests {
   [Test]
   public void OpenAsync()
   {
-    Mcp2221? device = null;
+    Mcp2221A? device = null;
 
-    Assert.That(async () => device = await Mcp2221.CreateAsync(CreatePseudoDevice(), shouldDisposeUsbHidDevice: true), Throws.Nothing);
+    Assert.That(async () => device = await Mcp2221A.CreateAsync(CreatePseudoDevice(), shouldDisposeUsbHidDevice: true), Throws.Nothing);
 
     Assert.That(device, Is.Not.Null);
     Assert.That(device.HidDevice, Is.Not.Null);
@@ -89,10 +89,10 @@ public partial class Mcp2221Tests {
   )
     => await TestDispose(shouldDisposeUsbHidDevice, async d => await d.DisposeAsync());
 
-  private async Task TestDispose(bool shouldDisposeUsbHidDevice, Func<Mcp2221, Task> disposeAction)
+  private async Task TestDispose(bool shouldDisposeUsbHidDevice, Func<Mcp2221A, Task> disposeAction)
   {
     using var baseDevice = CreatePseudoDevice();
-    await using var device = await Mcp2221.CreateAsync(baseDevice, shouldDisposeUsbHidDevice: shouldDisposeUsbHidDevice);
+    await using var device = await Mcp2221A.CreateAsync(baseDevice, shouldDisposeUsbHidDevice: shouldDisposeUsbHidDevice);
 
     Assert.That(() => _ = device.HidDevice, Throws.Nothing);
 

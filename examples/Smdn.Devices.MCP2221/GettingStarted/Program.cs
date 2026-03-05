@@ -3,7 +3,7 @@ using System.Device.Gpio;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using Smdn.Devices.MCP2221;
+using Smdn.Devices.Mcp2221A;
 using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -43,7 +43,7 @@ services.AddLibUsbDotNetUsbHid(
 using var serviceProvider = services.BuildServiceProvider();
 
 // Find and open the first MCP2221 device connected to the USB port.
-using var device = Mcp2221.Create(serviceProvider);
+using var device = Mcp2221A.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
 device.GP0.ConfigureAsGpio(PinMode.Output);

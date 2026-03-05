@@ -4,10 +4,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 #pragma warning disable IDE0040
-partial class Mcp2221 {
+partial class Mcp2221A {
 #pragma warning restore IDE0040
   internal interface IClockOutputFunctionality {
     ValueTask ConfigureAsClockOutputAsync(

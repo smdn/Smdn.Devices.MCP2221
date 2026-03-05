@@ -3,20 +3,20 @@
 
 using System;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
-public class Mcp2221NotSupportedException : NotSupportedException {
-  public Mcp2221NotSupportedException()
+public class Mcp2221ANotSupportedException : NotSupportedException {
+  public Mcp2221ANotSupportedException()
     : base("The requested MCP2221/MCP2221A is a device with an unsupported hardware revision and/or firmware revision.")
   {
   }
 
-  public Mcp2221NotSupportedException(string message)
+  public Mcp2221ANotSupportedException(string message)
     : base(message)
   {
   }
 
-  public Mcp2221NotSupportedException(string message, Exception innerException)
+  public Mcp2221ANotSupportedException(string message, Exception innerException)
     : base(message, innerException)
   {
   }

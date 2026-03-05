@@ -1,5 +1,5 @@
 # Wiring
-The wiring example of MCP2221.
+The wiring example of MCP2221/MCP2221A.
 
 ## Prerequisites
 Required devices and parts are as follows:

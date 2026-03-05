@@ -11,10 +11,10 @@ using Microsoft.Extensions.Logging;
 
 using Smdn.IO.UsbHid;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 #pragma warning disable IDE0055, CA1724
-public partial class Mcp2221 :
+public partial class Mcp2221A :
   IDisposable,
   IAsyncDisposable
 {
@@ -34,11 +34,11 @@ public partial class Mcp2221 :
   {
     switch (revision) {
       // case HardwareRevisionMcp2221A:
-      case HardwareRevisionMcp2221:
+      case HardwareRevisionMcp2221A:
         break;
 
       default:
-        throw new Mcp2221NotSupportedException($"hardware revision '{revision}' is not supported");
+        throw new Mcp2221ANotSupportedException($"hardware revision '{revision}' is not supported");
     }
   }
 
@@ -50,16 +50,16 @@ public partial class Mcp2221 :
         break;
 
       default:
-        throw new Mcp2221NotSupportedException($"firmware revision '{revision}' is not supported");
+        throw new Mcp2221ANotSupportedException($"firmware revision '{revision}' is not supported");
     }
   }
 
   [Obsolete($"Use {nameof(CreateAsync)} with {nameof(IUsbHidDevice)} instead.", error: true)]
-  public static async ValueTask<Mcp2221> OpenAsync(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
+  public static async ValueTask<Mcp2221A> OpenAsync(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
     => throw new NotSupportedException($"Use {nameof(CreateAsync)} with {nameof(IUsbHidDevice)} instead.");
 
   [Obsolete($"Use {nameof(Create)} with {nameof(IUsbHidDevice)} instead.", error: true)]
-  public static Mcp2221 Open(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
+  public static Mcp2221A Open(Func<IUsbHidDevice?> createHidDevice, IServiceProvider? serviceProvider = null)
     => throw new NotSupportedException($"Use {nameof(Create)} with {nameof(IUsbHidDevice)} instead.");
 
   /*
@@ -84,7 +84,7 @@ public partial class Mcp2221 :
   /// <remarks>Always returns <c>01234567</c>.</remarks>
   public string? ChipFactorySerialNumber { get; private set; } = null;
 
-  private Mcp2221(
+  private Mcp2221A(
     IUsbHidDevice hidDevice,
     bool shouldDisposeUsbHidDevice,
     ILogger? logger

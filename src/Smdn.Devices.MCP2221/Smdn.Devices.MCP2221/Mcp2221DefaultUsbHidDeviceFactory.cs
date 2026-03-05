@@ -9,14 +9,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Smdn.IO.UsbHid;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
-internal sealed class Mcp2221DefaultUsbHidDeviceFactory : IMcp2221UsbHidDeviceFactory {
-  public static readonly Mcp2221DefaultUsbHidDeviceFactory Instance = new();
+internal sealed class Mcp2221ADefaultUsbHidDeviceFactory : IMcp2221AUsbHidDeviceFactory {
+  public static readonly Mcp2221ADefaultUsbHidDeviceFactory Instance = new();
 
   [DoesNotReturn]
   private static void ThrowServiceProviderMustBeProvidedException()
-    => throw new InvalidOperationException($"{nameof(IServiceProvider)} must be provided in order to create {nameof(IUsbHidDevice)} if {nameof(IMcp2221UsbHidDeviceFactory)} is not provided.");
+    => throw new InvalidOperationException($"{nameof(IServiceProvider)} must be provided in order to create {nameof(IUsbHidDevice)} if {nameof(IMcp2221AUsbHidDeviceFactory)} is not provided.");
 
   public ValueTask<IUsbHidDevice> CreateAsync<TServiceKey>(
     IServiceProvider? serviceProvider,
@@ -58,10 +58,10 @@ internal sealed class Mcp2221DefaultUsbHidDeviceFactory : IMcp2221UsbHidDeviceFa
       serviceProvider.GetRequiredService<IUsbHidService>();
 
     return usbHidService.FindDevice(
-      Mcp2221.DeviceVendorId,
-      Mcp2221.DeviceProductId,
+      Mcp2221A.DeviceVendorId,
+      Mcp2221A.DeviceProductId,
       predicate,
       cancellationToken
-    ) ?? throw new Mcp2221NotFoundException(usbHidService, predicate);
+    ) ?? throw new Mcp2221ANotFoundException(usbHidService, predicate);
   }
 }

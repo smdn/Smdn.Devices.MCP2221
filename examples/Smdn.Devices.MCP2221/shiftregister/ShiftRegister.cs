@@ -8,7 +8,7 @@ using System.Device.Gpio;
 using System.Numerics;
 using System.Threading.Tasks;
 
-using Smdn.Devices.MCP2221;
+using Smdn.Devices.Mcp2221A;
 
 enum BitOrder {
   LSBFirst,
@@ -21,17 +21,17 @@ enum Endianness {
 }
 
 class ShiftRegister {
-  private readonly Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioLatch;
-  private readonly Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioClock;
-  private readonly Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioData;
+  private readonly Mcp2221A.GPFunctionality /*IGPIOFunctionality*/ gpioLatch;
+  private readonly Mcp2221A.GPFunctionality /*IGPIOFunctionality*/ gpioClock;
+  private readonly Mcp2221A.GPFunctionality /*IGPIOFunctionality*/ gpioData;
 
   /// <param name="gpioLatch">storage register clock pin (RCLK/ST_CP)</param>
   /// <param name="gpioClock">shift register clock pin (SRCLK/SH_CP)</param>
   /// <param name="gpioData">serial output pin (SER)</param>
   public ShiftRegister(
-    Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioLatch,
-    Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioClock,
-    Mcp2221.GPFunctionality /*IGPIOFunctionality*/ gpioData
+    Mcp2221A.GPFunctionality /*IGPIOFunctionality*/ gpioLatch,
+    Mcp2221A.GPFunctionality /*IGPIOFunctionality*/ gpioClock,
+    Mcp2221A.GPFunctionality /*IGPIOFunctionality*/ gpioData
   )
   {
     this.gpioLatch = gpioLatch ?? throw new ArgumentNullException(nameof(gpioLatch));

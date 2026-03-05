@@ -4,11 +4,11 @@
 using System;
 using System.Device.I2c;
 
-namespace Smdn.Devices.MCP2221.GpioAdapter;
+namespace Smdn.Devices.Mcp2221A.GpioAdapter;
 
 [CLSCompliant(false)]
-public class Mcp2221I2cDevice : I2cDevice {
-  private readonly Mcp2221.I2cFunctionality bus;
+public class Mcp2221AI2cDevice : I2cDevice {
+  private readonly Mcp2221A.I2cFunctionality bus;
   private readonly I2cAddress address;
   public override I2cConnectionSettings ConnectionSettings { get; }
 
@@ -17,7 +17,7 @@ public class Mcp2221I2cDevice : I2cDevice {
     set => bus.BusSpeed = value;
   }
 
-  public Mcp2221I2cDevice(Mcp2221.I2cFunctionality i2cBus, I2cAddress i2cDeviceAddress)
+  public Mcp2221AI2cDevice(Mcp2221A.I2cFunctionality i2cBus, I2cAddress i2cDeviceAddress)
   {
     this.bus = i2cBus ?? throw new ArgumentNullException(nameof(i2cBus));
     this.address = i2cDeviceAddress;

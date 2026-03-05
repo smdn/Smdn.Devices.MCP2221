@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma warning disable CA1815
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 public readonly struct I2cScanBusProgress {
   public I2cAddress ScanningAddress { get; }

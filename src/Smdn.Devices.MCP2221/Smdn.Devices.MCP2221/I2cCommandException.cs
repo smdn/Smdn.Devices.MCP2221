@@ -3,9 +3,9 @@
 
 using System;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
-public class I2cCommandException : Mcp2221CommandException {
+public class I2cCommandException : Mcp2221ACommandException {
   public I2cAddress Address { get; }
 
   public I2cCommandException() : this(I2cAddress.Zero, "The requested I2C command failed.") { }

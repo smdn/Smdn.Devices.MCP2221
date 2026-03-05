@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma warning disable CA1069 // CA1069: Enums should not have duplicate values
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 public enum I2cBusSpeed {
   Default = default,

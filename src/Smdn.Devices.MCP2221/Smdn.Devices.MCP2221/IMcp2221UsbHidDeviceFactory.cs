@@ -8,13 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Smdn.IO.UsbHid;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 /// <summary>
 /// Provides a mechanism to select the MCP2221/MCP2221A available on the system and
 /// create the corresponding <see cref="IUsbHidDevice"/>.
 /// </summary>
-public interface IMcp2221UsbHidDeviceFactory {
+public interface IMcp2221AUsbHidDeviceFactory {
   /// <summary>
   /// Asynchronously creates an <see cref="IUsbHidDevice"/> corresponding to the MCP2221/MCP2221A
   /// available on the system.
@@ -53,7 +53,7 @@ public interface IMcp2221UsbHidDeviceFactory {
   /// <see cref="IUsbHidDevice"/> corresponding to the MCP2221/MCP2221A,
   /// but <paramref name="serviceProvider"/> is <see langword="null"/>.
   /// </exception>
-  /// <exception cref="Mcp2221NotFoundException">
+  /// <exception cref="Mcp2221ANotFoundException">
   /// No MCP2221/MCP2221A <see cref="IUsbHidDevice"/> matching the specified
   /// <paramref name="predicate"/> was found.
   /// Or, the available MCP2221/MCP2221A was not found on the current system.
@@ -105,7 +105,7 @@ public interface IMcp2221UsbHidDeviceFactory {
   /// <see cref="IUsbHidDevice"/> corresponding to the MCP2221/MCP2221A,
   /// but <paramref name="serviceProvider"/> is <see langword="null"/>.
   /// </exception>
-  /// <exception cref="Mcp2221NotFoundException">
+  /// <exception cref="Mcp2221ANotFoundException">
   /// No MCP2221/MCP2221A <see cref="IUsbHidDevice"/> matching the specified
   /// <paramref name="predicate"/> was found.
   /// Or, the available MCP2221/MCP2221A was not found on the current system.

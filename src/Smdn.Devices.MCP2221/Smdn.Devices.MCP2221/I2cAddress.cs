@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 #pragma warning disable IDE0055
 public readonly struct I2cAddress :

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Smdn.Devices.MCP2221;
+using Smdn.Devices.Mcp2221A;
 using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -15,7 +15,7 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-await using var device = await Mcp2221.CreateAsync(serviceProvider);
+await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 
 device.I2c.BusSpeed = I2cBusSpeed.Default;
 

@@ -3,10 +3,10 @@
 
 using System;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
-public class Mcp2221CommandException : InvalidOperationException {
-  public Mcp2221CommandException() : base("command failed") { }
-  public Mcp2221CommandException(string message) : base(message) { }
-  public Mcp2221CommandException(string message, Exception innerException) : base(message, innerException) { }
+public class Mcp2221ACommandException : InvalidOperationException {
+  public Mcp2221ACommandException() : base("command failed") { }
+  public Mcp2221ACommandException(string message) : base(message) { }
+  public Mcp2221ACommandException(string message, Exception innerException) : base(message, innerException) { }
 }

@@ -7,10 +7,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 #pragma warning disable IDE0040
-partial class Mcp2221 {
+partial class Mcp2221A {
 #pragma warning restore IDE0040
   internal interface IGpioFunctionality {
     ValueTask ConfigureAsGpioAsync(
@@ -173,13 +173,13 @@ partial class Mcp2221 {
       public static PinValue ParseResponse(ReadOnlySpan<byte> resp, GPFunctionality gp)
       {
         if (resp[1] != 0x00) // Command completed successfully
-          throw new Mcp2221CommandException($"unexpected command response ({resp[1]:X2})");
+          throw new Mcp2221ACommandException($"unexpected command response ({resp[1]:X2})");
 
         var gpPinValue        = resp[2 + (2 * gp.GPIndex)];
         var gpDirectionValue  = resp[3 + (2 * gp.GPIndex)];
 
         if (gpPinValue == 0xEF || gpDirectionValue == 0xEF)
-          throw new Mcp2221CommandException($"{gp.PinName} is not set for GPIO operation");
+          throw new Mcp2221ACommandException($"{gp.PinName} is not set for GPIO operation");
 
         return gpPinValue;
       }
@@ -228,7 +228,7 @@ partial class Mcp2221 {
       public static bool ParseResponse(ReadOnlySpan<byte> resp, (GPFunctionality gp, PinValue newValue) args)
       {
         if (resp[1] != 0x00) // Command completed successfully
-          throw new Mcp2221CommandException($"unexpected command response ({resp[1]:X2})");
+          throw new Mcp2221ACommandException($"unexpected command response ({resp[1]:X2})");
 
         if (
           resp[2 + (4 * args.gp.GPIndex)] == 0xEE ||
@@ -236,7 +236,7 @@ partial class Mcp2221 {
           resp[4 + (4 * args.gp.GPIndex)] == 0xEE ||
           resp[5 + (4 * args.gp.GPIndex)] == 0xEE
         ) {
-          throw new Mcp2221CommandException($"{args.gp.PinName} is not set for GPIO operation");
+          throw new Mcp2221ACommandException($"{args.gp.PinName} is not set for GPIO operation");
         }
 
         return true;

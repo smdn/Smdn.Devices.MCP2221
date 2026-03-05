@@ -8,8 +8,8 @@ using Iot.Device.Mcp23xxx;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Smdn.Devices.MCP2221;
-using Smdn.Devices.MCP2221.GpioAdapter;
+using Smdn.Devices.Mcp2221A;
+using Smdn.Devices.Mcp2221A.GpioAdapter;
 using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -18,13 +18,13 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-await using var device = await Mcp2221.CreateAsync(serviceProvider);
+await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 
 await device.GP3.ConfigureAsLedI2cAsync();
 
 const int deviceAddressMcp23017 = 0x20; // The address of MCP23017 which is connected to MCP2221/MCP2221A
 
-var i2cDevice = new Mcp2221I2cDevice(device.I2c, deviceAddressMcp23017);
+var i2cDevice = new Mcp2221AI2cDevice(device.I2c, deviceAddressMcp23017);
 
 i2cDevice.BusSpeed = I2cBusSpeed.Default;
 

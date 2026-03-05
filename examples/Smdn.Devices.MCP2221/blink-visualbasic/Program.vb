@@ -9,7 +9,7 @@ Imports System.Threading
 
 Imports Microsoft.Extensions.DependencyInjection
 
-Imports Smdn.Devices.MCP2221
+Imports Smdn.Devices.Mcp2221A
 Imports Smdn.IO.UsbHid.DependencyInjection
 
 Class Blink
@@ -19,7 +19,7 @@ Class Blink
     services.AddHidSharpUsbHid()
 
     Using serviceProvider = services.BuildServiceProvider()
-      Using device = MCP2221.Create(serviceProvider)
+      Using device = Mcp2221A.Create(serviceProvider)
         Console.WriteLine("[MCP2221 Device information]")
 
         Dim serialNumber As String = Nothing

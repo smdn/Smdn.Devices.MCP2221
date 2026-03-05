@@ -4,7 +4,7 @@
 using System;
 using NUnit.Framework;
 
-namespace Smdn.Devices.MCP2221;
+namespace Smdn.Devices.Mcp2221A;
 
 [TestFixture]
 public class I2cAddressTests {

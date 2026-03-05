@@ -2,6 +2,16 @@
 [![tests/main](https://img.shields.io/github/actions/workflow/status/smdn/Smdn.Devices.Mcp2221A/test.yml?branch=main&label=tests%2Fmain)](https://github.com/smdn/Smdn.Devices.Mcp2221A/actions/workflows/test.yml)
 [![CodeQL](https://github.com/smdn/Smdn.Devices.Mcp2221A/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Devices.Mcp2221A/actions/workflows/codeql-analysis.yml)
 
+> [!IMPORTANT]
+> **Project Renaming Notice**
+>
+> This project has been renamed from **Smdn.Devices.MCP2221** to **Smdn.Devices.Mcp2221A**.
+>
+> - **NuGet Package:** The current stable package is still published under the old name `Smdn.Devices.MCP2221`. A new package `Smdn.Devices.Mcp2221A` will be released soon.
+> - **Source Code for the Current Package:** As the `main` branch now reflects the renamed project structure, please refer to the **[release tags](https://github.com/smdn/Smdn.Devices.Mcp2221A/tags)** for the source code and examples for the currently released version.
+> - **Code Change Required:** The next major version will include breaking changes, including the renaming of namespaces and assemblies. Users migrating to the new package will need to update their code (e.g., `using Smdn.Devices.Mcp2221A;`).
+> - **Upcoming API Changes:** An API refactoring is planned for the next release to improve usability and support for MCP2221A features.
+
 # Smdn.Devices.Mcp2221A
 [![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/)
 [![NuGet Smdn.Devices.Mcp2221A](https://img.shields.io/nuget/v/Smdn.Devices.Mcp2221A.svg)](https://www.nuget.org/packages/Smdn.Devices.Mcp2221A/)

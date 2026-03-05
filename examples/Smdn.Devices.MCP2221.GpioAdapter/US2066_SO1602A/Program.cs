@@ -7,8 +7,8 @@ using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Smdn.Devices.MCP2221;
-using Smdn.Devices.MCP2221.GpioAdapter;
+using Smdn.Devices.Mcp2221A;
+using Smdn.Devices.Mcp2221A.GpioAdapter;
 using Smdn.Devices.US2066;
 using Smdn.IO.UsbHid.DependencyInjection;
 
@@ -18,13 +18,13 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-await using var device = await MCP2221.CreateAsync(serviceProvider);
+await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 
-await device.GP3.ConfigureAsLEDI2CAsync();
+await device.GP3.ConfigureAsLedI2cAsync();
 
 using var display = SO1602A.Create(
-  new MCP2221I2cDevice(device.I2C, SO1602A.DefaultI2CAddress) {
-    BusSpeed = I2CBusSpeed.FastMode
+  new Mcp2221AI2cDevice(device.I2c, SO1602A.DefaultI2CAddress) {
+    BusSpeed = I2cBusSpeed.FastMode
   }
 );
 

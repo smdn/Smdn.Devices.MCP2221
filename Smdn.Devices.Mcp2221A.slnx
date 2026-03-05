@@ -1,0 +1,13 @@
+﻿<!--
+SPDX-FileCopyrightText: 2026 smdn <smdn@smdn.jp>
+SPDX-License-Identifier: MIT
+-->
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Smdn.Devices.MCP2221.GpioAdapter/Smdn.Devices.MCP2221.GpioAdapter.csproj" />
+    <Project Path="src/Smdn.Devices.Mcp2221A/Smdn.Devices.Mcp2221A.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Smdn.Devices.Mcp2221A/Smdn.Devices.Mcp2221A.Tests.csproj" />
+  </Folder>
+</Solution>

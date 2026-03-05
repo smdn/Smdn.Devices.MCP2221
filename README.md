@@ -1,15 +1,16 @@
-[![GitHub license](https://img.shields.io/github/license/smdn/Smdn.Devices.MCP2221)](https://github.com/smdn/Smdn.Devices.MCP2221/blob/main/LICENSE.txt)
-[![tests/main](https://img.shields.io/github/actions/workflow/status/smdn/Smdn.Devices.MCP2221/test.yml?branch=main&label=tests%2Fmain)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/test.yml)
-[![CodeQL](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Devices.MCP2221/actions/workflows/codeql-analysis.yml)
+[![GitHub license](https://img.shields.io/github/license/smdn/Smdn.Devices.Mcp2221A)](https://github.com/smdn/Smdn.Devices.Mcp2221A/blob/main/LICENSE.txt)
+[![tests/main](https://img.shields.io/github/actions/workflow/status/smdn/Smdn.Devices.Mcp2221A/test.yml?branch=main&label=tests%2Fmain)](https://github.com/smdn/Smdn.Devices.Mcp2221A/actions/workflows/test.yml)
+[![CodeQL](https://github.com/smdn/Smdn.Devices.Mcp2221A/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/smdn/Smdn.Devices.Mcp2221A/actions/workflows/codeql-analysis.yml)
 
-# Smdn.Devices.MCP2221
+# Smdn.Devices.Mcp2221A
 [![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/)
+[![NuGet Smdn.Devices.Mcp2221A](https://img.shields.io/nuget/v/Smdn.Devices.Mcp2221A.svg)](https://www.nuget.org/packages/Smdn.Devices.Mcp2221A/)
 
-[Smdn.Devices.MCP2221](src/Smdn.Devices.MCP2221/) is a .NET library for the **Microchip Technology [MCP2221](https://www.microchip.com/wwwproducts/en/MCP2221) and [MCP2221A](https://www.microchip.com/wwwproducts/en/MCP2221A), a USB2.0 to I<sup>2</sup>C/UART Protocol Converter with GPIO**. This library provides APIs that enable .NET applications to access the functions of the MCP2221/MCP2221A via the USB-HID interface.
+[Smdn.Devices.Mcp2221A](src/Smdn.Devices.Mcp2221A/) is a .NET library for the **Microchip Technology [MCP2221](https://www.microchip.com/wwwproducts/en/MCP2221) and [MCP2221A](https://www.microchip.com/wwwproducts/en/MCP2221A), a USB2.0 to I<sup>2</sup>C/UART Protocol Converter with GPIO**. This library provides APIs that enable .NET applications to access the functions of the MCP2221/MCP2221A via the USB-HID interface.
 
 With this library, you can interface with I<sup>2</sup>C devices and control GPIO pins from any PC that has a USB port. It can be used without intermediate microcontrollers like Raspberry Pi or Arduino and does not require any special kernel drivers, offering an alternative for hardware control and prototyping.
 
-See [Smdn.Devices.MCP2221 examples](examples/Smdn.Devices.MCP2221/).
+See [Smdn.Devices.Mcp2221A examples](examples/Smdn.Devices.Mcp2221A/).
 
 ## Smdn.Devices.MCP2221.GpioAdapter
 [![NuGet Smdn.Devices.MCP2221.GpioAdapter](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.GpioAdapter.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221.GpioAdapter/)
@@ -63,13 +64,13 @@ Haven't tested with the actual MCP2221, but it is expected that works as same as
 - Frameworks/Platforms
   - .NET Standard 2.1/.NET 5
   - Windows/Linux/MacOS and any other platforms which USB-HID driver supports
-- `Smdn.Devices.MCP2221`
+- `Smdn.Devices.Mcp2221A`
   - `Read`/`Write` and other command methods
     - Supports `Span<byte>`/`Memory<byte>`
     - Supports `async`, `CancellationToken`
-    - Supports logging with `ILogger`, [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging/) ([example](examples/Smdn.Devices.MCP2221/logging/))
+    - Supports logging with `ILogger`, [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging/) ([example](examples/Smdn.Devices.Mcp2221A/logging/))
   - Can handle multiple MCP2221/MCP2221A by finding target with `Predicate<IUsbHidDevice>`
-  - I2C bus scanning ([example](examples/Smdn.Devices.MCP2221/i2cscanbus/))
+  - I2C bus scanning ([example](examples/Smdn.Devices.Mcp2221A/i2cscanbus/))
   - Using [HIDSharp](https://www.zer7.com/software/hidsharp) as default USB-HID driver, [LibUsbDotNet](https://www.nuget.org/packages/LibUsbDotNet/) also supported.
 - `Smdn.Devices.MCP2221.GpioAdapter`
   - Provides an adapter for [System.Device.Gpio](https://www.nuget.org/packages/System.Device.Gpio/)
@@ -115,19 +116,19 @@ services.AddLibUsbDotNetUsbHid(
 ```
 
 ## Linux setup
-To use the MCP2221 with this library, two configuration steps may be required depending on your Linux distribution.
+To use the MCP2221/MCP2221A with this library, two configuration steps may be required depending on your Linux distribution.
 
 ### Device permissions (udev) <a name="mcp2221_udev_device_permissions">§</a>
-To access the MCP2221 via this library, some system configuration may be required. Generally, a **udev rule** is necessary on most distributions to grant non-root users access to the device (see [udev rule files](misc/udev/) for setup instructions).
+To access the MCP2221/MCP2221A via this library, some system configuration may be required. Generally, a **udev rule** is necessary on most distributions to grant non-root users access to the device (see [udev rule files](misc/udev/) for setup instructions).
 
 ### Driver conflict (Ubuntu 24.04 / Kernel 6.8+) <a name="mcp2221_modprobe_blacklist">§</a>
 On Ubuntu 24.04 (Kernel 6.8+) and newer systems, you may also encounter a driver conflict where the native `hid_mcp2221` driver claims the device, preventing the `/dev/hidraw*` node from being created. In this case, you must **blacklist** the dedicated driver to force the system to use the generic `usbhid` driver. Detailed steps for this process can be found in [modprobe blacklist file](misc/modprobe/blacklist-MCP2221.conf).
 
 ## Write code
-Add package [Smdn.Devices.MCP2221](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) [![NuGet Smdn.Devices.MCP2221](https://img.shields.io/nuget/v/Smdn.Devices.MCP2221.svg)](https://www.nuget.org/packages/Smdn.Devices.MCP2221/) to your project.
+Add package [Smdn.Devices.Mcp2221A](https://www.nuget.org/packages/Smdn.Devices.Mcp2221A/) [![NuGet Smdn.Devices.Mcp2221A](https://img.shields.io/nuget/v/Smdn.Devices.MCP2Mcp2221A21.svg)](https://www.nuget.org/packages/Smdn.Devices.Mcp2221A/) to your project.
 
 ```
-dotnet add package Smdn.Devices.MCP2221
+dotnet add package Smdn.Devices.Mcp2221A
 ```
 
 Then write your codes. The simplest code, blinking the LEDs connected to the GP pins is like below.
@@ -137,7 +138,7 @@ using System.Device.Gpio;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Smdn.Devices.MCP2221;
+using Smdn.Devices.Mcp2221A;
 using Smdn.IO.UsbHid.DependencyInjection;
 
 var services = new ServiceCollection();
@@ -148,14 +149,14 @@ services.AddHidSharpUsbHid();
 
 using var serviceProvider = services.BuildServiceProvider();
 
-// Find and open the first MCP2221 device connected to the USB port.
-using var device = MCP2221.Create(serviceProvider);
+// Find and open the first MCP2221/MCP2221A device connected to the USB port.
+using var device = Mcp2221A.Create(serviceProvider);
 
 // Configure the GP pins (GP0-GP3) as GPIO output.
-device.GP0.ConfigureAsGPIO(PinMode.Output);
-device.GP1.ConfigureAsGPIO(PinMode.Output);
-device.GP2.ConfigureAsGPIO(PinMode.Output);
-device.GP3.ConfigureAsGPIO(PinMode.Output);
+device.GP0.ConfigureAsGpio(PinMode.Output);
+device.GP1.ConfigureAsGpio(PinMode.Output);
+device.GP2.ConfigureAsGpio(PinMode.Output);
+device.GP3.ConfigureAsGpio(PinMode.Output);
 
 // Blink the configured GPIO pins.
 foreach (var gp in device.GPs) {
@@ -181,13 +182,13 @@ For detailed instructions, including wiring of the devices and parts, see [blink
 
 More examples can be found in following examples directory.
 
-- [Smdn.Devices.MCP2221 examples](examples/Smdn.Devices.MCP2221/): Small examples using MCP2221/MCP2221A functionalities.
+- [Smdn.Devices.Mcp2221A examples](examples/Smdn.Devices.Mcp2221A/): Small examples using MCP2221/MCP2221A functionalities.
 - [Smdn.Devices.MCP2221.GpioAdapter examples](examples/Smdn.Devices.MCP2221.GpioAdapter/): Small examples using [Iot.Device.Bindings](https://www.nuget.org/packages/Iot.Device.Bindings/).
 
 # Troubleshooting
 ## Linux
-### MCP2221 Detection and Access Permissions
-If your application cannot detect the MCP2221, follow these steps to diagnose driver conflicts or permission issues.
+### MCP2221/MCP2221A Detection and Access Permissions
+If your application cannot detect the MCP2221/MCP2221A, follow these steps to diagnose driver conflicts or permission issues.
 
 First, check if the system has created the character device file for HIDRAW:
 
@@ -195,7 +196,7 @@ First, check if the system has created the character device file for HIDRAW:
 ls -l /dev/hidraw*
 ```
 
-If no devices are listed, or if a device corresponding to the target MCP2221 is not listed, the kernel driver conflict is likely the cause. If the file exists but you cannot open it due to unprivileged access, [check the permissions](#mcp2221_udev_device_permissions).
+If no devices are listed, or if a device corresponding to the target MCP2221/MCP2221A is not listed, the kernel driver conflict is likely the cause. If the file exists but you cannot open it due to unprivileged access, [check the permissions](#mcp2221_udev_device_permissions).
 
 Next, inspect the kernel logs. Monitor the kernel logs while reconnecting the device to identify which driver is claiming it. Use `dmesg -w` or `journalctl -k -f`.
 
@@ -225,7 +226,7 @@ To verify which driver is currently controlling the interface, run:
 lsusb -t
 ```
 
-Look for the MCP2221 interface (typically `Class=Human Interface Device`).
+Look for the MCP2221/MCP2221A interface (typically `Class=Human Interface Device`).
 
 If the target interface is displayed as `Driver=usbhid`, it can be controlled as HIDRAW. However, if it is displayed as `Driver=mcp2221`, it is controlled by the kernel driver, and the HIDRAW node is suppressed.
 

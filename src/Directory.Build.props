@@ -17,7 +17,7 @@ SPDX-License-Identifier: MIT
   </PropertyGroup>
 
   <PropertyGroup Label="repository properties" Condition="'$(GITHUB_ACTIONS)' != 'true'">
-    <RepositoryUrl>https://github.com/smdn/Smdn.Devices.MCP2221</RepositoryUrl>
+    <RepositoryUrl>https://github.com/smdn/Smdn.Devices.Mcp2221A</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 

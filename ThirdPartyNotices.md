@@ -4,12 +4,12 @@ This library incorporates material from the projects listed below or described i
 The attached notices are provided for information purposes only.
 
 ## Dependencies
-`Smdn.Devices.MCP2221.*` depends on the following third-party libraries,
+`Smdn.Devices.Mcp2221A` depends on the following third-party libraries,
 some of which are distributed under license terms different from those of this software:
 
 * 'Smdn.IO.UsbHid.Abstractions' (MIT License)
 
-In addition, when using `Smdn.IO.UsbHid.Providers.*`, `Smdn.Devices.MCP2221.*` may
+In addition, when using `Smdn.IO.UsbHid.Providers.*`, `Smdn.Devices.Mcp2221A` may
 indirectly depend on the following libraries:
 
 * 'HIDSharp' (Apache License 2.0)

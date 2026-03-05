@@ -92,7 +92,13 @@ public partial class Mcp2221A :
   internal bool IsMcp2221A
     => !string.Equals(FirmwareRevision, FirmwareRevisionMcp2221, StringComparison.Ordinal);
 
-  public I2cController I2c { get; }
+  [CLSCompliant(false)]
+  public Mcp2221AI2cBus I2c {
+    get {
+      ThrowIfDisposed();
+      return field;
+    }
+  }
 
   private Mcp2221A(
     IUsbHidDevice hidDevice,

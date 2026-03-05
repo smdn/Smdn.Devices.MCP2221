@@ -27,7 +27,7 @@ await using var device = await Mcp2221A.CreateAsync(serviceProvider);
 await device.GP3.ConfigureAsLedI2cAsync();
 
 var i2cDevice = device.I2c
-  .CreateI2cDeviceAdapter(Bme280.DefaultI2cAddress /* or Bme280.SecondaryI2cAddress */)
+  .CreateDevice(Bme280.DefaultI2cAddress /* or Bme280.SecondaryI2cAddress */)
   .WithStandardMode();
 
 var bme280 = new Bme280(

@@ -25,8 +25,7 @@ public class Mcp2221AI2cDeviceTests {
   )
   {
     using var device = CreateFromPseudoDevice();
-    using var i2cBus = device.I2c.CreateI2cBusAdapter();
-    using var i2cDevice = i2cBus.CreateDevice(0x40);
+    using var i2cDevice = device.I2c.CreateDevice(0x40);
 
     Assert.That(() => i2cDevice.TransmissionSpeedInKbps = newTransmissionSpeedKbps, Throws.Nothing);
     Assert.That(i2cDevice.TransmissionSpeedInKbps, Is.EqualTo(newTransmissionSpeedKbps));
@@ -40,8 +39,7 @@ public class Mcp2221AI2cDeviceTests {
   )
   {
     using var device = CreateFromPseudoDevice();
-    using var i2cBus = device.I2c.CreateI2cBusAdapter();
-    using var i2cDevice = i2cBus.CreateDevice(0x40);
+    using var i2cDevice = device.I2c.CreateDevice(0x40);
 
     Assert.That(
       () => i2cDevice.TransmissionSpeedInKbps = newTransmissionSpeedKbps,
@@ -63,8 +61,7 @@ public class Mcp2221AI2cDeviceTests {
     const int ExpectedTransmissionSpeed = 100;
 
     using var device = CreateFromPseudoDevice();
-    using var i2cBus = device.I2c.CreateI2cBusAdapter();
-    using var i2cDevice = i2cBus.CreateDevice(0x40, transmissionSpeedInKbps: InitialTransmissionSpeed);
+    using var i2cDevice = device.I2c.CreateDevice(0x40, transmissionSpeedInKbps: InitialTransmissionSpeed);
 
     Assert.That(i2cDevice.TransmissionSpeedInKbps, Is.EqualTo(InitialTransmissionSpeed));
 
@@ -83,8 +80,7 @@ public class Mcp2221AI2cDeviceTests {
     const int ExpectedTransmissionSpeed = 400;
 
     using var device = CreateFromPseudoDevice();
-    using var i2cBus = device.I2c.CreateI2cBusAdapter();
-    using var i2cDevice = i2cBus.CreateDevice(0x40, transmissionSpeedInKbps: InitialTransmissionSpeed);
+    using var i2cDevice = device.I2c.CreateDevice(0x40, transmissionSpeedInKbps: InitialTransmissionSpeed);
 
     Assert.That(i2cDevice.TransmissionSpeedInKbps, Is.EqualTo(InitialTransmissionSpeed));
 

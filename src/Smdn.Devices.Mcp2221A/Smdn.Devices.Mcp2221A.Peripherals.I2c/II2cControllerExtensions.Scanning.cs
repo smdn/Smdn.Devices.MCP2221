@@ -17,16 +17,25 @@ System.Collections.Generic.IReadOnlyCollection
 namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 #pragma warning disable IDE0040
-partial class I2cController {
+partial class II2cControllerExtensions {
 #pragma warning restore IDE0040
-  public async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(
+  /// <remarks>
+  ///   <include
+  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
+  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
+  ///   />
+  /// </remarks>
+  public static async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(
+    this II2cController controller,
     I2cAddress addressRangeMin = default,
     I2cAddress addressRangeMax = default,
-    int i2cBusTransmissionSpeedInKbps = DefaultTransmissionSpeedInKbps,
+    int i2cBusTransmissionSpeedInKbps = Mcp2221AI2cBus.DefaultTransmissionSpeedInKbps,
     IProgress<I2cScanBusProgress>? progress = null,
     CancellationToken cancellationToken = default
   )
   {
+    if (controller is null)
+      throw new ArgumentNullException(nameof(controller));
     if ((int)addressRangeMax < (int)addressRangeMin)
       throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
 
@@ -44,7 +53,7 @@ partial class I2cController {
       progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
       try {
-        await WriteAsync(
+        await controller.WriteAsync(
           address,
           i2cBusTransmissionSpeedInKbps,
           default,
@@ -59,6 +68,7 @@ partial class I2cController {
 
       try {
         _ = await ReadByteAsync(
+          controller,
           address,
           i2cBusTransmissionSpeedInKbps,
           cancellationToken
@@ -74,14 +84,23 @@ partial class I2cController {
     return (writeAddressSet, readAddressSet);
   }
 
-  public (IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet) ScanBus(
+  /// <remarks>
+  ///   <include
+  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
+  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
+  ///   />
+  /// </remarks>
+  public static (IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet) ScanBus(
+    this II2cController controller,
     I2cAddress addressRangeMin = default,
     I2cAddress addressRangeMax = default,
-    int i2cBusTransmissionSpeedInKbps = DefaultTransmissionSpeedInKbps,
+    int i2cBusTransmissionSpeedInKbps = Mcp2221AI2cBus.DefaultTransmissionSpeedInKbps,
     IProgress<I2cScanBusProgress>? progress = null,
     CancellationToken cancellationToken = default
   )
   {
+    if (controller is null)
+      throw new ArgumentNullException(nameof(controller));
     if ((int)addressRangeMax < (int)addressRangeMin)
       throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
 
@@ -99,7 +118,7 @@ partial class I2cController {
       progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
       try {
-        Write(
+        controller.Write(
           address,
           i2cBusTransmissionSpeedInKbps,
           default,
@@ -114,6 +133,7 @@ partial class I2cController {
 
       try {
         _ = ReadByte(
+          controller,
           address,
           i2cBusTransmissionSpeedInKbps,
           cancellationToken

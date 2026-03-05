@@ -50,40 +50,6 @@ partial class Mcp2221ATests {
       return (device, baseDevice.EndPoint);
     }
 
-    [Test]
-    public async Task CreateI2cBusAdapter(
-      [Values] bool shouldDisposeMcp2221A
-    )
-    {
-      var (device, _) = await CreatePseudoDeviceWithConfiguredI2C();
-
-      using var i2cBus = device.I2c.CreateI2cBusAdapter(
-        shouldDisposeMcp2221A
-      );
-
-      Assert.That(i2cBus, Is.Not.Null);
-
-      i2cBus.Dispose();
-
-      Assert.That(
-        () => i2cBus.CreateDevice(0x00),
-        Throws.TypeOf<ObjectDisposedException>()
-      );
-
-      Assert.That(
-        () => _ = device.HidDevice,
-        shouldDisposeMcp2221A
-          ? Throws.TypeOf<ObjectDisposedException>()
-          : Throws.Nothing
-      );
-
-      Assert.That(
-        i2cBus.Dispose,
-        Throws.Nothing,
-        "dispose again"
-      );
-    }
-
     private static System.Collections.IEnumerable YieldTestCases_CreateI2cDeviceAdapter()
     {
       const bool ShouldDisposeMcp2221A = true;
@@ -102,7 +68,7 @@ partial class Mcp2221ATests {
     {
       var (device, _) = await CreatePseudoDeviceWithConfiguredI2C();
 
-      using var i2cDevice = device.I2c.CreateI2cDeviceAdapter(deviceAddress, shouldDisposeMcp2221A);
+      using var i2cDevice = device.I2c.CreateDevice(deviceAddress, shouldDisposeMcp2221A);
 
       Assert.That(i2cDevice, Is.Not.Null);
       Assert.That(i2cDevice.ConnectionSettings, Is.Not.Null);

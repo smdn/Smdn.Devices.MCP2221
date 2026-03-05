@@ -8,8 +8,8 @@ namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 [CLSCompliant(false)]
 public sealed class Mcp2221AI2cDevice : I2cDevice {
-  private I2cController i2cBus;
-  internal I2cController I2cBus => i2cBus ?? throw new ObjectDisposedException(GetType().FullName);
+  private Mcp2221AI2cBus i2cBus;
+  internal Mcp2221AI2cBus I2cBus => i2cBus ?? throw new ObjectDisposedException(GetType().FullName);
 
   /// <summary>
   /// Gets or sets the transmission speed used for reading and writing to the I2C bus in [kbps] units.
@@ -41,7 +41,7 @@ public sealed class Mcp2221AI2cDevice : I2cDevice {
 
       field = value;
     }
-  } = I2cController.DefaultTransmissionSpeedInKbps;
+  } = Mcp2221AI2cBus.DefaultTransmissionSpeedInKbps;
 #pragma warning restore SA1513
 
   private readonly I2cAddress deviceAddress;
@@ -49,8 +49,8 @@ public sealed class Mcp2221AI2cDevice : I2cDevice {
 
   public override I2cConnectionSettings ConnectionSettings { get; }
 
-  public Mcp2221AI2cDevice(
-    I2cController i2cBus,
+  internal Mcp2221AI2cDevice(
+    Mcp2221AI2cBus i2cBus,
     I2cAddress deviceAddress,
     bool shouldDisposeMcp2221A
   )
@@ -87,7 +87,7 @@ public sealed class Mcp2221AI2cDevice : I2cDevice {
 
   /// <inheritdoc/>
   public override void Read(Span<byte> buffer)
-    => I2cBus.Read(deviceAddress, TransmissionSpeedInKbps, buffer);
+    => I2cBus.Read(deviceAddress, TransmissionSpeedInKbps, buffer, cancellationToken: default);
 
   /// <inheritdoc/>
   public override void WriteByte(byte value)
@@ -95,7 +95,7 @@ public sealed class Mcp2221AI2cDevice : I2cDevice {
 
   /// <inheritdoc/>
   public override void Write(ReadOnlySpan<byte> buffer)
-    => I2cBus.Write(deviceAddress, TransmissionSpeedInKbps, buffer);
+    => I2cBus.Write(deviceAddress, TransmissionSpeedInKbps, buffer, cancellationToken: default);
 
   /// <inheritdoc/>
   public override void WriteRead(ReadOnlySpan<byte> writeBuffer, Span<byte> readBuffer)

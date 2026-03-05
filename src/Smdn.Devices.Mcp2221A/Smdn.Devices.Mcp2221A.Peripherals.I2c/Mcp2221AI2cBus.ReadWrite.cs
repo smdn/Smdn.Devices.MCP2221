@@ -13,33 +13,10 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 #pragma warning disable IDE0040
-partial class I2cController {
+partial class Mcp2221AI2cBus {
 #pragma warning restore IDE0040
   public const int MaxBlockLength = 0xFFFF;
   private const int MaxTransferLengthPerCommand = 64 - 4;
-
-  internal const int DefaultTransmissionSpeedInKbps = 100;
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public ValueTask WriteAsync(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    byte[] buffer,
-    int offset,
-    int count,
-    CancellationToken cancellationToken = default
-  )
-    => WriteAsync(
-      address,
-      transmissionSpeedInKbps,
-      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsMemory(offset, count),
-      cancellationToken
-    );
 
   /// <remarks>
   ///   <include
@@ -51,6 +28,7 @@ partial class I2cController {
   ///     This method issues writing command with 0-length in this case.
   ///   </para>
   /// </remarks>
+  /// <seealso cref="II2cController.WriteAsync(I2cAddress,int,ReadOnlyMemory{byte},CancellationToken)"/>
   public async ValueTask WriteAsync(
     I2cAddress address,
     int transmissionSpeedInKbps,
@@ -60,6 +38,8 @@ partial class I2cController {
   {
     if (MaxBlockLength < buffer.Length)
       throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+
+    Device.ThrowIfDisposed();
 
     var busSpeedDivider = Device.CalculateBusSpeedDividerOrThrow(
       transmissionSpeedInKbps,
@@ -92,31 +72,10 @@ partial class I2cController {
     catch (Exception ex) {
       logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
       if (ex is not I2cNackException)
-        await CancelAsync(address, ex).ConfigureAwait(false);
+        await CancelTransferAsync(address, ex).ConfigureAwait(false);
       throw;
     }
   }
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public void Write(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    byte[] buffer,
-    int offset,
-    int count,
-    CancellationToken cancellationToken = default
-  )
-    => Write(
-      address,
-      transmissionSpeedInKbps,
-      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsSpan(offset, count),
-      cancellationToken
-    );
 
   /// <remarks>
   ///   <include
@@ -128,6 +87,7 @@ partial class I2cController {
   ///     This method issues writing command with 0-length in this case.
   ///   </para>
   /// </remarks>
+  /// <seealso cref="II2cController.Write(I2cAddress,int,ReadOnlySpan{byte},CancellationToken)"/>
   public void Write(
     I2cAddress address,
     int transmissionSpeedInKbps,
@@ -137,6 +97,8 @@ partial class I2cController {
   {
     if (MaxBlockLength < buffer.Length)
       throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+
+    Device.ThrowIfDisposed();
 
     var busSpeedDivider = Device.CalculateBusSpeedDividerOrThrow(
       transmissionSpeedInKbps,
@@ -169,31 +131,10 @@ partial class I2cController {
     catch (Exception ex) {
       logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
       if (ex is not I2cNackException)
-        Cancel(address, ex);
+        CancelTransfer(address, ex);
       throw;
     }
   }
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public ValueTask<int> ReadAsync(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    byte[] buffer,
-    int offset,
-    int count,
-    CancellationToken cancellationToken = default
-  )
-    => ReadAsync(
-      address,
-      transmissionSpeedInKbps,
-      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsMemory(offset, count),
-      cancellationToken
-    );
 
   /// <remarks>
   ///   <include
@@ -205,6 +146,7 @@ partial class I2cController {
   ///     This method issues reading command with 0-length in this case.
   ///   </para>
   /// </remarks>
+  /// <seealso cref="II2cController.ReadAsync(I2cAddress,int,Memory{byte},CancellationToken)"/>
   public async ValueTask<int> ReadAsync(
     I2cAddress address,
     int transmissionSpeedInKbps,
@@ -214,6 +156,8 @@ partial class I2cController {
   {
     if (MaxBlockLength < buffer.Length)
       throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+
+    Device.ThrowIfDisposed();
 
     var busSpeedDivider = Device.CalculateBusSpeedDividerOrThrow(
       transmissionSpeedInKbps,
@@ -265,31 +209,10 @@ partial class I2cController {
     catch (Exception ex) {
       logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
       if (ex is not I2cReadException)
-        await CancelAsync(address, ex).ConfigureAwait(false);
+        await CancelTransferAsync(address, ex).ConfigureAwait(false);
       throw;
     }
   }
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public int Read(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    byte[] buffer,
-    int offset,
-    int count,
-    CancellationToken cancellationToken = default
-  )
-    => Read(
-      address,
-      transmissionSpeedInKbps,
-      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsSpan(offset, count),
-      cancellationToken
-    );
 
   /// <remarks>
   ///   <include
@@ -301,6 +224,7 @@ partial class I2cController {
   ///     This method issues reading command with 0-length in this case.
   ///   </para>
   /// </remarks>
+  /// <seealso cref="II2cController.Read(I2cAddress,int,Span{byte},CancellationToken)"/>
   public int Read(
     I2cAddress address,
     int transmissionSpeedInKbps,
@@ -310,6 +234,8 @@ partial class I2cController {
   {
     if (MaxBlockLength < buffer.Length)
       throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+
+    Device.ThrowIfDisposed();
 
     var busSpeedDivider = Device.CalculateBusSpeedDividerOrThrow(
       transmissionSpeedInKbps,
@@ -361,100 +287,8 @@ partial class I2cController {
     catch (Exception ex) {
       logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
       if (ex is not I2cReadException)
-        Cancel(address, ex);
+        CancelTransfer(address, ex);
       throw;
     }
-  }
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public async ValueTask WriteByteAsync(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    byte value,
-    CancellationToken cancellationToken = default
-  )
-  {
-    var buffer = ArrayPool<byte>.Shared.Rent(1);
-
-    try {
-      buffer[0] = value;
-
-      await WriteAsync(
-        address,
-        transmissionSpeedInKbps,
-        buffer.AsMemory(0, 1),
-        cancellationToken
-      ).ConfigureAwait(false);
-    }
-    finally {
-      ArrayPool<byte>.Shared.Return(buffer);
-    }
-  }
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public void WriteByte(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    byte value,
-    CancellationToken cancellationToken = default
-  )
-    => Write(address, transmissionSpeedInKbps, [value], cancellationToken);
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public async ValueTask<int> ReadByteAsync(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    CancellationToken cancellationToken = default
-  )
-  {
-    var buffer = ArrayPool<byte>.Shared.Rent(1);
-
-    try {
-      var ret = await ReadAsync(
-        address,
-        transmissionSpeedInKbps,
-        buffer.AsMemory(0, 1),
-        cancellationToken
-      ).ConfigureAwait(false);
-
-      return 0 == ret ? -1 : buffer[0];
-    }
-    finally {
-      ArrayPool<byte>.Shared.Return(buffer);
-    }
-  }
-
-  /// <remarks>
-  ///   <include
-  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
-  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
-  ///   />
-  /// </remarks>
-  public int ReadByte(
-    I2cAddress address,
-    int transmissionSpeedInKbps,
-    CancellationToken cancellationToken = default
-  )
-  {
-    Span<byte> buffer = stackalloc byte[1];
-
-    var ret = Read(address, transmissionSpeedInKbps, buffer, cancellationToken);
-
-    return 0 == ret ? -1 : buffer[0];
   }
 }

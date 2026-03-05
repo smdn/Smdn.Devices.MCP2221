@@ -10,14 +10,14 @@ using Microsoft.Extensions.Logging;
 namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 #pragma warning disable IDE0040
-partial class I2cController {
+partial class Mcp2221AI2cBus {
 #pragma warning restore IDE0040
   private static class CancelTransferCommand {
 #pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
     public static void ConstructCommand(
       Span<byte> comm,
       ReadOnlySpan<byte> userData,
-      (I2cAddress Address, Exception ExceptionCauseOfCancellation) args
+      (I2cAddress Address, Exception? ExceptionCauseOfCancellation) args
     )
 #pragma warning restore IDE0060
     {
@@ -29,7 +29,7 @@ partial class I2cController {
 
     public static I2cEngineState ParseResponse(
       ReadOnlySpan<byte> resp,
-      (I2cAddress Address, Exception ExceptionCauseOfCancellation) args
+      (I2cAddress Address, Exception? ExceptionCauseOfCancellation) args
     )
     {
       if (resp[1] != 0x00) // Command completed successfully
@@ -55,7 +55,10 @@ partial class I2cController {
     }
   }
 
-  private async ValueTask CancelAsync(I2cAddress address, Exception exceptionCauseOfCancellation)
+  ValueTask II2cController.CancelTransferAsync(I2cAddress address)
+    => CancelTransferAsync(address, exceptionCauseOfCancellation: null);
+
+  private async ValueTask CancelTransferAsync(I2cAddress address, Exception? exceptionCauseOfCancellation)
   {
     var engineState = await Device.CommandAsync(
       userData: default,
@@ -68,7 +71,10 @@ partial class I2cController {
     logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
   }
 
-  private void Cancel(I2cAddress address, Exception exceptionCauseOfCancellation)
+  void II2cController.CancelTransfer(I2cAddress address)
+    => CancelTransfer(address, exceptionCauseOfCancellation: null);
+
+  private void CancelTransfer(I2cAddress address, Exception? exceptionCauseOfCancellation)
   {
     var engineState = Device.Command(
       userData: default,

@@ -1,12 +1,10 @@
 // SPDX-FileCopyrightText: 2021 smdn <smdn@smdn.jp>
 // SPDX-License-Identifier: MIT
-
 #pragma warning disable CA1848, CA1873, CA2254
 
 using System;
 using System.Collections.Generic;
 using System.Device.Gpio;
-using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Logging;
 
@@ -43,12 +41,10 @@ internal class I2cOperationStateMachine {
   private I2cEngineState lastEngineState;
   public int ReadLength { get; private set; } = -1;
 
-#pragma warning disable 0164
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable CS0164
   public IEnumerable<(
-    Mcp2221AConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
-    Mcp2221AParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
+    Mcp2221AConstructCommandAction<(I2cAddress Address, Memory<byte> Buffer)> ConstructCommand,
+    Mcp2221AParseResponseFunc<(I2cAddress Address, Memory<byte> Buffer), bool> ParseResponse
   )>
   IterateWriteCommands()
   {
@@ -93,12 +89,12 @@ internal class I2cOperationStateMachine {
     if (lastEngineState.RequestedTransferLength == 0)
       yield break;
   }
+#pragma warning restore CS0164
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable CS0164
   public IEnumerable<(
-    Mcp2221AConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
-    Mcp2221AParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
+    Mcp2221AConstructCommandAction<(I2cAddress Address, Memory<byte> Buffer)> ConstructCommand,
+    Mcp2221AParseResponseFunc<(I2cAddress Address, Memory<byte> Buffer), bool> ParseResponse
   )>
   IterateReadCommands()
   {
@@ -149,7 +145,7 @@ internal class I2cOperationStateMachine {
 
     yield break;
   }
-#pragma warning restore 0164
+#pragma warning disable CS0164
 
   private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2cAddress address, I2cEngineState engineState)
   {
@@ -190,8 +186,11 @@ internal class I2cOperationStateMachine {
     };
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private void StatusConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
+  private void StatusConstructCommand(
+    Span<byte> comm,
+    ReadOnlySpan<byte> userData,
+    (I2cAddress Address, Memory<byte> _) args
+  )
   {
     // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
     comm[0] = 0x10; // Status/Set Parameters
@@ -212,13 +211,16 @@ internal class I2cOperationStateMachine {
     }
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private bool StatusParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> _) args)
+  private bool StatusParseResponse(
+    ReadOnlySpan<byte> resp,
+    (I2cAddress Address, Memory<byte> _) args)
   {
+    var (address, _) = args;
+
     // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
     _ = resp[1] switch {
       0x00 => true, // Command completed successfully
-      _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
+      _ => throw CreateUnexpectedResponseException(address, resp[1]),
     };
 
     lastEngineState = I2cEngineState.Parse(resp);
@@ -239,62 +241,83 @@ internal class I2cOperationStateMachine {
 
     operationState = TransitStateOrThrowIfEngineStateInvalid(
       operationState,
-      args.address,
+      address,
       lastEngineState
     );
 
     return operationState == OperationState.AdvanceToNextStep;
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private void WriteConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
+  private void WriteConstructCommand(
+    Span<byte> comm,
+    ReadOnlySpan<byte> userData,
+    (I2cAddress Address, Memory<byte> _) args
+  )
   {
+    var (address, _) = args;
+
     // [MCP2221A] 3.1.5 I2C WRITE DATA
     comm[0] = 0x90; // I2C Write Data
     comm[1] = (byte)(userData.Length & 0x00FF); // Requested I2C transfer length - low byte
     comm[2] = (byte)(userData.Length >> 8); // Requested I2C transfer length - high byte
-    comm[3] = args.address.GetWriteAddress(); // I2C slave address to communicate with
+    comm[3] = address.GetWriteAddress(); // I2C slave address to communicate with
     userData.CopyTo(comm.Slice(4));
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private bool WriteParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> _) args)
+  private bool WriteParseResponse(
+    ReadOnlySpan<byte> resp,
+    (I2cAddress Address, Memory<byte> _) args
+  )
   {
+    var (address, _) = args;
+
     // [MCP2221A] 3.1.5 I2C WRITE DATA
     operationState = resp[1] switch {
       0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
       0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-      _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
+      _ => throw CreateUnexpectedResponseException(address, resp[1]),
     };
 
     return operationState == OperationState.AdvanceToNextStep;
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private void ReadConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
+  private void ReadConstructCommand(
+    Span<byte> comm,
+    ReadOnlySpan<byte> userData,
+    (I2cAddress Address, Memory<byte> Buffer) args
+  )
   {
+    var (address, _) = args;
+
     // [MCP2221A] 3.1.8 I2C READ DATA
     comm[0] = 0x91; // I2C Read Data
     comm[1] = (byte)(userData.Length & 0x00FF); // Requested I2C transfer length - low byte
     comm[2] = (byte)(userData.Length >> 8); // Requested I2C transfer length - high byte
-    comm[3] = args.address.GetReadAddress(); // I2C slave address to communicate with
+    comm[3] = address.GetReadAddress(); // I2C slave address to communicate with
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private bool ReadParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> _) args)
+  private bool ReadParseResponse(
+    ReadOnlySpan<byte> resp,
+    (I2cAddress Address, Memory<byte> Buffer) args
+  )
   {
+    var (address, _) = args;
+
     // [MCP2221A] 3.1.8 I2C READ DATA
     operationState = resp[1] switch {
       0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
       0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-      _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
+      _ => throw CreateUnexpectedResponseException(address, resp[1]),
     };
 
     return operationState == OperationState.AdvanceToNextStep;
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private void GetConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Memory<byte> _) args)
+  private void GetConstructCommand(
+    Span<byte> comm,
+    ReadOnlySpan<byte> userData,
+    (I2cAddress Address, Memory<byte> Buffer) args
+  )
   {
     // [MCP2221A] 3.1.10 I2C READ DATA - GET I2C DATA
     comm[0] = 0x40; // I2C Read Data - Get I2C Data
@@ -302,25 +325,29 @@ internal class I2cOperationStateMachine {
     comm[2] = (byte)(userData.Length >> 8); // [??] Requested I2C transfer length - high byte
   }
 
-  [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  private bool GetParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Memory<byte> buffer) args)
+  private bool GetParseResponse(
+    ReadOnlySpan<byte> resp,
+    (I2cAddress Address, Memory<byte> Buffer) args
+  )
   {
+    var (address, buffer) = args;
+
     // [MCP2221A] 3.1.10 I2C READ DATA - GET I2C DATA
     operationState = resp[1] switch {
       0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
       0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-      0x41 => throw new I2cReadException(args.address, "can not read from I2C slave"), // Error reading the I2C slave data
-      _ => throw CreateUnexpectedResponseException(args.address, resp[1]),
+      0x41 => throw new I2cReadException(address, "can not read from I2C slave"), // Error reading the I2C slave data
+      _ => throw CreateUnexpectedResponseException(address, resp[1]),
     };
 
     if (operationState == OperationState.AdvanceToNextStep) {
       ReadLength = resp[3] switch {
         _ when resp[3] is >= 0 and <= 60 => resp[3],
         127 => throw new I2cCommandException("error has occurred on reading"),
-        _ => throw new I2cCommandException(args.address, $"unexpected data length ({resp[3]})"),
+        _ => throw new I2cCommandException(address, $"unexpected data length ({resp[3]})"),
       };
 
-      resp.Slice(4, ReadLength).CopyTo(args.buffer.Span);
+      resp.Slice(4, ReadLength).CopyTo(buffer.Span);
     }
 
     return operationState == OperationState.AdvanceToNextStep;

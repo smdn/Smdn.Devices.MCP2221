@@ -5,22 +5,29 @@
 using System;
 using System.Collections.Generic;
 using System.Device.Gpio;
+using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Logging;
 
 namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 internal class I2cOperationStateMachine {
-  private static Exception CreateUnexpectedResponseException(I2cAddress? address, byte response)
-    => address == null
-      ? new Mcp2221ACommandException($"unexpected response (0x{response:X2})")
-      : new I2cCommandException(address.Value, $"unexpected response (0x{response:X2})");
+  [DoesNotReturn]
+  private static OperationState ThrowUnexpectedResponseException(I2cAddress? address, byte response)
+  {
+    if (address.HasValue)
+      throw new I2cCommandException(address.Value, $"unexpected response (0x{response:X2})");
+    else
+      throw new Mcp2221ACommandException($"unexpected response (0x{response:X2})");
+  }
 
-  private static I2cCommandException CreateI2cErrorException(I2cAddress address, byte? stateValue, string message, string? i2cEngineState = null)
-    => new(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
+  [DoesNotReturn]
+  private static OperationState ThrowI2cErrorException(I2cAddress address, byte? stateValue, string message, string? i2cEngineState = null)
+    => throw new I2cCommandException(address, $"{message} (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
 
-  private static I2cCommandException CreateUnknownEngineStateException(I2cAddress address, byte? stateValue, string? i2cEngineState = null)
-    => new(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
+  [DoesNotReturn]
+  private static OperationState ThrowUnknownEngineStateException(I2cAddress address, byte? stateValue, string? i2cEngineState = null)
+    => throw new I2cCommandException(address, $"unknown I2C engine state (0x{stateValue?.ToString("X2", provider: null) ?? "??"}, {i2cEngineState ?? "(details not available)"})");
 
   private enum OperationState {
     Initial,
@@ -150,10 +157,10 @@ internal class I2cOperationStateMachine {
   private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2cAddress address, I2cEngineState engineState)
   {
     if (currentState == OperationState.Initial && (engineState.LineValueScl.IsLow || engineState.LineValueSda.IsLow))
-      throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
+      ThrowI2cErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
 
     if (engineState.BusStatus == I2cEngineTransferStatus.MarkedForCancellation)
-      throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been marked for cancellation unexpectedly. It may need to be reset or powered off.", engineState.ToString());
+      ThrowI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been marked for cancellation unexpectedly. It may need to be reset or powered off.", engineState.ToString());
 
     return engineState.StateMachineStateValue switch {
       /*
@@ -177,12 +184,12 @@ internal class I2cOperationStateMachine {
       // 0x61 when (currentState == OperationState.Initial) => OperationState.CancelAndRetry, // issuing cancellation in this state will transit state to 0x62, and will be in state which cannot reset with command
       0x61 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
       // 0x62: has been marked for cancellation?
-      0x62 => throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been in invalid state. It may need to be reset or powered off.", engineState.ToString()),
+      0x62 => ThrowI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been in invalid state. It may need to be reset or powered off.", engineState.ToString()),
 
       /*
         * exceptional / unknown states
         */
-      _ => throw CreateUnknownEngineStateException(address, engineState.StateMachineStateValue, engineState.ToString()),
+      _ => ThrowUnknownEngineStateException(address, engineState.StateMachineStateValue, engineState.ToString()),
     };
   }
 
@@ -219,8 +226,8 @@ internal class I2cOperationStateMachine {
 
     // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
     _ = resp[1] switch {
-      0x00 => true, // Command completed successfully
-      _ => throw CreateUnexpectedResponseException(address, resp[1]),
+      0x00 => default, // Command completed successfully
+      _ => ThrowUnexpectedResponseException(address, resp[1]),
     };
 
     lastEngineState = I2cEngineState.Parse(resp);
@@ -275,7 +282,7 @@ internal class I2cOperationStateMachine {
     operationState = resp[1] switch {
       0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
       0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-      _ => throw CreateUnexpectedResponseException(address, resp[1]),
+      _ => ThrowUnexpectedResponseException(address, resp[1]),
     };
 
     return operationState == OperationState.AdvanceToNextStep;
@@ -307,7 +314,7 @@ internal class I2cOperationStateMachine {
     operationState = resp[1] switch {
       0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
       0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
-      _ => throw CreateUnexpectedResponseException(address, resp[1]),
+      _ => ThrowUnexpectedResponseException(address, resp[1]),
     };
 
     return operationState == OperationState.AdvanceToNextStep;
@@ -337,7 +344,7 @@ internal class I2cOperationStateMachine {
       0x00 => OperationState.AdvanceToNextStep, // Command completed successfully
       0x01 => OperationState.Continue, // Command not completed (I2C engine is busy)
       0x41 => throw new I2cReadException(address, "can not read from I2C slave"), // Error reading the I2C slave data
-      _ => throw CreateUnexpectedResponseException(address, resp[1]),
+      _ => ThrowUnexpectedResponseException(address, resp[1]),
     };
 
     if (operationState == OperationState.AdvanceToNextStep) {

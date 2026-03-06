@@ -19,93 +19,93 @@ namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 #pragma warning disable IDE0040
 partial class I2cController {
 #pragma warning restore IDE0040
-    public async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(
-      I2cAddress addressRangeMin = default,
-      I2cAddress addressRangeMax = default,
-      IProgress<I2cScanBusProgress>? progress = null,
-      CancellationToken cancellationToken = default
-    )
-    {
-      if ((int)addressRangeMax < (int)addressRangeMin)
-        throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
+  public async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(
+    I2cAddress addressRangeMin = default,
+    I2cAddress addressRangeMax = default,
+    IProgress<I2cScanBusProgress>? progress = null,
+    CancellationToken cancellationToken = default
+  )
+  {
+    if ((int)addressRangeMax < (int)addressRangeMin)
+      throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
 
-      if (addressRangeMin.Equals(I2cAddress.Zero))
-        addressRangeMin = I2cAddress.DeviceMinValue;
-      if (addressRangeMax.Equals(I2cAddress.Zero))
-        addressRangeMax = I2cAddress.DeviceMaxValue;
+    if (addressRangeMin.Equals(I2cAddress.Zero))
+      addressRangeMin = I2cAddress.DeviceMinValue;
+    if (addressRangeMax.Equals(I2cAddress.Zero))
+      addressRangeMax = I2cAddress.DeviceMaxValue;
 
-      var writeAddressSet = new SortedSet<I2cAddress>();
-      var readAddressSet = new SortedSet<I2cAddress>();
+    var writeAddressSet = new SortedSet<I2cAddress>();
+    var readAddressSet = new SortedSet<I2cAddress>();
 
-      for (var addr = (int)addressRangeMin; addr <= (int)addressRangeMax; addr++) {
-        var address = new I2cAddress(addr);
+    for (var addr = (int)addressRangeMin; addr <= (int)addressRangeMax; addr++) {
+      var address = new I2cAddress(addr);
 
-        progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
+      progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
-        try {
-          await WriteAsync(address, default, cancellationToken).ConfigureAwait(false);
+      try {
+        await WriteAsync(address, default, cancellationToken).ConfigureAwait(false);
 
-          writeAddressSet.Add(address);
-        }
-        catch (I2cNackException ex) when (ex.Address.Equals(address)) {
-          // expected exception
-        }
-
-        try {
-          await ReadByteAsync(address, cancellationToken).ConfigureAwait(false);
-
-          readAddressSet.Add(address);
-        }
-        catch (I2cReadException ex) when (ex.Address.Equals(address)) {
-          // expected exception
-        }
+        writeAddressSet.Add(address);
+      }
+      catch (I2cNackException ex) when (ex.Address.Equals(address)) {
+        // expected exception
       }
 
-      return (writeAddressSet, readAddressSet);
+      try {
+        await ReadByteAsync(address, cancellationToken).ConfigureAwait(false);
+
+        readAddressSet.Add(address);
+      }
+      catch (I2cReadException ex) when (ex.Address.Equals(address)) {
+        // expected exception
+      }
     }
 
-    public (IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet) ScanBus(
-      I2cAddress addressRangeMin = default,
-      I2cAddress addressRangeMax = default,
-      IProgress<I2cScanBusProgress>? progress = null,
-      CancellationToken cancellationToken = default
-    )
-    {
-      if ((int)addressRangeMax < (int)addressRangeMin)
-        throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
+    return (writeAddressSet, readAddressSet);
+  }
 
-      if (addressRangeMin.Equals(I2cAddress.Zero))
-        addressRangeMin = I2cAddress.DeviceMinValue;
-      if (addressRangeMax.Equals(I2cAddress.Zero))
-        addressRangeMax = I2cAddress.DeviceMaxValue;
+  public (IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet) ScanBus(
+    I2cAddress addressRangeMin = default,
+    I2cAddress addressRangeMax = default,
+    IProgress<I2cScanBusProgress>? progress = null,
+    CancellationToken cancellationToken = default
+  )
+  {
+    if ((int)addressRangeMax < (int)addressRangeMin)
+      throw new ArgumentException($"{nameof(addressRangeMax)}({addressRangeMax}) must be greater than or equals to {nameof(addressRangeMin)}({addressRangeMin})", nameof(addressRangeMax));
 
-      var writeAddressSet = new SortedSet<I2cAddress>();
-      var readAddressSet = new SortedSet<I2cAddress>();
+    if (addressRangeMin.Equals(I2cAddress.Zero))
+      addressRangeMin = I2cAddress.DeviceMinValue;
+    if (addressRangeMax.Equals(I2cAddress.Zero))
+      addressRangeMax = I2cAddress.DeviceMaxValue;
 
-      for (var addr = (int)addressRangeMin; addr <= (int)addressRangeMax; addr++) {
-        var address = new I2cAddress(addr);
+    var writeAddressSet = new SortedSet<I2cAddress>();
+    var readAddressSet = new SortedSet<I2cAddress>();
 
-        progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
+    for (var addr = (int)addressRangeMin; addr <= (int)addressRangeMax; addr++) {
+      var address = new I2cAddress(addr);
 
-        try {
-          Write(address, default, cancellationToken);
+      progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
-          writeAddressSet.Add(address);
-        }
-        catch (I2cNackException ex) when (ex.Address.Equals(address)) {
-          // expected exception
-        }
+      try {
+        Write(address, default, cancellationToken);
 
-        try {
-          ReadByte(address, cancellationToken);
-
-          readAddressSet.Add(address);
-        }
-        catch (I2cReadException ex) when (ex.Address.Equals(address)) {
-          // expected exception
-        }
+        writeAddressSet.Add(address);
+      }
+      catch (I2cNackException ex) when (ex.Address.Equals(address)) {
+        // expected exception
       }
 
-      return (writeAddressSet, readAddressSet);
+      try {
+        ReadByte(address, cancellationToken);
+
+        readAddressSet.Add(address);
+      }
+      catch (I2cReadException ex) when (ex.Address.Equals(address)) {
+        // expected exception
+      }
     }
+
+    return (writeAddressSet, readAddressSet);
+  }
 }

@@ -16,472 +16,472 @@ namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 #pragma warning disable IDE0040
 public sealed partial class I2cController {
 #pragma warning restore IDE0040
-    public const int MaxBlockLength = 0xFFFF;
-    private const int MaxTransferLengthPerCommand = 64 - 4;
+  public const int MaxBlockLength = 0xFFFF;
+  private const int MaxTransferLengthPerCommand = 64 - 4;
 
-    internal Mcp2221A Device { get; }
+  internal Mcp2221A Device { get; }
 
-    public I2cBusSpeed BusSpeed { get; set; } = I2cBusSpeed.Default;
+  public I2cBusSpeed BusSpeed { get; set; } = I2cBusSpeed.Default;
 
-    private readonly ILogger? logger;
+  private readonly ILogger? logger;
 
-    internal I2cController(Mcp2221A device, ILogger? logger)
+  internal I2cController(Mcp2221A device, ILogger? logger)
+  {
+    Device = device;
+    this.logger = logger;
+  }
+
+  /// <summary>
+  /// Creates a new <see cref="System.Device.I2c.I2cBus"/> adapter.
+  /// This adapter allows the MCP2221/MCP2221A to interface with the extensive collection of I2C device
+  /// bindings provided by the <see href="https://www.nuget.org/packages/Iot.Device.Bindings">Iot.Device.Bindings</see>
+  /// library.
+  /// </summary>
+  /// <param name="busSpeed">
+  /// <para>
+  /// Specify the value to set for <see cref="Mcp2221AI2cBus.BusSpeed"/>.
+  /// </para>
+  /// <para>
+  /// The <see cref="Mcp2221AI2cBus.BusSpeed"/> of the <see cref="Mcp2221AI2cBus"/> instance created
+  /// shares the same value as <see cref="BusSpeed"/> of the current instance, so it overwrites the
+  /// current <see cref="BusSpeed"/> value regardless of the specified value.
+  /// </para>
+  /// </param>
+  /// <param name="shouldDisposeMcp2221A">
+  /// <see langword="true"/> to automatically dispose the underlying <see cref="Mcp2221A"/>
+  /// when this adapter is disposed; <see langword="false"/> to keep the <see cref="Mcp2221A"/> open.
+  /// The default is <see langword="false"/>.
+  /// </param>
+  /// <returns>
+  /// A <see cref="Mcp2221AI2cBus"/> instance that wraps the MCP2221 I2C functionality.
+  /// </returns>
+  /// <exception cref="ObjectDisposedException">
+  /// Thrown if the parent <see cref="Mcp2221A"/> has already been disposed.
+  /// </exception>
+  [CLSCompliant(false)]
+  public Mcp2221AI2cBus CreateI2cBusAdapter(
+    I2cBusSpeed busSpeed = I2cBusSpeed.Default,
+    bool shouldDisposeMcp2221A = false
+  )
+  {
+    Device.ThrowIfDisposed();
+
+    return new(
+      i2cBus: this,
+      shouldDisposeMcp2221A: shouldDisposeMcp2221A
+    ) {
+      BusSpeed = busSpeed,
+    };
+  }
+
+  /// <summary>
+  /// Creates a new <see cref="System.Device.I2c.I2cDevice"/> adapter for a specific I2C address.
+  /// This adapter allows the MCP2221/MCP2221A to interface with the extensive collection of I2C device
+  /// bindings provided by the <see href="https://www.nuget.org/packages/Iot.Device.Bindings">Iot.Device.Bindings</see>
+  /// library.
+  /// </summary>
+  /// <param name="deviceAddress">The I2C address of the target device.</param>
+  /// <param name="shouldDisposeMcp2221A">
+  /// <see langword="true"/> to automatically dispose the underlying <see cref="Mcp2221A"/>
+  /// when this adapter is disposed; <see langword="false"/> to keep the <see cref="Mcp2221A"/> open.
+  /// The default is <see langword="false"/>.
+  /// </param>
+  /// <returns>
+  /// A <see cref="System.Device.I2c.I2cDevice"/> instance that wraps the MCP2221 I2C functionality
+  /// for the specified address.
+  /// </returns>
+  /// <exception cref="ObjectDisposedException">
+  /// Thrown if the parent <see cref="Mcp2221A"/> has already been disposed.
+  /// </exception>
+  [CLSCompliant(false)]
+  public System.Device.I2c.I2cDevice CreateI2cDeviceAdapter(
+    I2cAddress deviceAddress,
+    bool shouldDisposeMcp2221A = false
+  )
+  {
+    Device.ThrowIfDisposed();
+
+    return new Mcp2221AI2cDevice(
+      i2cBus: this,
+      deviceAddress: deviceAddress,
+      shouldDisposeMcp2221A: shouldDisposeMcp2221A
+    );
+  }
+
+  private static readonly EventId EventIdI2cCommand = new(10, "I2C command");
+  private static readonly EventId EventIdI2cEngineState = new(11, "I2C engine state");
+
+  private static class CancelTransferCommand {
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+#pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
+    public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Exception exceptionCauseOfCancellation) args)
+#pragma warning restore IDE0060
     {
-      Device = device;
-      this.logger = logger;
+      // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
+      comm[0] = 0x10; // Status/Set Parameters
+      comm[1] = 0x00; // Don't care
+      comm[2] = 0x10; // Cancel current I2C/SMBus transfer
     }
 
-    /// <summary>
-    /// Creates a new <see cref="System.Device.I2c.I2cBus"/> adapter.
-    /// This adapter allows the MCP2221/MCP2221A to interface with the extensive collection of I2C device
-    /// bindings provided by the <see href="https://www.nuget.org/packages/Iot.Device.Bindings">Iot.Device.Bindings</see>
-    /// library.
-    /// </summary>
-    /// <param name="busSpeed">
-    /// <para>
-    /// Specify the value to set for <see cref="Mcp2221AI2cBus.BusSpeed"/>.
-    /// </para>
-    /// <para>
-    /// The <see cref="Mcp2221AI2cBus.BusSpeed"/> of the <see cref="Mcp2221AI2cBus"/> instance created
-    /// shares the same value as <see cref="BusSpeed"/> of the current instance, so it overwrites the
-    /// current <see cref="BusSpeed"/> value regardless of the specified value.
-    /// </para>
-    /// </param>
-    /// <param name="shouldDisposeMcp2221A">
-    /// <see langword="true"/> to automatically dispose the underlying <see cref="Mcp2221A"/>
-    /// when this adapter is disposed; <see langword="false"/> to keep the <see cref="Mcp2221A"/> open.
-    /// The default is <see langword="false"/>.
-    /// </param>
-    /// <returns>
-    /// A <see cref="Mcp2221AI2cBus"/> instance that wraps the MCP2221 I2C functionality.
-    /// </returns>
-    /// <exception cref="ObjectDisposedException">
-    /// Thrown if the parent <see cref="Mcp2221A"/> has already been disposed.
-    /// </exception>
-    [CLSCompliant(false)]
-    public Mcp2221AI2cBus CreateI2cBusAdapter(
-      I2cBusSpeed busSpeed = I2cBusSpeed.Default,
-      bool shouldDisposeMcp2221A = false
-    )
+    [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
+    public static I2cEngineState ParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Exception exceptionCauseOfCancellation) args)
     {
-      Device.ThrowIfDisposed();
+      if (resp[1] != 0x00) // Command completed successfully
+        throw new Mcp2221ACommandException($"unexpected response (0x{resp[1]:X2})", args.exceptionCauseOfCancellation);
 
-      return new(
-        i2cBus: this,
-        shouldDisposeMcp2221A: shouldDisposeMcp2221A
-      ) {
-        BusSpeed = busSpeed,
-      };
-    }
+      var state = I2cEngineState.Parse(resp);
+      var isBusStatusDefined =
+#if SYSTEM_ENUM_ISDEFINED_OF_TENUM
+        Enum.IsDefined<I2cEngineState.TransferStatus>(state.BusStatus);
+#else
+        Enum.IsDefined(typeof(I2cEngineState.TransferStatus), state.BusStatus);
+#endif
 
-    /// <summary>
-    /// Creates a new <see cref="System.Device.I2c.I2cDevice"/> adapter for a specific I2C address.
-    /// This adapter allows the MCP2221/MCP2221A to interface with the extensive collection of I2C device
-    /// bindings provided by the <see href="https://www.nuget.org/packages/Iot.Device.Bindings">Iot.Device.Bindings</see>
-    /// library.
-    /// </summary>
-    /// <param name="deviceAddress">The I2C address of the target device.</param>
-    /// <param name="shouldDisposeMcp2221A">
-    /// <see langword="true"/> to automatically dispose the underlying <see cref="Mcp2221A"/>
-    /// when this adapter is disposed; <see langword="false"/> to keep the <see cref="Mcp2221A"/> open.
-    /// The default is <see langword="false"/>.
-    /// </param>
-    /// <returns>
-    /// A <see cref="System.Device.I2c.I2cDevice"/> instance that wraps the MCP2221 I2C functionality
-    /// for the specified address.
-    /// </returns>
-    /// <exception cref="ObjectDisposedException">
-    /// Thrown if the parent <see cref="Mcp2221A"/> has already been disposed.
-    /// </exception>
-    [CLSCompliant(false)]
-    public System.Device.I2c.I2cDevice CreateI2cDeviceAdapter(
-      I2cAddress deviceAddress,
-      bool shouldDisposeMcp2221A = false
-    )
-    {
-      Device.ThrowIfDisposed();
-
-      return new Mcp2221AI2cDevice(
-        i2cBus: this,
-        deviceAddress: deviceAddress,
-        shouldDisposeMcp2221A: shouldDisposeMcp2221A
-      );
-    }
-
-    private static readonly EventId EventIdI2cCommand = new(10, "I2C command");
-    private static readonly EventId EventIdI2cEngineState = new(11, "I2C engine state");
-
-    private static class CancelTransferCommand {
-      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-  #pragma warning disable IDE0060 // [IDE0060] Remove unused parameter
-      public static void ConstructCommand(Span<byte> comm, ReadOnlySpan<byte> userData, (I2cAddress address, Exception exceptionCauseOfCancellation) args)
-  #pragma warning restore IDE0060
-      {
-        // [MCP2221A] 3.1.1 STATUS/SET PARAMETERS
-        comm[0] = 0x10; // Status/Set Parameters
-        comm[1] = 0x00; // Don't care
-        comm[2] = 0x10; // Cancel current I2C/SMBus transfer
+      if (!isBusStatusDefined) {
+        throw new I2cCommandException(
+          args.address,
+          $"unexpected response while transfer cancellation (0x{resp[2]:X2})",
+          args.exceptionCauseOfCancellation
+        );
       }
 
-      [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
-      public static I2cEngineState ParseResponse(ReadOnlySpan<byte> resp, (I2cAddress address, Exception exceptionCauseOfCancellation) args)
-      {
-        if (resp[1] != 0x00) // Command completed successfully
-          throw new Mcp2221ACommandException($"unexpected response (0x{resp[1]:X2})", args.exceptionCauseOfCancellation);
+      return state;
+    }
+  }
 
-        var state = I2cEngineState.Parse(resp);
-        var isBusStatusDefined =
-  #if SYSTEM_ENUM_ISDEFINED_OF_TENUM
-          Enum.IsDefined<I2cEngineState.TransferStatus>(state.BusStatus);
-  #else
-          Enum.IsDefined(typeof(I2cEngineState.TransferStatus), state.BusStatus);
-  #endif
+  private async ValueTask CancelAsync(I2cAddress address, Exception exceptionCauseOfCancellation)
+  {
+    var engineState = await Device.CommandAsync(
+      userData: default,
+      arg: (address, exceptionCauseOfCancellation),
+      cancellationToken: default,
+      constructCommand: CancelTransferCommand.ConstructCommand,
+      parseResponse: CancelTransferCommand.ParseResponse
+    ).ConfigureAwait(false);
 
-        if (!isBusStatusDefined) {
-          throw new I2cCommandException(
-            args.address,
-            $"unexpected response while transfer cancellation (0x{resp[2]:X2})",
-            args.exceptionCauseOfCancellation
+    logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
+  }
+
+  private void Cancel(I2cAddress address, Exception exceptionCauseOfCancellation)
+  {
+    var engineState = Device.Command(
+      userData: default,
+      arg: (address, exceptionCauseOfCancellation),
+      cancellationToken: default,
+      constructCommand: CancelTransferCommand.ConstructCommand,
+      parseResponse: CancelTransferCommand.ParseResponse
+    );
+
+    logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
+  }
+
+  public ValueTask WriteAsync(
+    I2cAddress address,
+    byte[] buffer,
+    int offset,
+    int count,
+    CancellationToken cancellationToken = default
+  )
+    => WriteAsync(
+      address,
+      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsMemory(offset, count),
+      cancellationToken
+    );
+
+  /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues writing command with 0-length in this case.</remarks>
+  public async ValueTask WriteAsync(
+    I2cAddress address,
+    ReadOnlyMemory<byte> buffer,
+    CancellationToken cancellationToken = default
+  )
+  {
+    if (MaxBlockLength < buffer.Length)
+      throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+
+    try {
+      logger?.LogInformation(EventIdI2cCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+
+      for (; ; ) {
+        var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
+
+        foreach (var (constructCommand, parseResponse) in new OperationContext(logger, BusSpeed).IterateWriteCommands()) {
+          await Device.CommandAsync(
+            userData: buffer.Slice(0, lengthToTransfer),
+            arg: (address, Memory<byte>.Empty),
+            cancellationToken: cancellationToken,
+            constructCommand: constructCommand,
+            parseResponse: parseResponse
+          ).ConfigureAwait(false);
+        }
+
+        buffer = buffer.Slice(lengthToTransfer);
+
+        if (buffer.IsEmpty)
+          break;
+      }
+    }
+    catch (Exception ex) {
+      logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
+      if (ex is not I2cNackException)
+        await CancelAsync(address, ex).ConfigureAwait(false);
+      throw;
+    }
+  }
+
+  public void Write(
+    I2cAddress address,
+    byte[] buffer,
+    int offset,
+    int count,
+    CancellationToken cancellationToken = default
+  )
+    => Write(
+      address,
+      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsSpan(offset, count),
+      cancellationToken
+    );
+
+  /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues writing command with 0-length in this case.</remarks>
+  public void Write(
+    I2cAddress address,
+    ReadOnlySpan<byte> buffer,
+    CancellationToken cancellationToken = default
+  )
+  {
+    if (MaxBlockLength < buffer.Length)
+      throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+
+    try {
+      logger?.LogInformation(EventIdI2cCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+
+      for (; ; ) {
+        var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
+
+        foreach (var (constructCommand, parseResponse) in new OperationContext(logger, BusSpeed).IterateWriteCommands()) {
+          Device.Command(
+            userData: buffer.Slice(0, lengthToTransfer),
+            arg: (address, Memory<byte>.Empty),
+            cancellationToken: cancellationToken,
+            constructCommand: constructCommand,
+            parseResponse: parseResponse
           );
         }
 
-        return state;
+        buffer = buffer.Slice(lengthToTransfer);
+
+        if (buffer.IsEmpty)
+          break;
       }
     }
-
-    private async ValueTask CancelAsync(I2cAddress address, Exception exceptionCauseOfCancellation)
-    {
-      var engineState = await Device.CommandAsync(
-        userData: default,
-        arg: (address, exceptionCauseOfCancellation),
-        cancellationToken: default,
-        constructCommand: CancelTransferCommand.ConstructCommand,
-        parseResponse: CancelTransferCommand.ParseResponse
-      ).ConfigureAwait(false);
-
-      logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
+    catch (Exception ex) {
+      logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
+      if (ex is not I2cNackException)
+        Cancel(address, ex);
+      throw;
     }
+  }
 
-    private void Cancel(I2cAddress address, Exception exceptionCauseOfCancellation)
-    {
-      var engineState = Device.Command(
-        userData: default,
-        arg: (address, exceptionCauseOfCancellation),
-        cancellationToken: default,
-        constructCommand: CancelTransferCommand.ConstructCommand,
-        parseResponse: CancelTransferCommand.ParseResponse
-      );
+  public ValueTask<int> ReadAsync(
+    I2cAddress address,
+    byte[] buffer,
+    int offset,
+    int count,
+    CancellationToken cancellationToken = default
+  )
+    => ReadAsync(
+      address,
+      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsMemory(offset, count),
+      cancellationToken
+    );
 
-      logger?.LogWarning(EventIdI2cEngineState, $"CANCEL TRANSFER: {engineState}");
-    }
+  /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues reading command with 0-length in this case.</remarks>
+  public async ValueTask<int> ReadAsync(
+    I2cAddress address,
+    Memory<byte> buffer,
+    CancellationToken cancellationToken = default
+  )
+  {
+    if (MaxBlockLength < buffer.Length)
+      throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
 
-    public ValueTask WriteAsync(
-      I2cAddress address,
-      byte[] buffer,
-      int offset,
-      int count,
-      CancellationToken cancellationToken = default
-    )
-      => WriteAsync(
-        address,
-        (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsMemory(offset, count),
-        cancellationToken
-      );
+    try {
+      logger?.LogInformation(EventIdI2cCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
 
-    /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues writing command with 0-length in this case.</remarks>
-    public async ValueTask WriteAsync(
-      I2cAddress address,
-      ReadOnlyMemory<byte> buffer,
-      CancellationToken cancellationToken = default
-    )
-    {
-      if (MaxBlockLength < buffer.Length)
-        throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+      var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
       try {
-        logger?.LogInformation(EventIdI2cCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+        var totalReadLength = 0;
 
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
+          var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
 
-          foreach (var (constructCommand, parseResponse) in new OperationContext(logger, BusSpeed).IterateWriteCommands()) {
+          var context = new OperationContext(logger, BusSpeed);
+
+          foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
             await Device.CommandAsync(
               userData: buffer.Slice(0, lengthToTransfer),
-              arg: (address, Memory<byte>.Empty),
+              arg: (address, readBufferMemory),
               cancellationToken: cancellationToken,
               constructCommand: constructCommand,
               parseResponse: parseResponse
             ).ConfigureAwait(false);
           }
 
-          buffer = buffer.Slice(lengthToTransfer);
+          if (context.ReadLength < 0)
+            break;
 
+          readBufferMemory.Slice(0, context.ReadLength).CopyTo(buffer);
+
+          buffer = buffer.Slice(context.ReadLength);
+
+          if (context.ReadLength < lengthToTransfer)
+            break;
           if (buffer.IsEmpty)
             break;
         }
+
+        return totalReadLength;
       }
-      catch (Exception ex) {
-        logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
-        if (ex is not I2cNackException)
-          await CancelAsync(address, ex).ConfigureAwait(false);
-        throw;
+      finally {
+        ArrayPool<byte>.Shared.Return(readBuffer);
       }
     }
+    catch (Exception ex) {
+      logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
+      if (ex is not I2cReadException)
+        await CancelAsync(address, ex).ConfigureAwait(false);
+      throw;
+    }
+  }
 
-    public void Write(
-      I2cAddress address,
-      byte[] buffer,
-      int offset,
-      int count,
-      CancellationToken cancellationToken = default
-    )
-      => Write(
-        address,
-        (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsSpan(offset, count),
-        cancellationToken
-      );
+  public int Read(
+    I2cAddress address,
+    byte[] buffer,
+    int offset,
+    int count,
+    CancellationToken cancellationToken = default
+  )
+    => Read(
+      address,
+      (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsSpan(offset, count),
+      cancellationToken
+    );
 
-    /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues writing command with 0-length in this case.</remarks>
-    public void Write(
-      I2cAddress address,
-      ReadOnlySpan<byte> buffer,
-      CancellationToken cancellationToken = default
-    )
-    {
-      if (MaxBlockLength < buffer.Length)
-        throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+  /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues reading command with 0-length in this case.</remarks>
+  public int Read(
+    I2cAddress address,
+    Span<byte> buffer,
+    CancellationToken cancellationToken = default
+  )
+  {
+    if (MaxBlockLength < buffer.Length)
+      throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
+
+    try {
+      logger?.LogInformation(EventIdI2cCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
+
+      var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
 
       try {
-        logger?.LogInformation(EventIdI2cCommand, $"I2C Write {buffer.Length} bytes to 0x{address}");
+        var totalReadLength = 0;
 
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
+          var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
 
-          foreach (var (constructCommand, parseResponse) in new OperationContext(logger, BusSpeed).IterateWriteCommands()) {
+          var context = new OperationContext(logger, BusSpeed);
+
+          foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
             Device.Command(
               userData: buffer.Slice(0, lengthToTransfer),
-              arg: (address, Memory<byte>.Empty),
+              arg: (address, readBufferMemory),
               cancellationToken: cancellationToken,
               constructCommand: constructCommand,
               parseResponse: parseResponse
             );
           }
 
-          buffer = buffer.Slice(lengthToTransfer);
+          if (context.ReadLength < 0)
+            break;
 
+          readBufferMemory.Span.Slice(0, context.ReadLength).CopyTo(buffer);
+
+          buffer = buffer.Slice(context.ReadLength);
+
+          if (context.ReadLength < lengthToTransfer)
+            break;
           if (buffer.IsEmpty)
             break;
         }
-      }
-      catch (Exception ex) {
-        logger?.LogError(EventIdI2cCommand, $"I2C Write to 0x{address} failed: {ex.Message}");
-        if (ex is not I2cNackException)
-          Cancel(address, ex);
-        throw;
-      }
-    }
 
-    public ValueTask<int> ReadAsync(
-      I2cAddress address,
-      byte[] buffer,
-      int offset,
-      int count,
-      CancellationToken cancellationToken = default
-    )
-      => ReadAsync(
-        address,
-        (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsMemory(offset, count),
-        cancellationToken
-      );
-
-    /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues reading command with 0-length in this case.</remarks>
-    public async ValueTask<int> ReadAsync(
-      I2cAddress address,
-      Memory<byte> buffer,
-      CancellationToken cancellationToken = default
-    )
-    {
-      if (MaxBlockLength < buffer.Length)
-        throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
-
-      try {
-        logger?.LogInformation(EventIdI2cCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
-
-        var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
-
-        try {
-          var totalReadLength = 0;
-
-          for (; ; ) {
-            var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
-            var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
-
-            var context = new OperationContext(logger, BusSpeed);
-
-            foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
-              await Device.CommandAsync(
-                userData: buffer.Slice(0, lengthToTransfer),
-                arg: (address, readBufferMemory),
-                cancellationToken: cancellationToken,
-                constructCommand: constructCommand,
-                parseResponse: parseResponse
-              ).ConfigureAwait(false);
-            }
-
-            if (context.ReadLength < 0)
-              break;
-
-            readBufferMemory.Slice(0, context.ReadLength).CopyTo(buffer);
-
-            buffer = buffer.Slice(context.ReadLength);
-
-            if (context.ReadLength < lengthToTransfer)
-              break;
-            if (buffer.IsEmpty)
-              break;
-          }
-
-          return totalReadLength;
-        }
-        finally {
-          ArrayPool<byte>.Shared.Return(readBuffer);
-        }
-      }
-      catch (Exception ex) {
-        logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
-        if (ex is not I2cReadException)
-          await CancelAsync(address, ex).ConfigureAwait(false);
-        throw;
-      }
-    }
-
-    public int Read(
-      I2cAddress address,
-      byte[] buffer,
-      int offset,
-      int count,
-      CancellationToken cancellationToken = default
-    )
-      => Read(
-        address,
-        (buffer ?? throw new ArgumentNullException(nameof(buffer))).AsSpan(offset, count),
-        cancellationToken
-      );
-
-    /// <remarks>An empty buffer can be specified to <paramref name="buffer"/>. This method issues reading command with 0-length in this case.</remarks>
-    public int Read(
-      I2cAddress address,
-      Span<byte> buffer,
-      CancellationToken cancellationToken = default
-    )
-    {
-      if (MaxBlockLength < buffer.Length)
-        throw new ArgumentException($"transfer length must be up to {MaxBlockLength} bytes", nameof(buffer));
-
-      try {
-        logger?.LogInformation(EventIdI2cCommand, $"I2C Read {buffer.Length} bytes from 0x{address}");
-
-        var readBuffer = ArrayPool<byte>.Shared.Rent(MaxTransferLengthPerCommand);
-
-        try {
-          var totalReadLength = 0;
-
-          for (; ; ) {
-            var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
-            var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
-
-            var context = new OperationContext(logger, BusSpeed);
-
-            foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
-              Device.Command(
-                userData: buffer.Slice(0, lengthToTransfer),
-                arg: (address, readBufferMemory),
-                cancellationToken: cancellationToken,
-                constructCommand: constructCommand,
-                parseResponse: parseResponse
-              );
-            }
-
-            if (context.ReadLength < 0)
-              break;
-
-            readBufferMemory.Span.Slice(0, context.ReadLength).CopyTo(buffer);
-
-            buffer = buffer.Slice(context.ReadLength);
-
-            if (context.ReadLength < lengthToTransfer)
-              break;
-            if (buffer.IsEmpty)
-              break;
-          }
-
-          return totalReadLength;
-        }
-        finally {
-          ArrayPool<byte>.Shared.Return(readBuffer);
-        }
-      }
-      catch (Exception ex) {
-        logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
-        if (ex is not I2cReadException)
-          Cancel(address, ex);
-        throw;
-      }
-    }
-
-    public async ValueTask WriteByteAsync(
-      I2cAddress address,
-      byte value,
-      CancellationToken cancellationToken = default
-    )
-    {
-      var buffer = ArrayPool<byte>.Shared.Rent(1);
-
-      try {
-        buffer[0] = value;
-
-        await WriteAsync(address, buffer.AsMemory(0, 1), cancellationToken).ConfigureAwait(false);
+        return totalReadLength;
       }
       finally {
-        ArrayPool<byte>.Shared.Return(buffer);
+        ArrayPool<byte>.Shared.Return(readBuffer);
       }
     }
-
-    public void WriteByte(
-      I2cAddress address,
-      byte value,
-      CancellationToken cancellationToken = default
-    )
-      => Write(address, [value], cancellationToken);
-
-    public async ValueTask<int> ReadByteAsync(
-      I2cAddress address,
-      CancellationToken cancellationToken = default
-    )
-    {
-      var buffer = ArrayPool<byte>.Shared.Rent(1);
-
-      try {
-        if (0 == await ReadAsync(address, buffer.AsMemory(0, 1), cancellationToken).ConfigureAwait(false))
-          return -1;
-        else
-          return buffer[0];
-      }
-      finally {
-        ArrayPool<byte>.Shared.Return(buffer);
-      }
+    catch (Exception ex) {
+      logger?.LogError(EventIdI2cCommand, $"I2C Read from 0x{address} failed: {ex.Message}");
+      if (ex is not I2cReadException)
+        Cancel(address, ex);
+      throw;
     }
+  }
 
-    public int ReadByte(
-      I2cAddress address,
-      CancellationToken cancellationToken = default
-    )
-    {
-      Span<byte> buffer = stackalloc byte[1];
+  public async ValueTask WriteByteAsync(
+    I2cAddress address,
+    byte value,
+    CancellationToken cancellationToken = default
+  )
+  {
+    var buffer = ArrayPool<byte>.Shared.Rent(1);
 
-      if (0 == Read(address, buffer, cancellationToken))
+    try {
+      buffer[0] = value;
+
+      await WriteAsync(address, buffer.AsMemory(0, 1), cancellationToken).ConfigureAwait(false);
+    }
+    finally {
+      ArrayPool<byte>.Shared.Return(buffer);
+    }
+  }
+
+  public void WriteByte(
+    I2cAddress address,
+    byte value,
+    CancellationToken cancellationToken = default
+  )
+    => Write(address, [value], cancellationToken);
+
+  public async ValueTask<int> ReadByteAsync(
+    I2cAddress address,
+    CancellationToken cancellationToken = default
+  )
+  {
+    var buffer = ArrayPool<byte>.Shared.Rent(1);
+
+    try {
+      if (0 == await ReadAsync(address, buffer.AsMemory(0, 1), cancellationToken).ConfigureAwait(false))
         return -1;
       else
         return buffer[0];
     }
+    finally {
+      ArrayPool<byte>.Shared.Return(buffer);
+    }
+  }
+
+  public int ReadByte(
+    I2cAddress address,
+    CancellationToken cancellationToken = default
+  )
+  {
+    Span<byte> buffer = stackalloc byte[1];
+
+    if (0 == Read(address, buffer, cancellationToken))
+      return -1;
+    else
+      return buffer[0];
+  }
 }

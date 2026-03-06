@@ -13,16 +13,6 @@ public sealed class Mcp2221AI2cBus : I2cBus {
 
   private readonly bool shouldDisposeMcp2221A;
 
-  /// <remarks>
-  /// This property shares its value with <see cref="I2cController.BusSpeed"/>.
-  /// Therefore, changing the value of this property affects <see cref="I2cController.BusSpeed"/>
-  /// and other <see cref="Mcp2221AI2cBus"/> instances.
-  /// </remarks>
-  public I2cBusSpeed BusSpeed {
-    get => I2cBus.BusSpeed;
-    set => I2cBus.BusSpeed = value;
-  }
-
   internal Mcp2221AI2cBus(
     I2cController i2cBus,
     bool shouldDisposeMcp2221A
@@ -33,14 +23,28 @@ public sealed class Mcp2221AI2cBus : I2cBus {
   }
 
   /// <inheritdoc/>
-  public override I2cDevice CreateDevice(int deviceAddress)
+  public override Mcp2221AI2cDevice CreateDevice(int deviceAddress)
     => CreateDevice(new I2cAddress(deviceAddress));
 
-  public I2cDevice CreateDevice(I2cAddress deviceAddress)
+  /// <param name="deviceAddress">The I2C address of the target device.</param>
+  /// <param name="transmissionSpeedInKbps">
+  /// The transmission speed used for reading and writing to the I2C bus in [kbps] units.
+  /// </param>
+  /// <remarks>
+  ///   <include
+  ///     file="../Smdn.Devices.Mcp2221A.docs.xml"
+  ///     path="docs/I2cReadWriteTransmissionSpeedParameter/remarks/*"
+  ///   />
+  /// </remarks>
+  public Mcp2221AI2cDevice CreateDevice(
+    I2cAddress deviceAddress,
+    int transmissionSpeedInKbps = I2cController.DefaultTransmissionSpeedInKbps
+  )
     => I2cBus.CreateI2cDeviceAdapter(
       deviceAddress: deviceAddress,
+      transmissionSpeedInKbps: transmissionSpeedInKbps,
       // The lifecycle of the MCP2221 is managed by this class, so regardless of the
-      // value specified for shouldDisposeMcp2221, the created device adapter
+      // value specified for shouldDisposeMcp2221A, the created device adapter
       // is not allowed to dispose of the MCP2221.
       shouldDisposeMcp2221A: false
     );

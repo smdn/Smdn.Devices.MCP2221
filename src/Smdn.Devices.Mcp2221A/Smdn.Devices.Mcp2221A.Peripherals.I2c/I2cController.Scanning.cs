@@ -22,6 +22,7 @@ partial class I2cController {
   public async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(
     I2cAddress addressRangeMin = default,
     I2cAddress addressRangeMax = default,
+    int i2cBusTransmissionSpeedInKbps = DefaultTransmissionSpeedInKbps,
     IProgress<I2cScanBusProgress>? progress = null,
     CancellationToken cancellationToken = default
   )
@@ -43,7 +44,12 @@ partial class I2cController {
       progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
       try {
-        await WriteAsync(address, default, cancellationToken).ConfigureAwait(false);
+        await WriteAsync(
+          address,
+          i2cBusTransmissionSpeedInKbps,
+          default,
+          cancellationToken
+        ).ConfigureAwait(false);
 
         writeAddressSet.Add(address);
       }
@@ -52,7 +58,11 @@ partial class I2cController {
       }
 
       try {
-        await ReadByteAsync(address, cancellationToken).ConfigureAwait(false);
+        _ = await ReadByteAsync(
+          address,
+          i2cBusTransmissionSpeedInKbps,
+          cancellationToken
+        ).ConfigureAwait(false);
 
         readAddressSet.Add(address);
       }
@@ -67,6 +77,7 @@ partial class I2cController {
   public (IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet) ScanBus(
     I2cAddress addressRangeMin = default,
     I2cAddress addressRangeMax = default,
+    int i2cBusTransmissionSpeedInKbps = DefaultTransmissionSpeedInKbps,
     IProgress<I2cScanBusProgress>? progress = null,
     CancellationToken cancellationToken = default
   )
@@ -88,7 +99,12 @@ partial class I2cController {
       progress?.Report(new I2cScanBusProgress(address, addressRangeMin, addressRangeMax));
 
       try {
-        Write(address, default, cancellationToken);
+        Write(
+          address,
+          i2cBusTransmissionSpeedInKbps,
+          default,
+          cancellationToken
+        );
 
         writeAddressSet.Add(address);
       }
@@ -97,7 +113,11 @@ partial class I2cController {
       }
 
       try {
-        ReadByte(address, cancellationToken);
+        _ = ReadByte(
+          address,
+          i2cBusTransmissionSpeedInKbps,
+          cancellationToken
+        );
 
         readAddressSet.Add(address);
       }

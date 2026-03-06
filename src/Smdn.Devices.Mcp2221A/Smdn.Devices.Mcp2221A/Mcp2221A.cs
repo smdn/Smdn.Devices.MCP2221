@@ -85,6 +85,13 @@ public partial class Mcp2221A :
   /// <remarks>Always returns <c>01234567</c>.</remarks>
   public string? ChipFactorySerialNumber { get; private set; } = null;
 
+  /// <remarks>
+  /// If the <see cref="FirmwareRevision"/> is not retrieved or is an unknown
+  /// revision, assume it is an MCP2221A.
+  /// </remarks>
+  internal bool IsMcp2221A
+    => !string.Equals(FirmwareRevision, FirmwareRevisionMcp2221, StringComparison.Ordinal);
+
   public I2cController I2c { get; }
 
   private Mcp2221A(

@@ -24,9 +24,7 @@ await device.GP3.ConfigureAsLedI2cAsync();
 
 const int DeviceAddressMcp23017 = 0x20; // The address of MCP23017 which is connected to MCP2221/MCP2221A
 
-device.I2c.BusSpeed = I2cBusSpeed.Default;
-
-var i2cDevice = device.I2c.CreateI2cDeviceAdapter(DeviceAddressMcp23017);
+var i2cDevice = device.I2c.CreateI2cDeviceAdapter(DeviceAddressMcp23017).WithStandardMode();
 
 var mcp23017 = new Mcp23017(
   i2cDevice: i2cDevice,

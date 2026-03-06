@@ -112,10 +112,6 @@ public partial class Mcp2221ATests {
     await disposeAction(device);
 
     Assert.That(() => _ = device.HidDevice, Throws.TypeOf<ObjectDisposedException>());
-    Assert.That(async () => await device.GP0.SetValueAsync(default), Throws.TypeOf<ObjectDisposedException>());
-    Assert.That(async () => await device.GP0.GetValueAsync(), Throws.TypeOf<ObjectDisposedException>());
-    Assert.That(async () => await device.I2c.WriteAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
-    Assert.That(async () => await device.I2c.ReadAsync(default, default), Throws.TypeOf<ObjectDisposedException>());
 
     Assert.That(() => _ = device.HardwareRevision, Throws.Nothing);
     Assert.That(() => _ = device.FirmwareRevision, Throws.Nothing);
@@ -130,6 +126,19 @@ public partial class Mcp2221ATests {
     Assert.That(() => _ = device.GP3, Throws.Nothing);
     Assert.That(() => _ = device.I2c, Throws.Nothing);
 
+    Assert.That(async () => await device.GP0.SetValueAsync(default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.GP0.SetValueAsync(default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.GP0.SetValue(default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.GP0.GetValueAsync(), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.GP0.GetValueAsync(), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.GP0.GetValue(), Throws.TypeOf<ObjectDisposedException>());
+
+    Assert.That(async () => await device.I2c.WriteAsync(default, 100, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.I2c.WriteAsync(default, 100, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.I2c.Write(default, 100, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(async () => await device.I2c.ReadAsync(default, 100, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.I2c.ReadAsync(default, 100, default), Throws.TypeOf<ObjectDisposedException>());
+    Assert.That(() => device.I2c.Read(default, 100, default), Throws.TypeOf<ObjectDisposedException>());
     Assert.That(baseDevice.IsDisposed, Is.EqualTo(shouldDisposeUsbHidDevice), "USB-HID device disposed");
 
     Assert.That(async () => await disposeAction(device), Throws.Nothing, "dispose again");

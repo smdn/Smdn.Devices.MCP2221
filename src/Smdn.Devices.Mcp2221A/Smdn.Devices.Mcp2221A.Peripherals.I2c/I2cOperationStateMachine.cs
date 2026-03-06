@@ -36,14 +36,14 @@ internal class I2cOperationStateMachine {
     AdvanceToNextStep,
   }
 
-  public I2cOperationStateMachine(ILogger? logger, I2cBusSpeed busSpeed)
+  public I2cOperationStateMachine(ILogger? logger, byte busSpeedDivider)
   {
     this.logger = logger;
-    this.busSpeed = busSpeed;
+    this.busSpeedDivider = busSpeedDivider;
   }
 
   private readonly ILogger? logger;
-  private readonly I2cBusSpeed busSpeed;
+  private readonly byte busSpeedDivider;
   private OperationState operationState;
   private I2cEngineState lastEngineState;
   public int ReadLength { get; private set; } = -1;
@@ -206,12 +206,7 @@ internal class I2cOperationStateMachine {
 
     if (operationState == OperationState.Initial) {
       comm[3] = 0x20; // Set I2C/SMBus communication speed
-      comm[4] = busSpeed switch {
-        I2cBusSpeed.Speed10kBitsPerSec => 0xAD,
-        I2cBusSpeed.Speed100kBitsPerSec => 0x75,
-        I2cBusSpeed.Speed400kBitsPerSec => 0x1B,
-        _ => 0x75, // as default (or should throw InvalidEnumValueException?)
-      };
+      comm[4] = busSpeedDivider; // The I2C/SMBus system clock divider
     }
     else if (operationState == OperationState.CancelAndRetry) {
       comm[2] = 0x10; // Cancel current I2C/SMBus transfer (0x10: Cancel transfer)

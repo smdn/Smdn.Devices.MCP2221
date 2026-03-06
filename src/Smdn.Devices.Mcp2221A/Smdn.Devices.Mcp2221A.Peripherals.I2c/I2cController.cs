@@ -16,6 +16,9 @@ namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 #pragma warning disable IDE0040
 public sealed partial class I2cController {
 #pragma warning restore IDE0040
+  internal static readonly EventId EventIdI2cCommand = new(10, "I2C command");
+  internal static readonly EventId EventIdI2cEngineState = new(11, "I2C engine state");
+
   public const int MaxBlockLength = 0xFFFF;
   private const int MaxTransferLengthPerCommand = 64 - 4;
 
@@ -107,9 +110,6 @@ public sealed partial class I2cController {
       shouldDisposeMcp2221A: shouldDisposeMcp2221A
     );
   }
-
-  private static readonly EventId EventIdI2cCommand = new(10, "I2C command");
-  private static readonly EventId EventIdI2cEngineState = new(11, "I2C engine state");
 
   private static class CancelTransferCommand {
     [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
@@ -203,8 +203,9 @@ public sealed partial class I2cController {
 
       for (; ; ) {
         var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
+        var stateMachine = new I2cOperationStateMachine(logger, BusSpeed);
 
-        foreach (var (constructCommand, parseResponse) in new OperationContext(logger, BusSpeed).IterateWriteCommands()) {
+        foreach (var (constructCommand, parseResponse) in stateMachine.IterateWriteCommands()) {
           await Device.CommandAsync(
             userData: buffer.Slice(0, lengthToTransfer),
             arg: (address, Memory<byte>.Empty),
@@ -256,8 +257,9 @@ public sealed partial class I2cController {
 
       for (; ; ) {
         var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
+        var stateMachine = new I2cOperationStateMachine(logger, BusSpeed);
 
-        foreach (var (constructCommand, parseResponse) in new OperationContext(logger, BusSpeed).IterateWriteCommands()) {
+        foreach (var (constructCommand, parseResponse) in stateMachine.IterateWriteCommands()) {
           Device.Command(
             userData: buffer.Slice(0, lengthToTransfer),
             arg: (address, Memory<byte>.Empty),
@@ -315,10 +317,9 @@ public sealed partial class I2cController {
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
           var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
+          var stateMachine = new I2cOperationStateMachine(logger, BusSpeed);
 
-          var context = new OperationContext(logger, BusSpeed);
-
-          foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
+          foreach (var (constructCommand, parseResponse) in stateMachine.IterateReadCommands()) {
             await Device.CommandAsync(
               userData: buffer.Slice(0, lengthToTransfer),
               arg: (address, readBufferMemory),
@@ -328,14 +329,14 @@ public sealed partial class I2cController {
             ).ConfigureAwait(false);
           }
 
-          if (context.ReadLength < 0)
+          if (stateMachine.ReadLength < 0)
             break;
 
-          readBufferMemory.Slice(0, context.ReadLength).CopyTo(buffer);
+          readBufferMemory.Slice(0, stateMachine.ReadLength).CopyTo(buffer);
 
-          buffer = buffer.Slice(context.ReadLength);
+          buffer = buffer.Slice(stateMachine.ReadLength);
 
-          if (context.ReadLength < lengthToTransfer)
+          if (stateMachine.ReadLength < lengthToTransfer)
             break;
           if (buffer.IsEmpty)
             break;
@@ -389,10 +390,9 @@ public sealed partial class I2cController {
         for (; ; ) {
           var lengthToTransfer = Math.Min(buffer.Length, MaxTransferLengthPerCommand);
           var readBufferMemory = readBuffer.AsMemory(0, lengthToTransfer);
+          var stateMachine = new I2cOperationStateMachine(logger, BusSpeed);
 
-          var context = new OperationContext(logger, BusSpeed);
-
-          foreach (var (constructCommand, parseResponse) in context.IterateReadCommands()) {
+          foreach (var (constructCommand, parseResponse) in stateMachine.IterateReadCommands()) {
             Device.Command(
               userData: buffer.Slice(0, lengthToTransfer),
               arg: (address, readBufferMemory),
@@ -402,14 +402,14 @@ public sealed partial class I2cController {
             );
           }
 
-          if (context.ReadLength < 0)
+          if (stateMachine.ReadLength < 0)
             break;
 
-          readBufferMemory.Span.Slice(0, context.ReadLength).CopyTo(buffer);
+          readBufferMemory.Span.Slice(0, stateMachine.ReadLength).CopyTo(buffer);
 
-          buffer = buffer.Slice(context.ReadLength);
+          buffer = buffer.Slice(stateMachine.ReadLength);
 
-          if (context.ReadLength < lengthToTransfer)
+          if (stateMachine.ReadLength < lengthToTransfer)
             break;
           if (buffer.IsEmpty)
             break;

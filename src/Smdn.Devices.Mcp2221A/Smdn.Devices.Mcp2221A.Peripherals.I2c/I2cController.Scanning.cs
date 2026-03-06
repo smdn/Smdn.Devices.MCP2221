@@ -14,11 +14,10 @@ System.Collections.Generic.IReadOnlyCollection
 #endif
 <Smdn.Devices.Mcp2221A.I2cAddress>;
 
-namespace Smdn.Devices.Mcp2221A;
+namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 #pragma warning disable IDE0040
-partial class Mcp2221A {
-  partial class I2cFunctionality {
+partial class I2cController {
 #pragma warning restore IDE0040
     public async ValueTask<(IReadOnlyI2cAddressSet WriteAddressSet, IReadOnlyI2cAddressSet ReadAddressSet)> ScanBusAsync(
       I2cAddress addressRangeMin = default,
@@ -109,5 +108,4 @@ partial class Mcp2221A {
 
       return (writeAddressSet, readAddressSet);
     }
-  }
 }

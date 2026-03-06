@@ -8,14 +8,14 @@ namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 [CLSCompliant(false)]
 public sealed class Mcp2221AI2cBus : I2cBus {
-  private Mcp2221A.I2cFunctionality i2cBus;
-  internal Mcp2221A.I2cFunctionality I2cBus => i2cBus ?? throw new ObjectDisposedException(GetType().FullName);
+  private I2cController i2cBus;
+  internal I2cController I2cBus => i2cBus ?? throw new ObjectDisposedException(GetType().FullName);
 
   private readonly bool shouldDisposeMcp2221A;
 
   /// <remarks>
-  /// This property shares its value with <see cref="Mcp2221A.I2cFunctionality.BusSpeed"/>.
-  /// Therefore, changing the value of this property affects <see cref="Mcp2221A.I2cFunctionality.BusSpeed"/>
+  /// This property shares its value with <see cref="I2cController.BusSpeed"/>.
+  /// Therefore, changing the value of this property affects <see cref="I2cController.BusSpeed"/>
   /// and other <see cref="Mcp2221AI2cBus"/> instances.
   /// </remarks>
   public I2cBusSpeed BusSpeed {
@@ -24,7 +24,7 @@ public sealed class Mcp2221AI2cBus : I2cBus {
   }
 
   internal Mcp2221AI2cBus(
-    Mcp2221A.I2cFunctionality i2cBus,
+    I2cController i2cBus,
     bool shouldDisposeMcp2221A
   )
   {

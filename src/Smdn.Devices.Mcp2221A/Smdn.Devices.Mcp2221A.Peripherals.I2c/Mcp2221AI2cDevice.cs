@@ -7,8 +7,8 @@ using System.Device.I2c;
 namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 internal sealed class Mcp2221AI2cDevice : I2cDevice {
-  private Mcp2221A.I2cFunctionality i2cBus;
-  internal Mcp2221A.I2cFunctionality I2cBus => i2cBus ?? throw new ObjectDisposedException(GetType().FullName);
+  private I2cController i2cBus;
+  internal I2cController I2cBus => i2cBus ?? throw new ObjectDisposedException(GetType().FullName);
 
   private readonly I2cAddress deviceAddress;
   private readonly bool shouldDisposeMcp2221A;
@@ -16,7 +16,7 @@ internal sealed class Mcp2221AI2cDevice : I2cDevice {
   public override I2cConnectionSettings ConnectionSettings { get; }
 
   public Mcp2221AI2cDevice(
-    Mcp2221A.I2cFunctionality i2cBus,
+    I2cController i2cBus,
     I2cAddress deviceAddress,
     bool shouldDisposeMcp2221A
   )

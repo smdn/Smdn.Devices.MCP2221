@@ -10,11 +10,10 @@ using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Logging;
 
-namespace Smdn.Devices.Mcp2221A;
+namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 #pragma warning disable IDE0040
-partial class Mcp2221A {
-  partial class I2cFunctionality {
+partial class I2cController {
 #pragma warning restore IDE0040
     private static Exception CreateUnexpectedResponseException(I2cAddress? address, byte response)
       => address == null
@@ -47,12 +46,12 @@ partial class Mcp2221A {
       private I2cEngineState lastEngineState;
       public int ReadLength { get; private set; } = -1;
 
-#pragma warning disable 0164
+  #pragma warning disable 0164
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
       public IEnumerable<(
-        ConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
-        ParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
+        Mcp2221AConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
+        Mcp2221AParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
       )>
       IterateWriteCommands()
       {
@@ -66,15 +65,15 @@ partial class Mcp2221A {
           StatusParseResponse
         );
 
-#pragma warning disable CA1508
+  #pragma warning disable CA1508
         if (operationState == OperationState.CancelAndRetry)
           goto WRITE_INIT;
-#pragma warning restore CA1508
+  #pragma warning restore CA1508
 
-#pragma warning disable IDE0055
+  #pragma warning disable IDE0055
       WRITE_DO:
         logger?.LogDebug(EventIdI2cCommand, "WRITE_DO");
-#pragma warning restore IDE0055
+  #pragma warning restore IDE0055
 
         yield return (
           WriteConstructCommand,
@@ -89,10 +88,10 @@ partial class Mcp2221A {
           StatusParseResponse
         );
 
-#pragma warning disable CA1508
+  #pragma warning disable CA1508
         if (operationState == OperationState.Continue)
           goto WRITE_STATUS;
-#pragma warning restore CA1508
+  #pragma warning restore CA1508
         if (lastEngineState.RequestedTransferLength == 0)
           yield break;
       }
@@ -100,8 +99,8 @@ partial class Mcp2221A {
       [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1316:TupleElementNamesShouldUseCorrectCasing", Justification = "Not a publicly-exposed type or member.")]
       [SuppressMessage("StyleCop.CSharp.MaintainAbilityRules", "SA1414:TupleTypesInSignaturesShouldHaveElementNames", Justification = "Not a publicly-exposed type or member.")]
       public IEnumerable<(
-        ConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
-        ParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
+        Mcp2221AConstructCommandAction<(I2cAddress, Memory<byte>)> constructCommand,
+        Mcp2221AParseResponseFunc<(I2cAddress, Memory<byte>), bool> parseResponse
       )>
       IterateReadCommands()
       {
@@ -116,27 +115,27 @@ partial class Mcp2221A {
           StatusParseResponse
         );
 
-#pragma warning disable CA1508
+  #pragma warning disable CA1508
         if (operationState == OperationState.CancelAndRetry)
           goto READ_INIT;
-#pragma warning restore CA1508
+  #pragma warning restore CA1508
 
-#pragma warning disable IDE0055
+  #pragma warning disable IDE0055
       READ_DO:
         logger?.LogDebug(EventIdI2cCommand, "READ_DO");
-#pragma warning restore IDE0055
+  #pragma warning restore IDE0055
 
         yield return (
           ReadConstructCommand,
           ReadParseResponse
         );
 
-#if false
+  #if false
         if (lastEngineState.RequestedTransferLength == 0)
           yield break; // no need to do READ_GET
         if (canAdvanceToNextStep)
           goto READ_GET;
-#endif
+  #endif
 
       READ_GET:
         yield return (
@@ -144,14 +143,14 @@ partial class Mcp2221A {
           GetParseResponse
         );
 
-#pragma warning disable CA1508
+  #pragma warning disable CA1508
         if (operationState == OperationState.Continue)
           goto READ_GET;
-#pragma warning restore CA1508
+  #pragma warning restore CA1508
 
         yield break;
       }
-#pragma warning restore 0164
+  #pragma warning restore 0164
 
       private static OperationState TransitStateOrThrowIfEngineStateInvalid(OperationState currentState, I2cAddress address, I2cEngineState engineState)
       {
@@ -163,8 +162,8 @@ partial class Mcp2221A {
 
         return engineState.StateMachineStateValue switch {
           /*
-           * success / can advance
-           */
+            * success / can advance
+            */
           0x00 => OperationState.AdvanceToNextStep, // completed successfully?
           // 0x10: ACK? transferring?
 
@@ -172,8 +171,8 @@ partial class Mcp2221A {
           0x60 => OperationState.AdvanceToNextStep, // all buffer transferred?
 
           /*
-           * still in progress / NACK reply
-           */
+            * still in progress / NACK reply
+            */
           // 0x25: write operation still in progress?
           0x25 when currentState == OperationState.Initial => OperationState.CancelAndRetry, // remains previous operation state(?)
           0x25 when 0 < engineState.TimeoutValue => OperationState.Continue, // current operation in progress
@@ -186,8 +185,8 @@ partial class Mcp2221A {
           0x62 => throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been in invalid state. It may need to be reset or powered off.", engineState.ToString()),
 
           /*
-           * exceptional / unknown states
-           */
+            * exceptional / unknown states
+            */
           _ => throw CreateUnknownEngineStateException(address, engineState.StateMachineStateValue, engineState.ToString()),
         };
       }
@@ -328,5 +327,4 @@ partial class Mcp2221A {
         return operationState == OperationState.AdvanceToNextStep;
       }
     }
-  }
 }

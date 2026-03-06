@@ -156,7 +156,7 @@ internal class I2cOperationStateMachine {
     if (currentState == OperationState.Initial && (engineState.LineValueScl.IsLow || engineState.LineValueSda.IsLow))
       throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "The line level of SDA and/or SCL is invalid. Try pull-up the bus lines. It may need to be reset or powered off.", engineState.ToString());
 
-    if (engineState.BusStatus == I2cEngineState.TransferStatus.MarkedForCancellation)
+    if (engineState.BusStatus == I2cEngineTransferStatus.MarkedForCancellation)
       throw CreateI2cErrorException(address, engineState.StateMachineStateValue, "I2C engine has been marked for cancellation unexpectedly. It may need to be reset or powered off.", engineState.ToString());
 
     return engineState.StateMachineStateValue switch {

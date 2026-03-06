@@ -132,9 +132,9 @@ public sealed partial class I2cController {
       var state = I2cEngineState.Parse(resp);
       var isBusStatusDefined =
 #if SYSTEM_ENUM_ISDEFINED_OF_TENUM
-        Enum.IsDefined<I2cEngineState.TransferStatus>(state.BusStatus);
+        Enum.IsDefined<I2cEngineTransferStatus>(state.BusStatus);
 #else
-        Enum.IsDefined(typeof(I2cEngineState.TransferStatus), state.BusStatus);
+        Enum.IsDefined(typeof(I2cEngineTransferStatus), state.BusStatus);
 #endif
 
       if (!isBusStatusDefined) {

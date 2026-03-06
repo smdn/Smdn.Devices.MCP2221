@@ -6,14 +6,18 @@ using System.Device.I2c;
 
 namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
+/// <inheritdoc/>
 [CLSCompliant(false)]
-public sealed class Mcp2221AI2cDevice : I2cDevice {
+public sealed class Mcp2221AI2cDevice : I2cDevice, II2cDevice {
   private Mcp2221AI2cBus i2cBus;
   internal Mcp2221AI2cBus I2cBus => i2cBus ?? throw new ObjectDisposedException(GetType().FullName);
 
-  /// <summary>
-  /// Gets or sets the transmission speed used for reading and writing to the I2C bus in [kbps] units.
-  /// </summary>
+  II2cController II2cDevice.Controller => I2cBus;
+
+  private readonly I2cAddress deviceAddress;
+  I2cAddress II2cDevice.Address => deviceAddress;
+
+  /// <inheritdoc/>
   /// <remarks>
   ///   <para>
   ///     Setting this property to <c>0</c> or a negative value will throw
@@ -44,10 +48,24 @@ public sealed class Mcp2221AI2cDevice : I2cDevice {
   } = Mcp2221AI2cBus.DefaultTransmissionSpeedInKbps;
 #pragma warning restore SA1513
 
-  private readonly I2cAddress deviceAddress;
   private readonly bool shouldDisposeMcp2221A;
 
-  public override I2cConnectionSettings ConnectionSettings { get; }
+  private I2cConnectionSettings? connectionSettings;
+
+  /// <inheritdoc/>
+  /// <remarks>
+  /// The <see cref="I2cConnectionSettings.BusId"/> of the object returned by
+  /// this property is always <c>0</c>.
+  /// </remarks>
+  /// <see cref="II2cDevice.Address"/>
+  public override I2cConnectionSettings ConnectionSettings {
+    get {
+      // lazy initialization
+      connectionSettings ??= new(busId: 0, deviceAddress: (int)deviceAddress);
+
+      return connectionSettings;
+    }
+  }
 
   internal Mcp2221AI2cDevice(
     Mcp2221AI2cBus i2cBus,
@@ -58,8 +76,6 @@ public sealed class Mcp2221AI2cDevice : I2cDevice {
     this.i2cBus = i2cBus ?? throw new ArgumentNullException(nameof(i2cBus));
     this.deviceAddress = deviceAddress;
     this.shouldDisposeMcp2221A = shouldDisposeMcp2221A;
-
-    ConnectionSettings = new(busId: 0, deviceAddress: (int)deviceAddress);
   }
 
   /// <inheritdoc/>
@@ -78,26 +94,32 @@ public sealed class Mcp2221AI2cDevice : I2cDevice {
   /// <inheritdoc/>
   public override byte ReadByte()
   {
-    Span<byte> buffer = stackalloc byte[1];
+    var ret = II2cDeviceExtensions.ReadByte(this);
 
-    Read(buffer);
-
-    return buffer[0];
+    return ret == -1
+      ? throw new I2cReadException()
+      : (byte)ret;
   }
 
   /// <inheritdoc/>
   public override void Read(Span<byte> buffer)
-    => I2cBus.Read(deviceAddress, TransmissionSpeedInKbps, buffer, cancellationToken: default);
+    => II2cDeviceExtensions.Read(this, buffer);
 
   /// <inheritdoc/>
   public override void WriteByte(byte value)
-    => Write([value]);
+    => II2cDeviceExtensions.WriteByte(this, value);
 
   /// <inheritdoc/>
   public override void Write(ReadOnlySpan<byte> buffer)
-    => I2cBus.Write(deviceAddress, TransmissionSpeedInKbps, buffer, cancellationToken: default);
+    => II2cDeviceExtensions.Write(this, buffer);
 
   /// <inheritdoc/>
+  /// <remarks>
+  /// The current implementation does not provide fully atomic operations;
+  /// it calls <see cref="Write(ReadOnlySpan{byte})"/> and <see cref="Read(Span{byte})"/>
+  /// consecutively. If an exception is thrown during <see cref="Write(ReadOnlySpan{byte})"/>,
+  /// <see cref="Read(Span{byte})"/> will not be performed.
+  /// </remarks>
   public override void WriteRead(ReadOnlySpan<byte> writeBuffer, Span<byte> readBuffer)
   {
     Write(writeBuffer);

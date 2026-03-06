@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
+using Smdn.Devices.Mcp2221A.Peripherals.I2c;
 using Smdn.IO.UsbHid;
 
 namespace Smdn.Devices.Mcp2221A;

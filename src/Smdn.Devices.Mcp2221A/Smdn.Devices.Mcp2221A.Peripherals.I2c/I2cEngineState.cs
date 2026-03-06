@@ -5,7 +5,7 @@ using System;
 using System.Device.Gpio;
 using System.Linq;
 
-namespace Smdn.Devices.Mcp2221A;
+namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 internal readonly struct I2cEngineState {
   public enum TransferStatus : byte {

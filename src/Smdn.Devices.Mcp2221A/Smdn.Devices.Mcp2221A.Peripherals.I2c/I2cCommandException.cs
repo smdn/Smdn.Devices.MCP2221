@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Smdn.Devices.Mcp2221A;
+namespace Smdn.Devices.Mcp2221A.Peripherals.I2c;
 
 public class I2cCommandException : Mcp2221ACommandException {
   public I2cAddress Address { get; }

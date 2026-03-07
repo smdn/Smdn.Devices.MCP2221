@@ -6,7 +6,20 @@ using System;
 namespace Smdn.Devices.Mcp2221A;
 
 public class Mcp2221ACommandException : InvalidOperationException {
-  public Mcp2221ACommandException() : base("command failed") { }
-  public Mcp2221ACommandException(string? message) : base(message) { }
-  public Mcp2221ACommandException(string? message, Exception? innerException) : base(message, innerException) { }
+  private const string DefaultMessage = "The command to the MCP2221/MCP2221A failed.";
+
+  public Mcp2221ACommandException()
+    : base(DefaultMessage)
+  {
+  }
+
+  public Mcp2221ACommandException(string? message)
+    : base(message ?? DefaultMessage)
+  {
+  }
+
+  public Mcp2221ACommandException(string? message, Exception? innerException)
+    : base(message ?? DefaultMessage, innerException)
+  {
+  }
 }

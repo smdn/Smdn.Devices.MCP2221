@@ -8,18 +8,20 @@ using Smdn.IO.UsbHid;
 namespace Smdn.Devices.Mcp2221A;
 
 public class Mcp2221ANotFoundException : InvalidOperationException {
+  private const string DefaultMessage = "The MCP2221/MCP2221A was not found on the current system.";
+
   public Mcp2221ANotFoundException()
-    : base("MCP2221/MCP2221A not found")
+    : base(DefaultMessage)
   {
   }
 
-  public Mcp2221ANotFoundException(string message)
-    : base(message)
+  public Mcp2221ANotFoundException(string? message)
+    : base(message ?? DefaultMessage)
   {
   }
 
-  public Mcp2221ANotFoundException(string message, Exception innerException)
-    : base(message, innerException)
+  public Mcp2221ANotFoundException(string? message, Exception? innerException)
+    : base(message ?? DefaultMessage, innerException)
   {
   }
 

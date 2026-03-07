@@ -15,13 +15,13 @@ public class Mcp2221AUnavailableException : UnauthorizedAccessException {
   {
   }
 
-  public Mcp2221AUnavailableException(string message)
-    : base(message)
+  public Mcp2221AUnavailableException(string? message)
+    : base(message ?? DefaultMessage)
   {
   }
 
-  public Mcp2221AUnavailableException(string message, Exception innerException)
-    : base(message, innerException)
+  public Mcp2221AUnavailableException(string? message, Exception? innerException)
+    : base(message ?? DefaultMessage, innerException)
   {
   }
 

@@ -26,7 +26,7 @@ updates:
           - "smdn/workflows-dotnet/*"
     ignore:
       # smdn/workflows-dotnet: report major and minor updates only
-      - dependency-name: "smdn/workflows-dotnet"
+      - dependency-name: "smdn/workflows-dotnet/*"
         update-types:
           - "version-update:semver-patch"
       # actions/checkout: report major updates only
